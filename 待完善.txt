@@ -1,0 +1,13 @@
+1.homepage周视图增加点击切换日功能
+2.homepage Places快速筛选按钮样式调整
+3.homepage本周任务列表移除鼠标移动到具体字符上的事件（目前显示为光标）
+4.homepage本周任务列表蓝底为选中样式，非鼠标移入样式；另，滚动条样式需调整
+5.homepage本周任务详情的Participants和Viewed by移除鼠标移入事件
+8.app permission改名Configuration
+11.日期下拉控件下拉不能收起
+-->
+6.new events中viewed by多选样式调整
+7.new events，configuration增加收起动画
+9.configuration》groups增加编辑，新建功能（需求变更）
+10.configuration》places，categories增加新建功能
+12.configuration》school years，catogories下拉加入背景颜色

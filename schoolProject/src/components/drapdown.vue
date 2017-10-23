@@ -11,7 +11,7 @@
       </li>
       <li class="li_add" v-if='inputAdd' @click='addItem()'>
         <a href="javascript:void(0)">
-          <span class="icon_li_add"></span> New School Year
+          <span class="icon_li_add"></span> New Item
         </a>
       </li>
     </ul>

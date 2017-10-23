@@ -22,8 +22,12 @@
                   <drapdown :input-value='groupsData.name'
                             :input-name='groupsData.name'
                             :input-select='groupsData.names'
+                            :input-add='true'
+                            @addItem='()=>{this.showConfirmPopup=true}'
                             @inputChange='groupsChanged'>
                   </drapdown>
+                  
+                  <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -63,11 +67,6 @@
                   </drapdown>
 
                   <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
-  
-                  <confirm-modal :showPopup='showConfirmPopup'
-                                 @closePopup='()=>{this.showConfirmPopup=false}'>
-                  </confirm-modal>
-
                 </div>
               </div>
               <div class="name_box">
@@ -135,6 +134,8 @@
                   <drapdown :input-value='placesData.name'
                             :input-name='placesData.name'
                             :input-select='placesData.places'
+                            :input-add='true'
+                            @addItem='()=>{this.showConfirmPopup=true}'
                             @inputChange='placeChanged'>
                   </drapdown>
 
@@ -150,11 +151,6 @@
                     <span class="action_icon icon_delete" @click='deleteRoom(index)'></span>
                   </div>
                 </div>
-
-                <confirm-modal :showPopup='showConfirmPopup'
-                               @closePopup='()=>{this.showConfirmPopup=false}'>
-                </confirm-modal>
-
               </div>
               <div class="button_box">
                 <span class="lab"></span>
@@ -173,8 +169,12 @@
                   <drapdown :input-value='categoriesData.name'
                             :input-name='categoriesData.name'
                             :input-select='categoriesData.nameList'
+                            :input-add='true'
+                            @addItem='()=>{this.showConfirmPopup=true}'
                             @inputChange='categoriesNameChanged'>
                   </drapdown>
+
+                  <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -188,6 +188,9 @@
                 </div>
               </div>
             </div>
+            <confirm-modal :showPopup='showConfirmPopup'
+                           @closePopup='()=>{this.showConfirmPopup=false}'>
+            </confirm-modal>
           </div>
           <div v-show='tab==0' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary">Save</button>
@@ -371,10 +374,10 @@ export default {
 <style lang='scss' scoped>
   @import '../styles/mixin';
   .configuration{
-    position: absolute;top: 0;right: 0;width: 0;height: 100%;z-index: 99;overflow: hidden;
+    position: absolute;top: 0;right: 0;width: 100%;height: 100%;overflow: hidden;z-index: -1;
     .config_bg{position: absolute;width: 100%;height: 100%;background: rgba(0,0,0,0.2);z-index: -1;}
     .config_body{
-      width: 0;
+      width: 0;transition:all 0.2s; -webkit-transition:all 0.2s;
       .icon_btn_add{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
       .title{
         height: 80px;border-bottom: 1px solid #eee;font-size: 30px;color: #4E81BD;padding: 20px 0;
@@ -426,7 +429,7 @@ export default {
     }
   }
   .configuration.act{
-    width: 100%;
-    .config_body{width: 800px;height: 100%;background: #fff;float: right;transition:all 0.2s; -webkit-transition:all 0.2s;}
+    z-index: 99;
+    .config_body{width: 800px;height: 100%;background: #fff;float: right;}
   }
 </style>

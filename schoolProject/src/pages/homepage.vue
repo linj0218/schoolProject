@@ -63,7 +63,9 @@
           </div>
           <div class="week_calendar">
             <div class="table_head">
-              <div class="th" v-for='th in weekTableHead' :class='{"act": th.isActDate}'>
+              <div class="th" v-for='th in weekTableHead'
+                              :class='{"act": th.isActDate}'
+                              @click='changeActDateFromWeekview(th)'>
                 <div class="week_name">{{th.week}}</div>
                 <div class="month_num">{{th.date}}</div>
               </div>
@@ -81,7 +83,11 @@
         <div class="part_3">
           <div class="task_title">
             <template v-for='li in weekTaskList'>
-              <div class="li container-fluid" v-for='td in li' v-if='td.spanNum!==0'>
+              <div class="li container-fluid"
+                   v-for='td in li'
+                   v-if='td.spanNum!==0'
+                   :class='{"act": td.id==weekTaskListActId}'
+                   @click='weekTaskListActIndexChanged(td)'>
                 <div class="col-lg-6"><span :class='td.color'></span>{{td.time}}</div>
                 <div class="col-lg-6">{{td.place}}</div>
                 <div class="col-lg-12">{{td.title}}</div>
@@ -122,12 +128,15 @@
           </div>
         </div>
       </div>
+
       <configuration :showConfig='showConfig'
                      @configurationToggleFunc='configurationToggleFunc'>
       </configuration>
+
       <new-event :showConfig='showEvent'
                  @eventToggleFunc='eventToggleFunc'>
       </new-event>
+      
     </div>
   </div>
 </template>
@@ -141,6 +150,9 @@
   import {weekMap, forEach, getMonthWeek, getYearWeek} from '@/plugins/util'
 
   export default {
+    components: {
+      headerr, calendar, configuration, newEvent, drapdown
+    },
     data () {
       return {
         // part_1 ------------------------------------------------------------
@@ -176,30 +188,31 @@
         ],
         weekTableHead: [
         ],
+        weekTaskListActId: null,
         weekTaskList: [
           [
-            {spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {spanNum: 2, color: 'bg_color_8', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {spanNum: 1, color: 'bg_color_1', time: 'All day', title: 'Title name', place: 'QingPu'}
+            {id: '1', spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
+            {id: '2', spanNum: 2, color: 'bg_color_8', time: 'All day', title: 'Title name', place: 'QingPu'},
+            {id: '3', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '4', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '5', spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
+            {id: '6', spanNum: 1, color: 'bg_color_1', time: 'All day', title: 'Title name', place: 'QingPu'}
           ],
           [
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 2, color: 'bg_color_7', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 1, color: 'bg_color_5', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
+            {id: '7', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '8', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '9', spanNum: 2, color: 'bg_color_7', time: 'All day', title: 'Title name', place: 'QingPu'},
+            {id: '10', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '11', spanNum: 1, color: 'bg_color_5', time: 'All day', title: 'Title name', place: 'QingPu'},
+            {id: '12', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
           ],
           [
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 2, color: 'bg_color_7', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
+            {id: '13', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '14', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '15', spanNum: 2, color: 'bg_color_7', time: 'All day', title: 'Title name', place: 'QingPu'},
+            {id: '16', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '17', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
+            {id: '18', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
           ]
         ],
         // part_3 ------------------------------------------------------------
@@ -217,9 +230,6 @@
         // 新建事件弹窗
         showEvent: false
       }
-    },
-    components: {
-      headerr, calendar, configuration, newEvent, drapdown
     },
     mounted () {
     },
@@ -250,6 +260,9 @@
               forEach(this.calendarList[i], (i3, item3) => {
                 let tempObj = {}
                 tempObj = {
+                  thisYear: this.actDateInfo.thisYear,
+                  thisMonth: this.actDateInfo.thisMonth,
+                  thisDate: item3.day,
                   week: weekMap[Number(i3) + 1].substr(0, 3),
                   date: item3.day,
                   isActDate: item2.day === item3.day
@@ -260,6 +273,12 @@
           })
         })
         this.weekTableHead = tempList
+      },
+      changeActDateFromWeekview (item) {
+        this.actDateInfo.thisYear = item.thisYear
+        this.actDateInfo.thisMonth = item.thisMonth
+        this.actDateInfo.thisDate = item.thisDate
+        this.createWeekInfo()
       },
       // 日历日期切换事件
       syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
@@ -283,6 +302,9 @@
       seeCategoryChanged (item) {
         this.seeCategoryId = item.value
         this.seeCategoryName = item.name
+      },
+      weekTaskListActIndexChanged (item) {
+        this.weekTaskListActId = item.id
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
@@ -309,7 +331,7 @@
       .places{
         padding: 40px 90px;
         .btn{
-          border: 1px solid #ccc;font-size: 20px;color: #ccc;height: 36px;padding: 0;position: relative;outline: none;
+          border: 1px solid #ccc;font-size: 20px;color: #ccc;height: 36px;padding: 0;position: relative;outline: none;background: #fff;
           span{position: absolute;width: 30px;height: 27px;right: -2px;top: -2px;background: url('../images/icon_checked.png') 0 0 / 100% 100% no-repeat;display: none;}
         }
         .btn.act{
@@ -376,12 +398,16 @@
       height: 533px;
       .task_title{
         float: left;width: 323px;height: 100%;overflow-y: auto;
+        &::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
         .li{
           height: 78px;line-height: 29px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #003;font-size: 16px;
           span{width: 12px;height: 12px;border-radius: 50%;position: absolute;left: 0;top: 50%;transform: translateY(-50%);}
         }
         .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
-        .li:hover{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
+        .li:hover{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);cursor: default;}
       }
       .task_detail{
         overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;
@@ -398,7 +424,7 @@
           overflow: hidden;padding: 30px;
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
-          .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;}
+          .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;}
         }
       }
     }

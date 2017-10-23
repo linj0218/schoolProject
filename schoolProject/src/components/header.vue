@@ -9,7 +9,7 @@
           <ul class="drop_down">
             <div class="icon_other1"></div>
             <li><span class="icon1"></span>Profile</li>
-            <li @click='handleEvent()'><span class="icon2"></span>App permission</li>
+            <li @click='handleEvent()'><span class="icon2"></span>Configuration</li>
             <li><span class="icon3"></span>Log out</li>
           </ul>
         </div>

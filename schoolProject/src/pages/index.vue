@@ -2,7 +2,7 @@
   <div id="body" v-cloak>
 
     <!-- 头部 -->
-    <headerr></headerr>
+    <headerr @configurationToggleFunc='configurationToggleFunc'></headerr>
 
     <div class="page_body">
       <div class="page_body_box clearfix">
@@ -65,6 +65,11 @@
           </div>
         </div>
       </div>
+
+      <configuration :showConfig='showConfig'
+                     @configurationToggleFunc='configurationToggleFunc'>
+      </configuration>
+
     </div>
   </div>
 </template>
@@ -72,8 +77,12 @@
 <script>
   import headerr from '@/components/header'
   import calendar from '@/components/calendar'
+  import configuration from '@/components/configuration'
   import {weekMap, monthMap, forEach} from '@/plugins/util'
   export default {
+    components: {
+      headerr, calendar, configuration
+    },
     data () {
       return {
         drawerActIndex: 0,
@@ -99,11 +108,10 @@
           {imgUrl: '', title: 'HR', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'},
           {imgUrl: '', title: 'IT', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'},
           {imgUrl: '', title: 'Doctor', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'}
-        ]
+        ],
+        // 配置弹窗
+        showConfig: false
       }
-    },
-    components: {
-      headerr, calendar
     },
     mounted () {
       this.init()
@@ -140,7 +148,7 @@
       // 切换周视图抽屉
       changeDrawerActIndex (i, item) {
         this.drawerActIndex = i
-        console.log(item)
+        // console.log(item)
       },
       syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
         this.calendarList = calendarList
@@ -148,6 +156,10 @@
         this.actDateInfo = actDateInfo
         // console.log(calendarList, thisDateInfo, actDateInfo)
         this.createWeekInfo()
+      },
+      // 配置弹窗切换事件
+      configurationToggleFunc () {
+        this.showConfig = !this.showConfig
       }
     },
     filters: {
@@ -162,7 +174,7 @@
   @import '../styles/mixin';
   #body{height: 100%;background: #f5f5f5;overflow: auto;}
   .page_body{
-    padding: 30px 180px;
+    padding: 30px 180px;position: relative;
     .part_1, .part_3{float: left;width: 63%;background: #fff;box-shadow: 0 0 1px #ddd;margin-right: 20px;margin-bottom: 20px;}
     .part_1{
       height: 304px;padding: 12px;

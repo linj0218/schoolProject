@@ -1,9 +1,9 @@
 <template>
   <div class="month_cal">
     <div class="month_nav">
-      <button @click='changeActMonth("last_month")'></button>
+      <button @click='changeActMonth("last_month")' @focus='()=>{this.$emit("buttonFocus")}' @blur='()=>{this.$emit("buttonBlur")}' ></button>
       {{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}
-      <button @click='changeActMonth("next_month")'></button>
+      <button @click='changeActMonth("next_month")' @focus='()=>{this.$emit("buttonFocus")}' @blur='()=>{this.$emit("buttonBlur")}' ></button>
     </div>
     <div class="month_body">
       <div class="month_table clearfix">
