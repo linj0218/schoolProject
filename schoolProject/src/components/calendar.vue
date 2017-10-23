@@ -84,7 +84,7 @@
       createCalendar () {
         let thisYear = this.actDateInfo.thisYear
         let thisMonth = this.actDateInfo.thisMonth
-        let thisMonthFirstDate = new Date(thisYear + '.' + thisMonth + '.1')
+        let thisMonthFirstDate = new Date(thisYear + '-' + thisMonth + '-1')
         let thisMonthLastDate = new Date(thisYear, thisMonth, 0)
 
         let thisMonthFirstWeek = !thisMonthFirstDate.getDay() ? 7 : thisMonthFirstDate.getDay()
