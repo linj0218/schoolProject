@@ -3,7 +3,7 @@
     <div class="config_bg" @click='closeConfig()'></div>
     <div class="config_body">
       <div class="title">
-        <span class="icon_back" @click='closeConfig()'></span>News event
+        <span class="icon_back" @click='closeConfig()'></span>{{eventType=="new"?"News":"Edit"}} event
       </div>
       <div class="content">
         <div>
@@ -126,7 +126,7 @@
       </div>
       <div class="btns">
         <button type="button" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-danger">Save and continue</button>
+        <button type="button" class="btn btn-danger" v-show='eventType=="new"'>Save and continue</button>
         <button type="button" class="btn cancel" @click='closeConfig()'>Cancel</button>
       </div>
     </div>
@@ -144,6 +144,11 @@ export default {
       type: Boolean,
       required: true,
       default: false
+    },
+    eventType: {
+      type: String,
+      required: false,
+      default: 'new'
     }
   },
   components: {

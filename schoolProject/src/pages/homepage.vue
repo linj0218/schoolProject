@@ -60,7 +60,7 @@
                 </drapdown>
 
               </div>
-              <button type="button" class="btn btn-primary" @click='()=>{this.showEvent=true}'>
+              <button type="button" class="btn btn-primary" @click='()=>{this.eventType="new";this.showEvent=true}'>
                 <span class="icon_btn_add"></span> New Event
               </button>
             </div>
@@ -128,6 +128,11 @@
               <button type="button" class="btn btn-block">Educational Director</button>
               <button type="button" class="btn btn-block">Administration of Pud...</button>
               <button type="button" class="btn btn-block">Secondary school of...</button>
+              <div class="edit_btn">
+                <button type="button" class="btn btn-primary" @click='()=>{this.eventType="edit";this.showEvent=true}'>
+                  <span class="icon_btn_edit"></span> Edit Event
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -137,7 +142,8 @@
                      @configurationToggleFunc='configurationToggleFunc'>
       </configuration>
 
-      <new-event :showConfig='showEvent'
+      <new-event :show-config='showEvent'
+                 :event-type='eventType'
                  @eventToggleFunc='eventToggleFunc'>
       </new-event>
       
@@ -240,7 +246,8 @@
         // 配置弹窗
         showConfig: false,
         // 新建事件弹窗
-        showEvent: false
+        showEvent: false,
+        eventType: null
       }
     },
     mounted () {
@@ -435,10 +442,14 @@
           }
         }
         .tast_detail_right{
-          overflow: hidden;padding: 30px;
+          overflow: hidden;padding: 30px 30px 94px 30px;height: 100%;position: relative;
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
-          .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;}
+          & > .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;}
+          .edit_btn{
+            position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;
+            .icon_btn_edit{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
+          }
         }
       }
     }
