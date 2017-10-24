@@ -184,25 +184,27 @@
         ],
         // part_2 ------------------------------------------------------------
         // Week info
-        categoryId: '0',
+        categoryId: '-1',
         categoryName: 'All',
         categoryColor: '',
         categorys: [
-          {value: '0', name: 'All', color: ''},
-          {value: '1', name: 'option1', color: 'bg_color_1'},
-          {value: '2', name: 'option2', color: 'bg_color_2'},
-          {value: '3', name: 'option3', color: 'bg_color_3'},
-          {value: '4', name: 'option4', color: 'bg_color_4'}
+          {value: '-1', name: 'All', color: ''},
+          {value: '2', name: 'Primaire', color: 'bg_color_1'},
+          {value: '3', name: 'Secondaire', color: 'bg_color_2'},
+          {value: '4', name: 'Orientation (salon, etc.)', color: 'bg_color_3'},
+          {value: '9', name: 'Examens', color: 'bg_color_4'},
+          {value: '11', name: 'Certifications', color: 'bg_color_5'},
+          {value: '14', name: 'Concours', color: 'bg_color_6'},
+          {value: '15', name: 'IT', color: 'bg_color_7'}
         ],
-        seeCategoryId: '0',
+        seeCategoryId: '-1',
         seeCategoryName: 'All',
         seeCategoryColor: '',
         seeCategorys: [
-          {value: '0', name: 'All', color: ''},
-          {value: '1', name: 'option1', color: 'bg_color_1'},
-          {value: '2', name: 'option2', color: 'bg_color_2'},
-          {value: '3', name: 'option3', color: 'bg_color_3'},
-          {value: '4', name: 'option4', color: 'bg_color_4'}
+          {value: '-1', name: 'All', color: ''},
+          {value: '1', name: 'Admin', color: 'bg_color_1'},
+          {value: '2', name: 'Super User', color: 'bg_color_2'},
+          {value: '3', name: 'User', color: 'bg_color_3'}
         ],
         weekTableHead: [
         ],
@@ -251,13 +253,18 @@
       }
     },
     mounted () {
-      this.$http.post(
-        'http://218.242.249.178:8083/e3MiddlewareManageWeb/service/userService/login1',
-        {
-          'ak': 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMTFd7g1BmKHKuey Qz9JO3/kcbk M18VprYzz/aV3n4MDv5KUzrVAgtDst07PN/ycZi4Y/qyMKLdfxgnbO30T8CAwEAAQ:=', 'pk': '0782ee869ca541d59bcf3713c262fe3a', 'number': 9720, 'date': '2017-10-24 20:28:25', 'sign': 'I5kA2y5Mki3ZOVNTy32/5Ms5hPgMc2StStBSYyplmfHnZNVb8nHqEzOdYe5pLO8FyhxpRlw 86aiEGzWjF9hoQ==', 'dataContent': '[{\'username\': \'admin\', \'password\': \'baison8888\', \'captcha\': \'\', \'browser\': \'webkit\'}]', 'token': null
-        })
+      this.$http({
+        method: 'post',
+        url: 'http://218.83.241.198:8001/sharedcalendarmonth?todo=oneMonthEvents',
+        data: {
+          start: new Date('2017-9-25').toUTCString(),
+          end: new Date('2017-11-6').toUTCString(),
+          s_permission: -1,
+          s_category: -1
+        }
+      })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
       })
     },
     methods: {
