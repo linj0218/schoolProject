@@ -7,6 +7,8 @@ $color_6: #687280;
 $color_7: #00B3CF;
 $color_8: #F2A200;
 $color_9: #00CFB0;
+$color_10: #4A90E2;
+$color_11: #5ACE6D;
 *{box-sizing: border-box;}
 [v-cloak]{display: none;}
 .flex{display: flex;}
@@ -19,12 +21,16 @@ $color_9: #00CFB0;
 .color_7{color: $color_7;}
 .color_8{color: $color_8;}
 .color_9{color: $color_9;}
-.bg_color_1{background: $color_1;}
-.bg_color_2{background: $color_2;}
-.bg_color_3{background: $color_3;}
-.bg_color_4{background: $color_4;}
-.bg_color_5{background: $color_5;}
-.bg_color_6{background: $color_6;}
-.bg_color_7{background: $color_7;}
-.bg_color_8{background: $color_8;}
-.bg_color_9{background: $color_9;}
+.color_10{color: $color_10;}
+.color_11{color: $color_11;}
+.bg_color_1{background: $color_1 !important;}
+.bg_color_2{background: $color_2 !important;}
+.bg_color_3{background: $color_3 !important;}
+.bg_color_4{background: $color_4 !important;}
+.bg_color_5{background: $color_5 !important;}
+.bg_color_6{background: $color_6 !important;}
+.bg_color_7{background: $color_7 !important;}
+.bg_color_8{background: $color_8 !important;}
+.bg_color_9{background: $color_9 !important;}
+.bg_color_10{background: $color_10 !important;}
+.bg_color_11{background: $color_11 !important;}

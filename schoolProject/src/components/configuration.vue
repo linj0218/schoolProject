@@ -23,6 +23,7 @@
                             :input-name='groupsData.name'
                             :input-select='groupsData.names'
                             :input-add='true'
+                            :input-item-text='"New Groups"'
                             @addItem='()=>{this.showConfirmPopup=true}'
                             @inputChange='groupsChanged'>
                   </drapdown>
@@ -62,6 +63,7 @@
                             :input-name='schoolYearData.yearName'
                             :input-select='schoolYearData.years'
                             :input-add='true'
+                            :input-item-text='"New School years"'
                             @inputChange='yearChanged'
                             @addItem='()=>{this.showConfirmPopup=true}'>
                   </drapdown>
@@ -95,6 +97,8 @@
 
                   <drapdown :input-value='schoolYearData.weekId'
                             :input-name='schoolYearData.weekName'
+                            :input-bg-type='"background"'
+                            :input-bg-color='schoolYearData.weekColor'
                             :input-select='schoolYearData.weeks'
                             @inputChange='weekChanged'>
                   </drapdown>
@@ -135,6 +139,7 @@
                             :input-name='placesData.name'
                             :input-select='placesData.places'
                             :input-add='true'
+                            :input-item-text='"New Places"'
                             @addItem='()=>{this.showConfirmPopup=true}'
                             @inputChange='placeChanged'>
                   </drapdown>
@@ -170,6 +175,7 @@
                             :input-name='categoriesData.name'
                             :input-select='categoriesData.nameList'
                             :input-add='true'
+                            :input-item-text='"New Categories"'
                             @addItem='()=>{this.showConfirmPopup=true}'
                             @inputChange='categoriesNameChanged'>
                   </drapdown>
@@ -181,7 +187,9 @@
                 <span class="lab">Color:</span>
                 <div class="name_value">
                   <drapdown :input-value='categoriesData.color'
-                            :input-name='categoriesData.color'
+                            :input-name='""'
+                            :input-bg-type='"background"'
+                            :input-bg-color='categoriesData.color'
                             :input-select='categoriesData.colorList'
                             @inputChange='categoriesColorChanged'>
                   </drapdown>
@@ -271,9 +279,10 @@ export default {
         endDate: '2017-10-23',
         weekId: '1',
         weekName: 'A',
+        weekColor: 'bg_color_10',
         weeks: [
-          {value: '1', name: 'A'},
-          {value: '2', name: 'B'}
+          {value: '1', name: 'A', color: 'bg_color_10'},
+          {value: '2', name: 'B', color: 'bg_color_11'}
         ],
         holidays: [
           {value: '1', name: '1.Oct,2017 - 8.Oct,2017'},
@@ -306,12 +315,17 @@ export default {
           {value: 'type3', name: 'type3'},
           {value: 'type4', name: 'type4'}
         ],
-        color: 'color1',
+        color: 'bg_color_1',
         colorList: [
-          {value: 'color1', name: 'color1'},
-          {value: 'color2', name: 'color2'},
-          {value: 'color3', name: 'color3'},
-          {value: 'color4', name: 'color4'}
+          {value: 'bg_color_1', name: '', color: 'bg_color_1'},
+          {value: 'bg_color_2', name: '', color: 'bg_color_2'},
+          {value: 'bg_color_3', name: '', color: 'bg_color_3'},
+          {value: 'bg_color_4', name: '', color: 'bg_color_4'},
+          {value: 'bg_color_5', name: '', color: 'bg_color_5'},
+          {value: 'bg_color_6', name: '', color: 'bg_color_6'},
+          {value: 'bg_color_7', name: '', color: 'bg_color_7'},
+          {value: 'bg_color_8', name: '', color: 'bg_color_8'},
+          {value: 'bg_color_9', name: '', color: 'bg_color_9'}
         ]
       },
       showConfirmPopup: false,
@@ -339,6 +353,7 @@ export default {
     weekChanged (item) {
       this.schoolYearData.weekId = item.value
       this.schoolYearData.weekName = item.name
+      this.schoolYearData.weekColor = item.color
     },
     delHoliday (index) {
       this.schoolYearData.holidays.splice(index, 1)
