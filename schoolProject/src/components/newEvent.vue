@@ -16,8 +16,8 @@
             </div>
             <div class="all_day">
               <div class="checkbox">
-                <label>
-                  <input @click='checkAllDayChange()' type="checkbox" v-model='allDay'> All day
+                <label :class='{"checked": allDay}'>
+                  <input type="checkbox" v-model='allDay'> All day
                 </label>
               </div>
             </div>
@@ -107,14 +107,14 @@
               <div class="viewed_by">
                 <div class="check_all">
                   <div class="checkbox">
-                    <label>
+                    <label :class='{"checked": viewedAll}'>
                       <input @click='checkAllChange()' type="checkbox" v-model='viewedAll'> All Employees
                     </label>
                   </div>
                 </div>
                 <div class="check_list">
                   <div class="checkbox" v-for='item in viewedList'>
-                    <label>
+                    <label :class='{"checked": item.value}'>
                       <input @click='checkChange(item)' type="checkbox" v-model='item.value'> {{item.name}}
                     </label>
                   </div>
@@ -231,23 +231,27 @@ export default {
 
     },
     checkAllChange () {
-      let flg = this.viewedAll
-      forEach(this.viewedList, (i, obj) => {
-        obj.value = flg
-      })
+      setTimeout(() => {
+        let flg = this.viewedAll
+        forEach(this.viewedList, (i, obj) => {
+          obj.value = flg
+        })
+      }, 0)
     },
     checkChange (item) {
-      if (!item.value) {
-        this.viewedAll = false
-      } else {
-        let flg = true
-        forEach(this.viewedList, (i, obj) => {
-          if (!obj.value) {
-            flg = false
-          }
-        })
-        this.viewedAll = flg
-      }
+      setTimeout(() => {
+        if (!item.value) {
+          this.viewedAll = false
+        } else {
+          let flg = true
+          forEach(this.viewedList, (i, obj) => {
+            if (!obj.value) {
+              flg = false
+            }
+          })
+          this.viewedAll = flg
+        }
+      }, 0)
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
       this.startDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
@@ -352,4 +356,8 @@ export default {
     width: 100%;
     .config_body{width: 1012px;height: 100%;background: #fff;float: right;transition:all 0.2s; -webkit-transition:all 0.2s;}
   }
+  .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox]{display: none;}
+  .checkbox label{padding-left: 24px;}
+  .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;margin-left: -24px;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;}
+  .checkbox .checked:before{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
 </style>
