@@ -40,6 +40,8 @@
                 <!-- 下拉组件 -->
                 <drapdown :input-value='categoryId'
                           :input-name='categoryName'
+                          :input-color-type='"circle"'
+                          :input-color='categoryColor'
                           :input-select='categorys'
                           @inputChange='categoryChanged'>
                 </drapdown>
@@ -51,6 +53,8 @@
                 <!-- 下拉组件 -->
                 <drapdown :input-value='seeCategoryId'
                           :input-name='seeCategoryName'
+                          :input-color-type='"circle"'
+                          :input-color='seeCategoryColor'
                           :input-select='seeCategorys'
                           @inputChange='seeCategoryChanged'>
                 </drapdown>
@@ -176,15 +180,23 @@
         // Week info
         categoryId: '0',
         categoryName: 'All',
+        categoryColor: '',
         categorys: [
-          {value: '0', name: 'All'},
-          {value: '1', name: 'option1'}
+          {value: '0', name: 'All', color: ''},
+          {value: '1', name: 'option1', color: 'bg_color_1'},
+          {value: '2', name: 'option2', color: 'bg_color_2'},
+          {value: '3', name: 'option3', color: 'bg_color_3'},
+          {value: '4', name: 'option4', color: 'bg_color_4'}
         ],
         seeCategoryId: '0',
         seeCategoryName: 'All',
+        seeCategoryColor: '',
         seeCategorys: [
-          {value: '0', name: 'All'},
-          {value: '1', name: 'option1'}
+          {value: '0', name: 'All', color: ''},
+          {value: '1', name: 'option1', color: 'bg_color_1'},
+          {value: '2', name: 'option2', color: 'bg_color_2'},
+          {value: '3', name: 'option3', color: 'bg_color_3'},
+          {value: '4', name: 'option4', color: 'bg_color_4'}
         ],
         weekTableHead: [
         ],
@@ -298,10 +310,12 @@
       categoryChanged (item) {
         this.categoryId = item.value
         this.categoryName = item.name
+        this.categoryColor = item.color
       },
       seeCategoryChanged (item) {
         this.seeCategoryId = item.value
         this.seeCategoryName = item.name
+        this.seeCategoryColor = item.color
       },
       weekTaskListActIndexChanged (item) {
         this.weekTaskListActId = item.id
@@ -358,7 +372,7 @@
         }
         .filter_condition{
           text-align: right;line-height: 76px;padding: 0 30px;
-          .select{width: 90px;display: inline-block;height: 36px;vertical-align: middle;line-height: 36px;margin: 0 20px;}
+          .select{width: 150px;display: inline-block;height: 36px;vertical-align: middle;line-height: 36px;margin: 10px;}
         }
       }
       .week_calendar{

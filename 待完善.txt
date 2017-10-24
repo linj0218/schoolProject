@@ -8,6 +8,7 @@
 10.configuration》places，categories增加新建功能
 11.日期下拉控件下拉不能收起
 12.configuration》school years，catogories下拉加入背景颜色
+13.homepage筛选条件下拉菜单加上颜色圆点
 -->
 6.new events中viewed by多选样式调整
 7.new events，configuration增加收起动画

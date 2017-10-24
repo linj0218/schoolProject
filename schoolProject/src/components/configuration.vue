@@ -97,8 +97,8 @@
 
                   <drapdown :input-value='schoolYearData.weekId'
                             :input-name='schoolYearData.weekName'
-                            :input-bg-type='"background"'
-                            :input-bg-color='schoolYearData.weekColor'
+                            :input-color-type='"background"'
+                            :input-color='schoolYearData.weekColor'
                             :input-select='schoolYearData.weeks'
                             @inputChange='weekChanged'>
                   </drapdown>
@@ -188,8 +188,8 @@
                 <div class="name_value">
                   <drapdown :input-value='categoriesData.color'
                             :input-name='""'
-                            :input-bg-type='"background"'
-                            :input-bg-color='categoriesData.color'
+                            :input-color-type='"background"'
+                            :input-color='categoriesData.color'
                             :input-select='categoriesData.colorList'
                             @inputChange='categoriesColorChanged'>
                   </drapdown>

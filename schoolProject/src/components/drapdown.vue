@@ -1,18 +1,23 @@
 <template>
   <div class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-            :class='[{"circle": inputBgType=="circle"}, {"background": inputBgType=="background"}]'
+            :class='[{"circle": inputColorType=="circle"}, {"background": inputColorType=="background"}]'
             :disabled='inputDisabled'>
-      <span class="button_bg" :class='inputBgType=="background" && inputBgColor'>
+      <span class="button_bg" :class='inputColorType=="background" && inputColor'>
         {{inputName}}
       </span>
+      <span v-show='inputColorType=="circle"' class="icon_circle" :class='inputColor'></span>
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
       <li v-for='item in inputSelect'
           :class='{"isSelected": item.value == inputValue}'
           @click='chooseItem(item)'>
-        <a href="javascript:void(0)" :class='[{"background": inputBgType=="background"}, inputBgType=="background" && item.color]'>{{item.name}}</a>
+        <a href="javascript:void(0)"
+           :class='[{"background": inputColorType=="background"}, inputColorType=="background" && item.color]'>
+         {{item.name}}
+         <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle" && item.color'></span>
+        </a>
       </li>
       <li class="li_add" v-if='inputAdd' @click='addItem()'>
         <a href="javascript:void(0)">
@@ -60,13 +65,13 @@
         default: 'New Item'
       },
       // 下拉按钮颜色类型
-      inputBgType: {
+      inputColorType: {
         type: String,
         required: false,
         default: ''
       },
       // 颜色色值
-      inputBgColor: {
+      inputColor: {
         type: String,
         required: false,
         default: ''
@@ -93,7 +98,7 @@
   @import '../styles/mixin';
   .dropdown-menu > .isSelected > a{color: #337ab7;}
   .dropdown-menu a.background {color: #fff !important;}
-  .dropdown-menu > li > a{height: 34px;line-height: 28px;}
+  .dropdown-menu > li > a{height: 34px;line-height: 28px;position: relative;}
   .dropdown-menu li:nth-child(odd) a{background: #f9f9f9;}
   .dropdown-menu .li_add a{
     color: #4E81BD;
@@ -105,5 +110,8 @@
   }
   .btn-default.background .button_bg{color: #fff;}
   .caret{position: absolute;right: 15px;top: 50%;transform: translateY(-50%);}
+  .icon_circle{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);border-radius: 50%;display: none;}
+  .circle .icon_circle{display: inline-block;}
+  .li_icon_circle{position: absolute;width: 22px;height: 22px;right: 15px;top: 50%;transform: translateY(-50%);border-radius: 50%;}
   .opening>.dropdown-menu{width: 100%;}
 </style>

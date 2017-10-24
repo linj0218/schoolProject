@@ -22,12 +22,14 @@
               </div>
             </div>
             <div>
-              <span class="lab">Categroy</span>
+              <span class="lab">Category</span>
               <div class="name_value flex">
-                <drapdown :input-value='categroyId'
-                          :input-name='categroyName'
-                          :input-select='categroys'
-                          @inputChange='categroyChanged'>
+                <drapdown :input-value='categoryId'
+                          :input-name='categoryName'
+                          :input-color-type='"circle"'
+                          :input-color='categoryColor'
+                          :input-select='categorys'
+                          @inputChange='categoryChanged'>
                 </drapdown>
               </div>
             </div>
@@ -153,13 +155,15 @@ export default {
       title: '',
       // All day
       allDay: false,
-      // Categroy
-      categroyId: '10086',
-      categroyName: 'option1',
-      categroys: [
-        {value: '10086', name: 'option1'},
-        {value: '10087', name: 'option2'},
-        {value: '10088', name: 'option3'}
+      // Category
+      categoryId: '1',
+      categoryName: 'option1',
+      categoryColor: 'bg_color_1',
+      categorys: [
+        {value: '1', name: 'option1', color: 'bg_color_1'},
+        {value: '2', name: 'option2', color: 'bg_color_2'},
+        {value: '3', name: 'option3', color: 'bg_color_3'},
+        {value: '4', name: 'option4', color: 'bg_color_4'}
       ],
       // Place
       placeId: '10086',
@@ -263,9 +267,10 @@ export default {
       this.roomId = item.value
       this.roomName = item.name
     },
-    categroyChanged (item) {
-      this.categroyId = item.value
-      this.categroyName = item.name
+    categoryChanged (item) {
+      this.categoryId = item.value
+      this.categoryName = item.name
+      this.categoryColor = item.color
     },
     placeChanged (item) {
       this.placeId = item.value
