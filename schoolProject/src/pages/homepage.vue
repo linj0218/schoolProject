@@ -251,6 +251,14 @@
       }
     },
     mounted () {
+      this.$http.post(
+        'http://218.242.249.178:8083/e3MiddlewareManageWeb/service/userService/login1',
+        {
+          'ak': 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMTFd7g1BmKHKuey Qz9JO3/kcbk M18VprYzz/aV3n4MDv5KUzrVAgtDst07PN/ycZi4Y/qyMKLdfxgnbO30T8CAwEAAQ:=', 'pk': '0782ee869ca541d59bcf3713c262fe3a', 'number': 9720, 'date': '2017-10-24 20:28:25', 'sign': 'I5kA2y5Mki3ZOVNTy32/5Ms5hPgMc2StStBSYyplmfHnZNVb8nHqEzOdYe5pLO8FyhxpRlw 86aiEGzWjF9hoQ==', 'dataContent': '[{\'username\': \'admin\', \'password\': \'baison8888\', \'captcha\': \'\', \'browser\': \'webkit\'}]', 'token': null
+        })
+      .then((res) => {
+        console.log(res)
+      })
     },
     methods: {
       // 地址切换事件
