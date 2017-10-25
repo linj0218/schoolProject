@@ -255,7 +255,7 @@
     mounted () {
       this.$http({
         method: 'post',
-        url: 'http://218.83.241.198:8001/sharedcalendarmonth?todo=oneMonthEvents',
+        url: '/sharedcalendarmonth?todo=oneMonthEvents',
         data: {
           start: new Date('2017-9-25').toUTCString(),
           end: new Date('2017-11-6').toUTCString(),
