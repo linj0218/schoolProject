@@ -92,10 +92,11 @@
         let thisMonthLastWeek = !thisMonthLastDate.getDay() ? 7 : thisMonthLastDate.getDay()
 
         let lastMonth = thisMonth - 1 === 0 ? 12 : thisMonth - 1
-        let lastMonthLastDate = new Date(lastMonth === 12 ? thisYear - 1 : thisYear, thisMonth - 1, 0).getDate()
+        let lastMonthLastDate = new Date(lastMonth === 12 ? thisYear - 1 : thisYear, thisMonth - 1, 0)
         let lastMonthLackCount = thisMonthFirstWeek - 1
 
         let nextMonth = thisMonth + 1 === 13 ? 1 : thisMonth + 1
+        let nextMonthFirstDate = new Date(nextMonth === 1 ? thisYear + 1 : thisYear, nextMonth - 1, 1)
         let nextMonthLackCount = 7 - thisMonthLastWeek
 
         let calendarListIndex = 0
@@ -103,7 +104,12 @@
         // 构建上月数据
         calendarList[0] = !calendarList[0] ? [] : calendarList[0]
         for (let i = 1, len = lastMonthLackCount; i <= len; i++) {
-          calendarList[0].push({monthInfo: 'last_month', day: lastMonthLastDate - (len - i), monthValue: lastMonth})
+          calendarList[0].push({
+            monthInfo: 'last_month',
+            day: lastMonthLastDate.getDate() - (len - i),
+            monthValue: lastMonth,
+            yearValue: lastMonthLastDate.getFullYear()
+          })
         }
 
         // 构建本月数据
@@ -112,12 +118,22 @@
             ++calendarListIndex
             calendarList[calendarListIndex] = []
           }
-          calendarList[calendarListIndex].push({monthInfo: 'this_month', day: i, monthValue: thisMonth})
+          calendarList[calendarListIndex].push({
+            monthInfo: 'this_month',
+            day: i,
+            monthValue: thisMonth,
+            yearValue: thisYear
+          })
         }
 
         // 构建下月数据
         for (let i = 1, len = nextMonthLackCount; i <= len; i++) {
-          calendarList[calendarListIndex].push({monthInfo: 'next_month', day: i, monthValue: nextMonth})
+          calendarList[calendarListIndex].push({
+            monthInfo: 'next_month',
+            day: i,
+            monthValue: nextMonth,
+            yearValue: nextMonthFirstDate.getFullYear()
+          })
         }
 
         this.calendarList = calendarList

@@ -98,25 +98,25 @@
               </div>
             </template>
           </div>
-          <div class="task_detail">
+          <div class="task_detail" >
             <div class="tast_detail_left">
               <div class="item">
-                <span>Title:</span><div>{{taskDetailInfo.title}}</div>
+                <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
               </div>
               <div class="item">
-                <span>Categroy:</span><div>{{taskDetailInfo.categroy}} <i></i></div>
+                <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
               </div>
               <div class="item">
-                <span>Place:</span><div>{{taskDetailInfo.place}}</div>
+                <span>Place:</span><div>{{taskDetailInfo.place ? taskDetailInfo.place : '-'}}</div>
               </div>
               <div class="item">
-                <span>Start:</span><div>{{taskDetailInfo.start}}</div>
+                <span>Start:</span><div>{{taskDetailInfo.start ? taskDetailInfo.start : '-'}}</div>
               </div>
               <div class="item">
-                <span>End:</span><div>{{taskDetailInfo.end}}</div>
+                <span>End:</span><div>{{taskDetailInfo.end ? taskDetailInfo.end : '-'}}</div>
               </div>
               <div class="item">
-                <span>Description:</span><div>{{taskDetailInfo.description}}</div>
+                <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
               </div>
             </div>
             <div class="tast_detail_right">
@@ -210,6 +210,7 @@
         ],
         weekTaskListActId: null,
         weekTaskList: [
+          /*
           [
             {id: '1', spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
             {id: '2', spanNum: 2, color: 'bg_color_8', time: 'All day', title: 'Title name', place: 'QingPu'},
@@ -234,16 +235,18 @@
             {id: '17', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
             {id: '18', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
           ]
+          */
         ],
         // part_3 ------------------------------------------------------------
         // Task info
         taskDetailInfo: {
-          title: 'Title name',
-          categroy: 'lable2',
-          place: 'Qingpu ClassRoom 102',
-          start: '2017-09-19',
-          end: '2017-09-20',
-          description: 'Occasionally, Dad would get out his mandolin and play for the family. We three children: Trisha, Monte and I, George Jr., would often sing along. Songs such as the Tennessee Waltz'
+          title: '',
+          categroy: '',
+          color: '',
+          place: '',
+          start: '',
+          end: '',
+          description: ''
         },
         // 配置弹窗
         showConfig: false,
@@ -253,19 +256,6 @@
       }
     },
     mounted () {
-      this.$http({
-        method: 'post',
-        url: '/sharedcalendarmonth?todo=oneMonthEvents',
-        data: {
-          start: new Date('2017-9-25').toUTCString(),
-          end: new Date('2017-11-6').toUTCString(),
-          s_permission: -1,
-          s_category: -1
-        }
-      })
-      .then((res) => {
-        // console.log(res)
-      })
     },
     methods: {
       // 地址切换事件
@@ -294,8 +284,8 @@
               forEach(this.calendarList[i], (i3, item3) => {
                 let tempObj = {}
                 tempObj = {
-                  thisYear: this.actDateInfo.thisYear,
-                  thisMonth: this.actDateInfo.thisMonth,
+                  thisYear: item3.yearValue,
+                  thisMonth: item3.monthValue,
                   thisDate: item3.day,
                   week: weekMap[Number(i3) + 1].substr(0, 3),
                   date: item3.day,
@@ -307,6 +297,60 @@
           })
         })
         this.weekTableHead = tempList
+
+        // 获取数据
+        let startDateObj = tempList[0]
+        let startDate = startDateObj.thisYear + '-' + startDateObj.thisMonth + '-' + startDateObj.thisDate
+        let endDateObj = tempList[tempList.length - 1]
+        let endDate = endDateObj.thisYear + '-' + endDateObj.thisMonth + '-' + endDateObj.thisDate
+        this.getWeekInfoData(startDate, endDate)
+      },
+      // 获取数据
+      getWeekInfoData (startDate, endDate) {
+        let self = this
+        this.$http.post('/queryWeekEvents', {
+          startDate: startDate,
+          endDate: endDate
+        }).then((res) => {
+          let resData = res.data
+          self.weekTaskList = []
+          forEach(resData, (i, item) => {
+            let dateList = item.start_date.split('-')
+            let taskStartYear = Number(dateList[0])
+            let taskStartMonth = Number(dateList[1])
+            let taskStartDate = Number(dateList[2])
+            let tempList = []
+            forEach(self.weekTableHead, (i2, item2) => {
+              let tempObj = {}
+              if (item2.thisYear === taskStartYear && item2.thisMonth === taskStartMonth && item2.thisDate === taskStartDate) {
+                tempObj = {
+                  id: item.id,
+                  spanNum: item.days,
+                  color: 'bg_color_3',
+                  time: item.day_flag === 0 ? 'All day' : item.start_time + '-' + item.end_time,
+                  title: item.title,
+                  place: 'QingPu'
+                }
+                if (i === '0') {
+                  self.weekTaskListActId = item.id
+                  self.taskDetailInfo = {
+                    title: item.title,
+                    categroy: item.category_id,
+                    color: 'bg_color_3',
+                    place: 'Qingpu ClassRoom 102',
+                    start: item.start_date,
+                    end: item.end_date,
+                    description: item.description
+                  }
+                }
+              } else {
+                tempObj = {id: '', spanNum: 0, color: '', time: '', title: '', place: ''}
+              }
+              tempList.push(tempObj)
+            })
+            self.weekTaskList.push(tempList)
+          })
+        })
       },
       changeActDateFromWeekview (item) {
         this.actDateInfo.thisYear = item.thisYear
@@ -453,7 +497,7 @@
             line-height: 24px;padding: 10px 0;
             span{float: left;width: 140px;text-align: right;color: #999;font-size: 16px;margin-right: 10px;}
             div{overflow: hidden;font-size: 18px;color: #333;}
-            i{display: inline-block;width: 20px;height: 20px;background: #FFAC00;border-radius: 50%;vertical-align: middle;}
+            i{display: inline-block;width: 20px;height: 20px;border-radius: 50%;vertical-align: middle;}
           }
         }
         .tast_detail_right{

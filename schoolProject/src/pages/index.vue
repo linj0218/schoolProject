@@ -118,6 +118,15 @@
     },
     methods: {
       init () {
+        /*
+        this.$http.post('/queryWeekEvents', {
+          startDate: '2017-10-06',
+          endDate: '2017-10-12'
+        })
+        .then((res) => {
+          // console.log(res)
+        })
+        */
       },
       // 创建日历下周任务视图
       createWeekInfo () {
@@ -148,7 +157,6 @@
       // 切换周视图抽屉
       changeDrawerActIndex (i, item) {
         this.drawerActIndex = i
-        // console.log(item)
       },
       syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
         this.calendarList = calendarList
