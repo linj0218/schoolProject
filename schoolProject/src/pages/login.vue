@@ -7,8 +7,8 @@
         <span>Welcome to LFS Portal</span>
       </div>
       <div class="form_cont">
-        <input class="form-control" type="text" placeholder="User" v-model='name'>
-        <input class="form-control" type="password" placeholder="Password" v-model='pwd'>
+        <input class="form-control" type="text" placeholder="User" v-model='userName'>
+        <input class="form-control" type="password" placeholder="Password" v-model='passWord'>
       </div>
       <div class="forget_pwd">
         <a href="javascripe:void(0);">Forget your Password?</a>
@@ -28,23 +28,28 @@ export default {
   },
   data () {
     return {
-      name: '',
-      pwd: ''
+      userName: '',
+      passWord: ''
     }
   },
   methods: {
     login () {
-      if (this.name === '' || this.pwd === '') {
+      if (this.userName === '' || this.passWord === '') {
         return false;
       }
       let self = this
       // TODO 填入正确地址，参数
-      this.$http.post('/queryWeekEvents', {
-        name: this.name,
-        password: this.pwd
+      let param = '{"userName": "'+this.userName+'","passWord": "'+this.passWord+'"}'
+      let obj = JSON.parse(param);
+      this.$http.post('/loginCtl/user/login', {
+        data: param
       }).then((res) => {
-        // TODO 处理返回数据
-        self.$router.push({ path: '/' })
+      	if(!res.success){	//登录失败
+      		alert("Login failed")
+      	}else{
+      		self.$router.push({ path: '/' })
+      	}
+        
       })
     }
   }

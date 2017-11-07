@@ -176,11 +176,6 @@
         },
         // Places
         placesList: [
-          {isSelected: true, name: 'Campus Qingpu', value: ''},
-          {isSelected: true, name: 'Campus Exterieur', value: ''},
-          {isSelected: true, name: 'Campus Pudong', value: ''},
-          {isSelected: true, name: 'Campus Exterieur', value: ''},
-          {isSelected: true, name: 'Campus Pudong', value: ''}
         ],
         // part_2 ------------------------------------------------------------
         // Week info
@@ -304,11 +299,29 @@
         let endDateObj = tempList[tempList.length - 1]
         let endDate = endDateObj.thisYear + '-' + endDateObj.thisMonth + '-' + endDateObj.thisDate
         this.getWeekInfoData(startDate, endDate)
+        this.getPlaces()
+      },
+      getPlaces () {
+      	let self = this
+        this.$http.post('/sharedcalendarDetailCtl/queryCampus', {
+        }).then((res) => {
+				  let resData = res.data
+          self.placesList = []
+          forEach(resData, (i, item) => {
+          	let obj = {
+          		id:item.id,
+          		name:item.campus_name,
+          		address:item.address,
+          		isSelected:true
+          	}
+          	self.placesList.push(obj)
+          })
+        })
       },
       // 获取数据
       getWeekInfoData (startDate, endDate) {
         let self = this
-        this.$http.post('/queryWeekEvents', {
+        this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
           startDate: startDate,
           endDate: endDate
         }).then((res) => {

@@ -96,12 +96,7 @@
         weekList: [],
         // Application
         applicationList: [
-          {value: '', name: 'Application'},
-          {value: '', name: 'Application'},
-          {value: '', name: 'Application'},
-          {value: '', name: 'Application'},
-          {value: '', name: 'Application'},
-          {value: '', name: 'Application'}
+         
         ],
         // Department
         departmentList: [
@@ -115,6 +110,7 @@
     },
     mounted () {
       this.init()
+      this.initAppList()
     },
     methods: {
       init () {
@@ -130,6 +126,7 @@
       },
       // 创建日历下周任务视图
       createWeekInfo () {
+      	console.log("size is :"+this.calendarList.length)
         let tempList = []
         forEach(this.calendarList, (i, item) => {
           forEach(item, (i2, item2) => {
@@ -168,8 +165,30 @@
       // 配置弹窗切换事件
       configurationToggleFunc () {
         this.showConfig = !this.showConfig
-      }
+      },
+      //初始化appList列表
+      initAppList () {
+      	let self = this
+      	let param = '{"apps": ""}'
+        this.$http.post('/appCtl/app/appList', {
+        	data: param
+        }).then((res) => {
+				  let resData = res.data
+          self.placesList = []
+          forEach(resData, (i, item) => {
+          	let obj = {
+          		value:item.nom,
+          		name:item.nom
+          	}
+          	if(i<6){
+          		self.applicationList.push(obj)
+          	}
+          	
+          })
+        })
+      },
     },
+    
     filters: {
       monthName (str) {
         return monthMap[str].substr(0, 3)
