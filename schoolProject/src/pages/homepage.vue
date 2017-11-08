@@ -302,19 +302,19 @@
         this.getPlaces()
       },
       getPlaces () {
-      	let self = this
+        let self = this
         this.$http.post('/sharedcalendarDetailCtl/queryCampus', {
         }).then((res) => {
-				  let resData = res.data
+          let resData = res.data
           self.placesList = []
           forEach(resData, (i, item) => {
-          	let obj = {
-          		id:item.id,
-          		name:item.campus_name,
-          		address:item.address,
-          		isSelected:true
-          	}
-          	self.placesList.push(obj)
+            let obj = {
+              id: item.id,
+              name: item.campus_name,
+              address: item.address,
+              isSelected: true
+            }
+            self.placesList.push(obj)
           })
         })
       },

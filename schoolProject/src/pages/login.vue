@@ -3,7 +3,7 @@
     <div class="bg"></div>
     <div class="form">
       <div class="form_title">
-        <span></span>
+        <span class="logo"></span>
         <span>Welcome to LFS Portal</span>
       </div>
       <div class="form_cont">
@@ -39,17 +39,16 @@ export default {
       }
       let self = this
       // TODO 填入正确地址，参数
-      let param = '{"userName": "'+this.userName+'","passWord": "'+this.passWord+'"}'
-      let obj = JSON.parse(param);
+      let param = '{"userName": "' + this.userName + '","passWord": "' + this.passWord + '"}'
+      // let obj = JSON.parse(param);
       this.$http.post('/loginCtl/user/login', {
         data: param
       }).then((res) => {
-      	if(!res.success){	//登录失败
-      		alert("Login failed")
-      	}else{
-      		self.$router.push({ path: '/' })
-      	}
-        
+        if (!res.success) { // 登录失败
+          alert('Login failed')
+        } else {
+          self.$router.push({ path: '/' })
+        }
       })
     }
   }
@@ -58,10 +57,13 @@ export default {
 
 <style lang='scss' scoped>
   #body{height: 100%;background: #f5f5f5;overflow: auto;position: relative;}
-  .bg{height: 100%;}
+  .bg{height: 100%;background: url('../images/login_bg.jpg') 0 0 / 100% auto no-repeat;}
   .form{
     position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width: 400px;height: 380px;background: #fff;
-    .form_title{line-height: 150px;color: #2C66C2;font-size: 22px;text-align: center;}
+    .form_title{
+      line-height: 150px;color: #2C66C2;font-size: 22px;text-align: center;
+      .logo{display: inline-block;width: 63px;height: 95px;background: url('../images/logo_2.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
+    }
     .form_cont{
       padding: 0 20px;
       .form-control{background: transparent;}
