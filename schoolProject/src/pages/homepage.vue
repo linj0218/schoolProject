@@ -144,6 +144,7 @@
 
       <new-event :show-config='showEvent'
                  :event-type='eventType'
+                 :event-id='weekTaskListActId'
                  @closeEventModal='closeEventModal'>
       </new-event>
       
@@ -344,6 +345,7 @@
           })
 
           if (emptyWeekFlg) {
+            this.weekTaskListActId = null
             this.taskDetailInfo = {
               title: '',
               categroy: '',
