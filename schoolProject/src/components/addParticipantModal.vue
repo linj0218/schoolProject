@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="popup_footer">
-        <button type="button" class="btn btn-primary">Confirm</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
       </div>
     </div>
   </div>
@@ -51,10 +51,10 @@
       return {
         searchValue: '',
         preSelectList: [
-          {value: '1', type: 'icon_member', name: 'SQLDebugger', isSelected: false},
-          {value: '2', type: 'icon_members', name: 'SQLDebugger', isSelected: false},
-          {value: '3', type: 'icon_member', name: 'SQLDebugger', isSelected: false},
-          {value: '4', type: 'icon_member', name: 'SQLDebugger', isSelected: false},
+          {value: '1', type: 'icon_member', name: 'ClassRoom 101', isSelected: false},
+          {value: '2', type: 'icon_members', name: 'ConferenceRoom 301', isSelected: false},
+          {value: '3', type: 'icon_member', name: 'PlayGround', isSelected: false},
+          {value: '4', type: 'icon_member', name: 'Primaire', isSelected: false},
           {value: '5', type: 'icon_member', name: 'SQLDebugger', isSelected: false}
         ],
         selectedList: [
@@ -63,17 +63,27 @@
     },
     mounted () {
     },
+    watch: {
+      showPopup () {
+        // TODO 查询列表
+        // console.log('1')
+      }
+    },
     methods: {
+      // 回车查询
       formSearch () {
         console.log(this.searchValue)
       },
+      // 关闭弹窗
       closePopup () {
         this.$emit('closePopup')
       },
+      // 添加选项
       addItem (index) {
         this.preSelectList[index].isSelected = true
         this.selectedList.push(this.preSelectList[index])
       },
+      // 删除选项
       deleteItem (item, index) {
         forEach(this.preSelectList, (i, obj) => {
           if (obj.value === item.value) {
@@ -81,6 +91,14 @@
           }
         })
         this.selectedList.splice(index, 1)
+      },
+      // 提交选项
+      confirm () {
+        let resData = {
+          status: 'ok',
+          data: this.selectedList
+        }
+        this.$emit('closePopup', resData)
       }
     }
   }

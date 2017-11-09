@@ -205,7 +205,7 @@
       .apps{
         height: 100%;padding: 0;
         .app{
-          height: 50%;background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 22px;line-height: 140px;text-align: center;transition:all 0.5s; -webkit-transition:all 0.5s;
+          height: 50%;background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 22px;line-height: 140px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;
           .icon{display: inline-block;width: 80px;height: 80px;background: #fff;border-radius: 50%;vertical-align: middle;margin-right: 15px;}
         }
         .app:hover{color: #fff;background: #4E81BD;}

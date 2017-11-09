@@ -6,29 +6,36 @@
         <span class="icon_back" @click='closeConfig()'></span>{{eventType=="new"?"News":"Edit"}} event
       </div>
       <div class="content">
+        
+        <!-- 选择成员弹窗 -->
+        <add-participant-modal :showPopup='data.showAddParticipantPopup'
+                               @closePopup='closeAddParticipantModal'>
+        </add-participant-modal>
+
+        <!-- event弹窗 -->
         <div>
           <div class="left">
             <div>
               <span class="lab">Title</span>
               <div class="name_value">
-                <input class="form-control" type="text" name="" v-model='title'>
+                <input class="form-control" type="text" name="" v-model='data.title'>
               </div>
             </div>
             <div class="all_day">
               <div class="checkbox">
-                <label :class='{"checked": allDay}'>
-                  <input type="checkbox" v-model='allDay'> All day
+                <label :class='{"checked": data.day_flag}'>
+                  <input type="checkbox" v-model='data.day_flag'> All day
                 </label>
               </div>
             </div>
             <div>
               <span class="lab">Category</span>
               <div class="name_value flex">
-                <drapdown :input-value='categoryId'
-                          :input-name='categoryName'
+                <drapdown :input-value='data.category_id'
+                          :input-name='data.categoryName'
                           :input-color-type='"circle"'
-                          :input-color='categoryColor'
-                          :input-select='categorys'
+                          :input-color='data.categoryColor'
+                          :input-select='data.categorys'
                           @inputChange='categoryChanged'>
                 </drapdown>
               </div>
@@ -36,14 +43,14 @@
             <div>
               <span class="lab">Place</span>
               <div class="name_value flex">
-                <drapdown :input-value='placeId'
-                          :input-name='placeName'
-                          :input-select='places'
+                <drapdown :input-value='data.place_id'
+                          :input-name='data.placeName'
+                          :input-select='data.places'
                           @inputChange='placeChanged'>
                 </drapdown>
-                <drapdown :input-value='roomId'
-                          :input-name='roomName'
-                          :input-select='rooms'
+                <drapdown :input-value='data.roomId'
+                          :input-name='data.roomName'
+                          :input-select='data.rooms'
                           @inputChange='roomChanged'>
                 </drapdown>
               </div>
@@ -51,14 +58,14 @@
             <div>
               <span class="lab">Start</span>
               <div class="name_value flex">
-                <date-select :input-value='startDate'
+                <date-select :input-value='data.start_date'
                              :show-icon='false'
                              @dataChange='startDateChange'>
                 </date-select>
-                <drapdown :input-value='startTimeId'
-                          :input-name='startTimeName'
-                          :input-select='startTimeList'
-                          :input-disabled='allDay'
+                <drapdown :input-value='data.start_time'
+                          :input-name='data.startTimeName'
+                          :input-select='data.startTimeList'
+                          :input-disabled='data.day_flag'
                           @inputChange='startTimeChanged'>
                 </drapdown>
               </div>
@@ -66,14 +73,14 @@
             <div>
               <span class="lab">End</span>
               <div class="name_value flex">
-                <date-select :input-value='endDate'
+                <date-select :input-value='data.end_date'
                              :show-icon='false'
                              @dataChange='endDateChange'>
                 </date-select>
-                <drapdown :input-value='endTimeId'
-                          :input-name='endTimeName'
-                          :input-select='endTimeList'
-                          :input-disabled='allDay'
+                <drapdown :input-value='data.end_time'
+                          :input-name='data.endTimeName'
+                          :input-select='data.endTimeList'
+                          :input-disabled='data.day_flag'
                           @inputChange='endTimeChanged'>
                 </drapdown>
               </div>
@@ -81,7 +88,7 @@
             <div>
               <span class="lab">Description</span>
               <div class="name_value">
-                <textarea class="form-control textarea"></textarea>
+                <textarea class="form-control textarea" v-model='data.description'></textarea>
               </div>
             </div>
           </div>
@@ -89,17 +96,12 @@
             <div>
               <span class="lab">Participants</span>
               <div class="participants">
-                <div class="li" v-for='(item, index) in participants'>
+                <div class="li" v-for='(item, index) in data.participants'>
                   <span class="icon" :class='item.type'></span>{{item.name}}<span class="action_icon icon_delete" @click='deleteParticipant(index)'></span>
                 </div>
-                <button type="button" class="btn btn-primary" @click='()=>{this.showAddParticipantPopup=true}'>
+                <button type="button" class="btn btn-primary" @click='()=>{this.data.showAddParticipantPopup=true}'>
                   <span class="icon_btn_add"></span> Participants
                 </button>
-
-                <add-participant-modal :showPopup='showAddParticipantPopup'
-                                       @closePopup='()=>{this.showAddParticipantPopup=false}'>
-                </add-participant-modal>
-
               </div>
             </div>
             <div>
@@ -107,13 +109,13 @@
               <div class="viewed_by">
                 <div class="check_all">
                   <div class="checkbox">
-                    <label :class='{"checked": viewedAll}'>
-                      <input @click='checkAllChange()' type="checkbox" v-model='viewedAll'> All Employees
+                    <label :class='{"checked": data.viewedAll}'>
+                      <input @click='checkAllChange()' type="checkbox" v-model='data.viewedAll'> All Employees
                     </label>
                   </div>
                 </div>
                 <div class="check_list">
-                  <div class="checkbox" v-for='item in viewedList'>
+                  <div class="checkbox" v-for='item in data.viewedList'>
                     <label :class='{"checked": item.value}'>
                       <input @click='checkChange(item)' type="checkbox" v-model='item.value'> {{item.name}}
                     </label>
@@ -125,7 +127,7 @@
         </div>
       </div>
       <div class="btns">
-        <button type="button" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-primary" @click='save()'>Save</button>
         <button type="button" class="btn btn-danger" v-show='eventType=="new"'>Save and continue</button>
         <button type="button" class="btn cancel" @click='closeConfig()'>Cancel</button>
       </div>
@@ -156,137 +158,212 @@ export default {
   },
   data () {
     return {
-      // part_left ------------------------------------------------------
-      title: '',
-      // All day
-      allDay: false,
-      // Category
-      categoryId: '1',
-      categoryName: 'option1',
-      categoryColor: 'bg_color_1',
-      categorys: [
-        {value: '1', name: 'option1', color: 'bg_color_1'},
-        {value: '2', name: 'option2', color: 'bg_color_2'},
-        {value: '3', name: 'option3', color: 'bg_color_3'},
-        {value: '4', name: 'option4', color: 'bg_color_4'}
-      ],
-      // Place
-      placeId: '10086',
-      placeName: 'place1',
-      places: [
-        {value: '10086', name: 'place1'},
-        {value: '10087', name: 'place2'},
-        {value: '10088', name: 'place3'}
-      ],
-      roomId: '10086',
-      roomName: 'ClassRoom1',
-      rooms: [
-        {value: '10086', name: 'ClassRoom1'},
-        {value: '10087', name: 'ClassRoom2'},
-        {value: '10088', name: 'ClassRoom3'}
-      ],
-      // Start
-      startDate: '2017-10-22',
-      startTimeId: '8:00',
-      startTimeName: '8:00',
-      startTimeList: [
-        {value: '8:00', name: '8:00'},
-        {value: '9:00', name: '9:00'},
-        {value: '10:00', name: '10:00'},
-        {value: '11:00', name: '11:00'}
-      ],
-      // End
-      endDate: '2017-10-22',
-      endTimeId: '8:00',
-      endTimeName: '8:00',
-      endTimeList: [
-        {value: '8:00', name: '8:00'},
-        {value: '9:00', name: '9:00'},
-        {value: '10:00', name: '10:00'},
-        {value: '11:00', name: '11:00'}
-      ],
-      // part_right ------------------------------------------------------
-      // Participants
-      participants: [
-        {value: '1', name: 'ClassRoom 101', type: 'icon_member'},
-        {value: '2', name: 'ConferenceRoom 301', type: 'icon_members'},
-        {value: '3', name: 'PlayGround', type: 'icon_member'},
-        {value: '4', name: 'Primaire', type: 'icon_member'},
-        {value: '5', name: 'PlayGround', type: 'icon_member'}
-      ],
-      showAddParticipantPopup: false,
-      // Viewed by
-      viewedAll: false,
-      viewedList: [
-        {id: '1', value: false, name: 'Administration of Qingpu'},
-        {id: '2', value: false, name: 'Educational Director'},
-        {id: '3', value: false, name: 'Secondary school of Qingpu'},
-        {id: '4', value: false, name: 'Secondary school of Qingpu'},
-        {id: '5', value: false, name: 'Administration of Pudong'},
-        {id: '6', value: false, name: 'Director'},
-        {id: '7', value: false, name: 'Primary school of Qingpu'}
-      ]
+      data: {
+        // part_left ------------------------------------------------------
+        title: '',
+        // All day
+        day_flag: false,
+        // Category
+        category_id: '1',
+        categoryName: 'option1',
+        categoryColor: 'bg_color_1',
+        categorys: [
+          {value: '1', name: 'option1', color: 'bg_color_1'},
+          {value: '2', name: 'option2', color: 'bg_color_2'},
+          {value: '3', name: 'option3', color: 'bg_color_3'},
+          {value: '4', name: 'option4', color: 'bg_color_4'}
+        ],
+        // Place
+        place_id: '10086',
+        placeName: 'place1',
+        places: [
+          {value: '10086', name: 'place1'},
+          {value: '10087', name: 'place2'},
+          {value: '10088', name: 'place3'}
+        ],
+        roomId: '10086',
+        roomName: 'ClassRoom1',
+        rooms: [
+          {value: '10086', name: 'ClassRoom1'},
+          {value: '10087', name: 'ClassRoom2'},
+          {value: '10088', name: 'ClassRoom3'}
+        ],
+        // Start
+        start_date: '2017-10-22',
+        start_time: '8:00',
+        startTimeName: '8:00',
+        startTimeList: [
+          {value: '8:00', name: '8:00'},
+          {value: '9:00', name: '9:00'},
+          {value: '10:00', name: '10:00'},
+          {value: '11:00', name: '11:00'}
+        ],
+        // End
+        end_date: '2017-10-22',
+        end_time: '8:00',
+        endTimeName: '8:00',
+        endTimeList: [
+          {value: '8:00', name: '8:00'},
+          {value: '9:00', name: '9:00'},
+          {value: '10:00', name: '10:00'},
+          {value: '11:00', name: '11:00'}
+        ],
+        // description
+        description: '',
+        // part_right ------------------------------------------------------
+        // Participants
+        participants: [],
+        showAddParticipantPopup: false,
+        // Viewed by
+        viewedAll: false,
+        viewedList: [
+          {id: '1', value: false, name: 'Administration of Qingpu'},
+          {id: '2', value: false, name: 'Educational Director'},
+          {id: '3', value: false, name: 'Secondary school of Qingpu'},
+          {id: '4', value: false, name: 'Secondary school of Qingpu'},
+          {id: '5', value: false, name: 'Administration of Pudong'},
+          {id: '6', value: false, name: 'Director'},
+          {id: '7', value: false, name: 'Primary school of Qingpu'}
+        ]
+      },
+      copyData: {}
+    }
+  },
+  mounted () {
+  },
+  watch: {
+    showConfig () {
+      this.getPlaces()
     }
   },
   methods: {
+    // 获取地址
+    getPlaces () {
+      this.$http.post('/sharedcalendarDetailCtl/queryCampus', {}).then((res) => {
+        let resData = res.data
+        this.data.places = []
+        forEach(resData, (i, item) => {
+          this.data.places.push({
+            value: item.id,
+            name: item.campus_name
+          })
+          if (i === '0') {
+            this.data.place_id = item.id
+            this.data.placeName = item.campus_name
+          }
+        })
+      })
+    },
     closeConfig () {
-      this.$emit('eventToggleFunc')
+      this.$emit('closeEventModal')
+    },
+    // 表单保存
+    save () {
+      let groupIds = []
+      let userIds = []
+      forEach(this.data.participants, (i, item) => {
+        if (item.type === 'icon_member') {
+          userIds.push(item.value)
+        } else {
+          groupIds.push(item.value)
+        }
+      })
+
+      let userGroupId = []
+      forEach(this.data.viewedList, (i, item) => {
+        if (item.value) userGroupId.push(item.id)
+      })
+
+      let reqData = {
+        title: this.data.title,
+        day_flag: this.data.day_flag ? 1 : 0,
+        category_id: this.data.category_id,
+        start_date: this.data.start_date,
+        start_time: this.data.day_flag ? '' : this.data.start_time,
+        end_date: this.data.end_date,
+        end_time: this.data.day_flag ? '' : this.data.end_time,
+        description: this.data.description,
+        place_id: this.data.place_id,
+        groupIds: groupIds.join(','),
+        userIds: userIds.join(','),
+        userGroupId: userGroupId.join(',')
+      }
+      console.log(reqData)
+
+      return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
+        data: JSON.stringify(reqData)
+      }).then((res) => {
+        console.log(res)
+        alert('保存成功')
+        this.closeConfig()
+        return res
+      })
     },
     checkAllDayChange () {
 
     },
+    // 全选切换
     checkAllChange () {
       setTimeout(() => {
-        let flg = this.viewedAll
-        forEach(this.viewedList, (i, obj) => {
+        let flg = this.data.viewedAll
+        forEach(this.data.viewedList, (i, obj) => {
           obj.value = flg
         })
       }, 0)
     },
+    // 员工切换
     checkChange (item) {
       setTimeout(() => {
         if (!item.value) {
-          this.viewedAll = false
+          this.data.viewedAll = false
         } else {
           let flg = true
-          forEach(this.viewedList, (i, obj) => {
+          forEach(this.data.viewedList, (i, obj) => {
             if (!obj.value) {
               flg = false
             }
           })
-          this.viewedAll = flg
+          this.data.viewedAll = flg
         }
       }, 0)
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
-      this.startDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
+      this.data.start_date = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
     },
     endDateChange (calendarList, thisDateInfo, actDateInfo) {
-      this.endDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
+      this.data.end_date = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
     },
     startTimeChanged (item) {
-      this.startTimeId = item.value
-      this.startTimeName = item.name
+      this.data.start_time = item.value
+      this.data.startTimeName = item.name
     },
     endTimeChanged (item) {
-      this.endTimeId = item.value
-      this.endTimeName = item.name
+      this.data.end_time = item.value
+      this.data.endTimeName = item.name
     },
     roomChanged (item) {
-      this.roomId = item.value
-      this.roomName = item.name
+      this.data.roomId = item.value
+      this.data.roomName = item.name
     },
     categoryChanged (item) {
-      this.categoryId = item.value
-      this.categoryName = item.name
-      this.categoryColor = item.color
+      this.data.category_id = item.value
+      this.data.categoryName = item.name
+      this.data.categoryColor = item.color
     },
     placeChanged (item) {
-      this.placeId = item.value
-      this.placeName = item.name
+      this.data.place_id = item.value
+      this.data.placeName = item.name
     },
+    // 关闭Participant弹窗
+    closeAddParticipantModal (resData) {
+      this.data.showAddParticipantPopup = false
+      if (resData && resData.status === 'ok') {
+        this.data.participants = resData.data
+      }
+    },
+    // 删除Participant
     deleteParticipant (index) {
-      this.participants.splice(index, 1)
+      this.data.participants.splice(index, 1)
     }
   }
 }
@@ -324,7 +401,7 @@ export default {
           overflow: hidden;
           .lab{color: #999;font-size: 16px;line-height: 34px;display: block;}
           .participants{
-            height: 300px;background: #f5f5f5;border-radius: 2px;position: relative;padding-bottom: 58px;border: 1px solid #ddd;
+            height: 300px;background: #f5f5f5;border-radius: 2px;position: relative;padding-bottom: 58px;border: 1px solid #ddd;overflow: hidden;
             .li{
               position: relative;line-height: 34px;padding: 0 16px;color: #333;
               .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}

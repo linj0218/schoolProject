@@ -144,7 +144,7 @@
 
       <new-event :show-config='showEvent'
                  :event-type='eventType'
-                 @eventToggleFunc='eventToggleFunc'>
+                 @closeEventModal='closeEventModal'>
       </new-event>
       
     </div>
@@ -303,8 +303,7 @@
       },
       getPlaces () {
         let self = this
-        this.$http.post('/sharedcalendarDetailCtl/queryCampus', {
-        }).then((res) => {
+        this.$http.post('/sharedcalendarDetailCtl/queryCampus', {}).then((res) => {
           let resData = res.data
           self.placesList = []
           forEach(resData, (i, item) => {
@@ -321,7 +320,7 @@
       // 获取数据
       getWeekInfoData (startDate, endDate) {
         let self = this
-        this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
+        return this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
           startDate: startDate,
           endDate: endDate
         }).then((res) => {
@@ -340,7 +339,7 @@
                   id: item.id,
                   spanNum: item.days,
                   color: 'bg_color_3',
-                  time: item.day_flag === 0 ? 'All day' : item.start_time + '-' + item.end_time,
+                  time: item.day_flag === 1 ? 'All day' : item.start_time + '-' + item.end_time,
                   title: item.title,
                   place: 'QingPu'
                 }
@@ -363,6 +362,7 @@
             })
             self.weekTaskList.push(tempList)
           })
+          return res
         })
       },
       changeActDateFromWeekview (item) {
@@ -383,7 +383,7 @@
         this.showConfig = !this.showConfig
       },
       // 新建事件弹窗切换事件
-      eventToggleFunc () {
+      closeEventModal () {
         this.showEvent = !this.showEvent
       },
       categoryChanged (item) {
@@ -481,7 +481,7 @@
             .task_1 > div,
             .task_2 > div{padding: 4px 8px;height: 100%;display: table;width: 100%;}
             .task_1 > div > div,
-            .task_2 > div > div{height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 25px;}
+            .task_2 > div > div{height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 10px;overflow: hidden;}
             .task_0{flex: 1;}
           }
         }
