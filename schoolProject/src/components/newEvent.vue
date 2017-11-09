@@ -230,9 +230,13 @@ export default {
     }
   },
   mounted () {
+    this.copyData = JSON.parse(JSON.stringify(this.data))
   },
   watch: {
     showConfig () {
+      if (this.showConfig && this.eventType === 'new') {
+        this.data = JSON.parse(JSON.stringify(this.copyData))
+      }
       this.getPlaces()
     }
   },

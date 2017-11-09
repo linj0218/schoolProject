@@ -204,34 +204,7 @@
         weekTableHead: [
         ],
         weekTaskListActId: null,
-        weekTaskList: [
-          /*
-          [
-            {id: '1', spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {id: '2', spanNum: 2, color: 'bg_color_8', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {id: '3', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '4', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '5', spanNum: 1, color: 'bg_color_3', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {id: '6', spanNum: 1, color: 'bg_color_1', time: 'All day', title: 'Title name', place: 'QingPu'}
-          ],
-          [
-            {id: '7', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '8', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '9', spanNum: 2, color: 'bg_color_7', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {id: '10', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '11', spanNum: 1, color: 'bg_color_5', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {id: '12', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
-          ],
-          [
-            {id: '13', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '14', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '15', spanNum: 2, color: 'bg_color_7', time: 'All day', title: 'Title name', place: 'QingPu'},
-            {id: '16', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '17', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''},
-            {id: '18', spanNum: 0, color: 'bg_color_1', time: '', title: '', place: ''}
-          ]
-          */
-        ],
+        weekTaskList: [],
         // part_3 ------------------------------------------------------------
         // Task info
         taskDetailInfo: {
@@ -325,15 +298,19 @@
           endDate: endDate
         }).then((res) => {
           let resData = res.data
+          let emptyWeekFlg = true
           self.weekTaskList = []
+
           forEach(resData, (i, item) => {
             let dateList = item.start_date.split('-')
             let taskStartYear = Number(dateList[0])
             let taskStartMonth = Number(dateList[1])
             let taskStartDate = Number(dateList[2])
             let tempList = []
+
             forEach(self.weekTableHead, (i2, item2) => {
               let tempObj = {}
+
               if (item2.thisYear === taskStartYear && item2.thisMonth === taskStartMonth && item2.thisDate === taskStartDate) {
                 tempObj = {
                   id: item.id,
@@ -343,7 +320,10 @@
                   title: item.title,
                   place: 'QingPu'
                 }
+                tempObj.source = item
+
                 if (i === '0') {
+                  emptyWeekFlg = false
                   self.weekTaskListActId = item.id
                   self.taskDetailInfo = {
                     title: item.title,
@@ -362,6 +342,19 @@
             })
             self.weekTaskList.push(tempList)
           })
+
+          if (emptyWeekFlg) {
+            this.taskDetailInfo = {
+              title: '',
+              categroy: '',
+              color: '',
+              place: '',
+              start: '',
+              end: '',
+              description: ''
+            }
+          }
+
           return res
         })
       },
@@ -396,8 +389,18 @@
         this.seeCategoryName = item.name
         this.seeCategoryColor = item.color
       },
-      weekTaskListActIndexChanged (item) {
+      weekTaskListActIndexChanged (o) {
+        let item = o.source
         this.weekTaskListActId = item.id
+        this.taskDetailInfo = {
+          title: item.title,
+          categroy: item.category_id,
+          color: 'bg_color_3',
+          place: 'Qingpu ClassRoom 102',
+          start: item.start_date,
+          end: item.end_date,
+          description: item.description
+        }
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
