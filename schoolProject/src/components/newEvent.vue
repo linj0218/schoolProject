@@ -157,6 +157,32 @@ export default {
     drapdown, dateSelect, addParticipantModal
   },
   data () {
+  	  let date = new Date();
+			let year = date.getFullYear()
+			let month = date.getMonth() + 1
+			let day = date.getDate()
+			let ddd = year+"-"+month+"-"+day
+			let hour = date.getHours();
+			if(hour<=12){
+				hour += hour+":00 AM"
+			}else{
+				hour += (hour-12)+":00 PM"
+			}
+			let time_list=[
+				{value: '7:00 AM', name: '7:00 AM'},
+				{value: '8:00 AM', name: '8:00 AM'},
+        {value: '9:00 AM', name: '9:00 AM'},
+        {value: '10:00 AM', name: '10:00 AM'},
+        {value: '11:00 AM', name: '11:00 AM'},
+        {value: '12:00 AM', name: '12:00 AM'},
+        {value: '1:00 PM', name: '1:00 PM'},
+        {value: '2:00 PM', name: '2:00 PM'},
+        {value: '3:00 PM', name: '3:00 PM'},
+        {value: '4:00 PM', name: '4:00 PM'},
+        {value: '5:00 PM', name: '5:00 PM'},
+        {value: '6:00 PM', name: '6:00 PM'},
+        {value: '7:00 PM', name: '7:00 PM'}
+			]
     return {
       data: {
         // part_left ------------------------------------------------------
@@ -165,13 +191,16 @@ export default {
         day_flag: false,
         // Category
         category_id: '1',
-        categoryName: 'option1',
+        categoryName: 'Primaire',
         categoryColor: 'bg_color_1',
         categorys: [
-          {value: '1', name: 'option1', color: 'bg_color_1'},
-          {value: '2', name: 'option2', color: 'bg_color_2'},
-          {value: '3', name: 'option3', color: 'bg_color_3'},
-          {value: '4', name: 'option4', color: 'bg_color_4'}
+          {value: '1', name: 'Primaire', color: 'bg_color_1'},
+          {value: '2', name: 'Secondaire', color: 'bg_color_2'},
+          {value: '3', name: 'Orientation (salon, etc.)', color: 'bg_color_3'},
+          {value: '4', name: 'Examens', color: 'bg_color_4'},
+          {value: '5', name: 'Certifications', color: 'bg_color_5'},
+          {value: '6', name: 'Concours', color: 'bg_color_6'},
+          {value: '7', name: 'IT', color: 'bg_color_7'}
         ],
         // Place
         place_id: '10086',
@@ -189,25 +218,15 @@ export default {
           {value: '10088', name: 'ClassRoom3'}
         ],
         // Start
-        start_date: '2017-10-22',
-        start_time: '8:00',
-        startTimeName: '8:00',
-        startTimeList: [
-          {value: '8:00', name: '8:00'},
-          {value: '9:00', name: '9:00'},
-          {value: '10:00', name: '10:00'},
-          {value: '11:00', name: '11:00'}
-        ],
+        start_date: ddd,
+        start_time: hour,
+        startTimeName: hour,
+        startTimeList: time_list,
         // End
-        end_date: '2017-10-22',
-        end_time: '8:00',
-        endTimeName: '8:00',
-        endTimeList: [
-          {value: '8:00', name: '8:00'},
-          {value: '9:00', name: '9:00'},
-          {value: '10:00', name: '10:00'},
-          {value: '11:00', name: '11:00'}
-        ],
+        end_date: ddd,
+        end_time: hour,
+        endTimeName: hour,
+        endTimeList: time_list,
         // description
         description: '',
         // part_right ------------------------------------------------------
