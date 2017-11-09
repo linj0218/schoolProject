@@ -224,6 +224,7 @@
       }
     },
     mounted () {
+      this.getPlaces()
     },
     methods: {
       // 地址切换事件
@@ -272,7 +273,6 @@
         let endDateObj = tempList[tempList.length - 1]
         let endDate = endDateObj.thisYear + '-' + endDateObj.thisMonth + '-' + endDateObj.thisDate
         this.getWeekInfoData(startDate, endDate)
-        this.getPlaces()
       },
       getPlaces () {
         let self = this

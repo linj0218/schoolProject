@@ -174,13 +174,9 @@ export default {
           {value: '4', name: 'option4', color: 'bg_color_4'}
         ],
         // Place
-        place_id: '10086',
-        placeName: 'place1',
-        places: [
-          {value: '10086', name: 'place1'},
-          {value: '10087', name: 'place2'},
-          {value: '10088', name: 'place3'}
-        ],
+        place_id: '',
+        placeName: '',
+        places: [],
         roomId: '10086',
         roomName: 'ClassRoom1',
         rooms: [
@@ -237,7 +233,9 @@ export default {
       if (this.showConfig && this.eventType === 'new') {
         this.data = JSON.parse(JSON.stringify(this.copyData))
       }
-      this.getPlaces()
+      if (this.showConfig) {
+        this.getPlaces()
+      }
     }
   },
   methods: {
@@ -251,10 +249,6 @@ export default {
             value: item.id,
             name: item.campus_name
           })
-          if (i === '0') {
-            this.data.place_id = item.id
-            this.data.placeName = item.campus_name
-          }
         })
       })
     },
