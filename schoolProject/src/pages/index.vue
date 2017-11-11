@@ -2,7 +2,7 @@
   <div id="body" v-cloak>
 
     <!-- 头部 -->
-    <headerr @configurationToggleFunc='configurationToggleFunc'></headerr>
+    <headerr :showConfiguration='false' @configurationToggleFunc='configurationToggleFunc'></headerr>
 
     <div class="page_body">
       <div class="page_body_box clearfix">
@@ -32,7 +32,7 @@
         </div>
         <div class="part_2">
           <div class="calendar">
-            <div class="title">Calendar</div>
+            <router-link :to='{path: "/homepage"}' tag='div' class="title">Calendar</router-link>
             
             <!-- 日历组件 -->
             <calendar :inputActDateInfo='actDateInfo'
@@ -245,7 +245,7 @@
             .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
             .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
             .drawer_li:nth-child(3n+3) .point_icon{background: #00C1DF;}
-            .drawer_li{line-height: 24px;}
+            .drawer_li{line-height: 24px;padding: 7px 0;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{
               flex: 4;text-align: center;

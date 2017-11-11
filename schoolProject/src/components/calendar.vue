@@ -64,8 +64,8 @@
     },
     data () {
       return {
-        calendarList: [ // 日历数组
-        ],
+        // 日历数组
+        calendarList: [],
         thisDateInfo: { // 今日
           thisYear: new Date().getFullYear(),
           thisMonth: new Date().getMonth() + 1,
