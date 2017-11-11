@@ -228,6 +228,7 @@ import dateSelect from '@/components/dateSelect'
 import confirmModal from '@/components/confirmModal'
 import addParticipantModal from '@/components/addParticipantModal'
 import weekSelectModal from '@/components/weekSelectModal'
+import {forEach} from '@/plugins/util'
 export default {
   props: {
     showConfig: {
@@ -244,12 +245,8 @@ export default {
       tab: 0,
       // Groups data
       groupsData: {
-        name: 'Administrator',
-        names: [
-          {value: 'Administrator', name: 'Administrator'},
-          {value: 'Administrator1', name: 'Administrator1'},
-          {value: 'Administrator2', name: 'Administrator2'}
-        ],
+        name: '',
+        names: [],
         membersList: [
           {value: '1', type: 'icon_member', name: 'ClassRoom 101'},
           {value: '2', type: 'icon_members', name: 'ConferenceRoom 301'},
@@ -292,12 +289,8 @@ export default {
       },
       // Places
       placesData: {
-        name: 'place1',
-        places: [
-          {value: 'place1', name: 'place1'},
-          {value: 'place2', name: 'place2'},
-          {value: 'place3', name: 'place3'}
-        ],
+        name: '',
+        places: [],
         rooms: [
           {value: '1', name: 'ClassRoom 101'},
           {value: '2', name: 'ConferenceRoom 301'},
@@ -308,14 +301,9 @@ export default {
       },
       // Categories
       categoriesData: {
-        name: 'type1',
-        nameList: [
-          {value: 'type1', name: 'type1'},
-          {value: 'type2', name: 'type2'},
-          {value: 'type3', name: 'type3'},
-          {value: 'type4', name: 'type4'}
-        ],
-        color: 'bg_color_1',
+        name: '',
+        nameList: [],
+        color: '',
         colorList: [
           {value: 'bg_color_1', name: '', color: 'bg_color_1'},
           {value: 'bg_color_2', name: '', color: 'bg_color_2'},
@@ -332,11 +320,55 @@ export default {
       showWeekSelectModal: false
     }
   },
+  mounted () {
+    this.init()
+  },
   methods: {
+    init () {
+      let self = this
+      let param = '{"event_id": 0}'
+      this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
+        data: param
+      }).then((res) => {
+        let resData = res.data
+        self.placesList = []
+        let objList = []
+        forEach(resData.groupsList, (i, item) => {
+          let data = resData.groupsList[i]
+          let obj = {
+            value: data.id,
+            name: data.group_name
+          }
+          objList.push(obj)
+        })
+        this.groupsData.names = objList
+        let placesList = []
+        forEach(resData.placesList, (i, item) => {
+          let data = resData.placesList[i]
+          let obj = {
+            value: data.id,
+            name: data.place_name
+          }
+          placesList.push(obj)
+        })
+        this.placesData.places = placesList
+        let categoryList = []
+        forEach(resData.categoryList, (i, item) => {
+          let data = resData.categoryList[i]
+          let obj = {
+            value: data.id,
+            name: data.category_no
+          }
+          categoryList.push(obj)
+        })
+        this.categoriesData.nameList = categoryList
+      })
+    },
     closeConfig () {
       this.$emit('configurationToggleFunc')
     },
     groupsChanged (item) {
+      this.groupsData.value = item.value
       this.groupsData.name = item.name
     },
     delMember (index) {
@@ -359,7 +391,8 @@ export default {
       this.schoolYearData.holidays.splice(index, 1)
     },
     placeChanged (item) {
-      this.placesData.name = item.value
+      this.placesData.value = item.value
+      this.placesData.name = item.name
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
       // console.log(calendarList, thisDateInfo, actDateInfo)
@@ -376,7 +409,8 @@ export default {
       this.placesData.rooms.splice(index, 1)
     },
     categoriesNameChanged (item) {
-      this.categoriesData.name = item.value
+      this.categoriesData.value = item.value
+      this.categoriesData.name = item.name
       // this.schoolYearData.weekName = item.name
     },
     categoriesColorChanged (item) {
