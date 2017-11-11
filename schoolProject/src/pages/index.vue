@@ -105,7 +105,7 @@
         ],
         // 配置弹窗
         showConfig: false,
-			  weekTaskList: []        
+        weekTaskList: []
       }
     },
     mounted () {
@@ -114,28 +114,27 @@
     },
     methods: {
       init () {
-       this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
+        this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
           startDate: '2017-11-03',
           endDate: '2017-11-19'
         }).then((res) => {
-        	let tempList = []
-        	let resData = res.data
-					if (!resData || resData.length === 0) return
-					 let tempObj = {}
-					 for (let i = 0, len = resData.length; i < len; i++) {
-					 	let field = resData[i]
-					 	tempObj = {
-					    id: field.id,
-					    time: field.start_time + '-' + field.end_time,
-					    name: field.title,
-					    tdate: field.start_date,
-					    address: 'Qingpu'
-					  }
-					 	tempList.push(tempObj)
-					 }
-					 this.weekTaskList = tempList
-					 
-					 this.createWeekInfo()
+          let tempList = []
+          let resData = res.data
+          if (!resData || resData.length === 0) return
+          let tempObj = {}
+          for (let i = 0, len = resData.length; i < len; i++) {
+            let field = resData[i]
+            tempObj = {
+              id: field.id,
+              time: field.start_time + '-' + field.end_time,
+              name: field.title,
+              tdate: field.start_date,
+              address: 'Qingpu'
+            }
+            tempList.push(tempObj)
+          }
+          this.weekTaskList = tempList
+          this.createWeekInfo()
         })
       },
       // 创建日历下周任务视图
@@ -148,14 +147,14 @@
               forEach(this.calendarList[i], (i3, item3) => {
                 let tempObj = {}
                 let dayTaskList = []
-                let tempObj_day = {}
+                let tempObjDay = {}
                 forEach(this.weekTaskList, (i4, item4) => {
-                	let t_day = item4.tdate.split("-")[2]
-	                if(item3.day == t_day){
-	                	tempObj_day = this.weekTaskList[i4]
-	                	dayTaskList.push(tempObj_day)
-	                }
-	              })
+                  let tDay = item4.tdate.split('-')[2]
+                  if (item3.day === tDay) {
+                    tempObjDay = this.weekTaskList[i4]
+                    dayTaskList.push(tempObjDay)
+                  }
+                })
                 tempObj = {
                   week: weekMap[Number(i3) + 1].substr(0, 3),
                   date: item3.day,
