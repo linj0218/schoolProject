@@ -247,13 +247,7 @@ export default {
       groupsData: {
         name: '',
         names: [],
-        membersList: [
-          {value: '1', type: 'icon_member', name: 'ClassRoom 101'},
-          {value: '2', type: 'icon_members', name: 'ConferenceRoom 301'},
-          {value: '3', type: 'icon_member', name: 'PlayGround'},
-          {value: '4', type: 'icon_members', name: 'Primaire'},
-          {value: '5', type: 'icon_member', name: 'PlayGround'}
-        ],
+        membersList: [],
         showAddParticipantPopup: false
       },
       groupId: '10086',
@@ -298,17 +292,7 @@ export default {
         name: '',
         nameList: [],
         color: '',
-        colorList: [
-          {value: 'bg_color_1', name: '', color: 'bg_color_1'},
-          {value: 'bg_color_2', name: '', color: 'bg_color_2'},
-          {value: 'bg_color_3', name: '', color: 'bg_color_3'},
-          {value: 'bg_color_4', name: '', color: 'bg_color_4'},
-          {value: 'bg_color_5', name: '', color: 'bg_color_5'},
-          {value: 'bg_color_6', name: '', color: 'bg_color_6'},
-          {value: 'bg_color_7', name: '', color: 'bg_color_7'},
-          {value: 'bg_color_8', name: '', color: 'bg_color_8'},
-          {value: 'bg_color_9', name: '', color: 'bg_color_9'}
-        ]
+        colorList: []
       },
       showConfirmPopup: false,
       showWeekSelectModal: false
@@ -347,15 +331,24 @@ export default {
         })
         this.placesData.places = placesList
         let categoryList = []
+        let colorList = []
         forEach(resData.categoryList, (i, item) => {
           let data = resData.categoryList[i]
           let obj = {
             value: data.id,
-            name: data.category_no
+            name: data.category_no,
+            color: data.category_remark
+          }
+          let color = {
+            value: data.category_remark,
+            name: '',
+            color: data.category_remark
           }
           categoryList.push(obj)
+          colorList.push(color)
         })
         this.categoriesData.nameList = categoryList
+        this.categoriesData.colorList = colorList
       })
     },
     getRoomsById (id) {
@@ -375,12 +368,30 @@ export default {
         this.placesData.rooms = objList
       })
     },
+    findUsersByGroupId (id) {
+      let param = JSON.stringify({group_id: id})
+      this.$http.post('/sharedcalendarSettingCtl/event/getUsersByGroupId', {
+        data: param
+      }).then((res) => {
+        let resData = res.data
+        let objList = []
+        forEach(resData, (i, item) => {
+          let obj = {
+            value: item.id,
+            name: item.nom
+          }
+          objList.push(obj)
+        })
+        this.groupsData.membersList = objList
+      })
+    },
     closeConfig () {
       this.$emit('configurationToggleFunc')
     },
     groupsChanged (item) {
       this.groupsData.value = item.value
       this.groupsData.name = item.name
+      this.findUsersByGroupId(item.value)
     },
     delMember (index) {
       this.groupsData.membersList.splice(index, 1)
@@ -423,6 +434,7 @@ export default {
     categoriesNameChanged (item) {
       this.categoriesData.value = item.value
       this.categoriesData.name = item.name
+      this.categoriesData.color = item.color
     },
     categoriesColorChanged (item) {
       this.categoriesData.color = item.value
