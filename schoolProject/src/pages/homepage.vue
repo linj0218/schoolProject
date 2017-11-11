@@ -300,50 +300,63 @@
         }).then((res) => {
           let resData = res.data
           let emptyWeekFlg = true
+          let tempList = []
           self.weekTaskList = []
 
-          forEach(resData, (i, item) => {
-            let dateList = item.start_date.split('-')
-            let taskStartYear = Number(dateList[0])
-            let taskStartMonth = Number(dateList[1])
-            let taskStartDate = Number(dateList[2])
-            let tempList = []
+          if (!resData || resData.length === 0) return
 
-            forEach(self.weekTableHead, (i2, item2) => {
+          let formatWeekInfo = () => {
+            for (let i = 0, len = self.weekTableHead.length; i < len; i++) {
+              let item = self.weekTableHead[i]
               let tempObj = {}
 
-              if (item2.thisYear === taskStartYear && item2.thisMonth === taskStartMonth && item2.thisDate === taskStartDate) {
-                tempObj = {
-                  id: item.id,
-                  spanNum: item.days,
-                  color: 'bg_color_3',
-                  time: item.day_flag === 1 ? 'All day' : item.start_time + '-' + item.end_time,
-                  title: item.title,
-                  place: 'QingPu'
-                }
-                tempObj.source = item
+              for (let i2 = 0, len2 = resData.length; i2 < len2; i2++) {
+                let field = resData[i2]
+                if (field === null) continue
 
-                if (i === '0') {
-                  emptyWeekFlg = false
-                  self.weekTaskListActId = item.id
-                  self.taskDetailInfo = {
-                    title: item.title,
-                    categroy: item.category_id,
-                    color: 'bg_color_3',
-                    place: 'Qingpu ClassRoom 102',
-                    start: item.start_date,
-                    end: item.end_date,
-                    description: item.description
+                let dateList = field.start_date.split('-')
+                let taskStartYear = Number(dateList[0])
+                let taskStartMonth = Number(dateList[1])
+                let taskStartDate = Number(dateList[2])
+
+                if (item.thisYear === taskStartYear && item.thisMonth === taskStartMonth && item.thisDate === taskStartDate) {
+                  if (field.days > 1) {
+                    i = i + field.days - 1
                   }
+                  tempObj = {
+                    id: field.id,
+                    spanNum: field.days,
+                    color: 'bg_color_3',
+                    time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
+                    title: field.title,
+                    place: 'QingPu'
+                  }
+                  tempObj.source = field
+                  resData.splice(i2, 1, null)
+                  break;
                 }
-              } else {
+              }
+
+              if (JSON.stringify(tempObj) === '{}') {
                 tempObj = {id: '', spanNum: 0, color: '', time: '', title: '', place: ''}
               }
               tempList.push(tempObj)
-            })
+            }
             self.weekTaskList.push(tempList)
-          })
 
+            for (let i = 0, len = resData.length; i < len; i++) {
+              if (resData[i] != null) {
+                tempList = []
+                formatWeekInfo()
+                break;
+              }
+            }
+          }
+
+          formatWeekInfo()
+          console.log(self.weekTaskList)
+
+          // 默认列表第一个Event
           if (emptyWeekFlg) {
             this.weekTaskListActId = null
             this.taskDetailInfo = {
@@ -483,10 +496,25 @@
             display: flex;height: 60px;
             .task_1{flex: 1;}
             .task_2{flex: 2;}
+            .task_3{flex: 3;}
+            .task_4{flex: 4;}
+            .task_5{flex: 5;}
+            .task_6{flex: 6;}
+            .task_7{flex: 7;}
             .task_1 > div,
-            .task_2 > div{padding: 4px 8px;height: 100%;display: table;width: 100%;}
+            .task_2 > div,
+            .task_3 > div,
+            .task_4 > div,
+            .task_5 > div,
+            .task_6 > div,
+            .task_7 > div{padding: 4px 8px;height: 100%;display: table;width: 100%;}
             .task_1 > div > div,
-            .task_2 > div > div{height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 10px;overflow: hidden;}
+            .task_2 > div > div,
+            .task_3 > div > div,
+            .task_4 > div > div,
+            .task_5 > div > div,
+            .task_6 > div > div,
+            .task_7 > div > div{height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 10px;overflow: hidden;}
             .task_0{flex: 1;}
           }
         }
