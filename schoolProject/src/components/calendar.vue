@@ -181,6 +181,7 @@
         this.actDateInfo = tempObj
         this.createCalendar()
       },
+      // 切换周
       changeActWeek (index, selectModel) {
         if (selectModel === 'week') {
           this.actWeek = index
@@ -203,11 +204,27 @@
       getYearWeek () {
         return getYearWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate)
       },
-      afterInit () {
-        this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo)
+      // 获取当前日期所属的周数据
+      getActWeek () {
+        let actWeek = []
+        for (let i = 0, len = this.calendarList.length; i < len; i++) {
+          let row = this.calendarList[i]
+          for (let i2 = 0, len2 = row.length; i2 < len2; i2++) {
+            let item = row[i2]
+            if (this.actDateInfo.thisYear === item.yearValue && this.actDateInfo.monthValue === item.thisMonth && this.actDateInfo.thisDate === item.day) {
+              actWeek = row
+              return actWeek
+            }
+          }
+        }
+        return actWeek
       },
+      afterInit () {
+        this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek())
+      },
+      // 返回数据：日历数据，今日数据，当前日期数据，当前日期所属周数据
       syncData () {
-        this.$emit('syncDataFunc', this.calendarList, this.thisDateInfo, this.actDateInfo)
+        this.$emit('syncDataFunc', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek())
       }
     },
     filters: {

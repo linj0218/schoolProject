@@ -25,8 +25,10 @@
           </div>
           <div class="mid"></div>
           <div class="right">
-            <div class="li" v-for='(item, index) in selectedList' @click='deleteItem(item, index)'>
-              <span class="icon" :class='item.type'></span>{{item.name}}<span class="action_icon icon_delete"></span>
+            <div class="li" v-for='(item, index) in selectedList'>
+              <span class="icon" :class='item.type'></span>
+              {{item.name}}
+              <span class="action_icon icon_delete" @click='deleteItem(item, index)'></span>
             </div>
           </div>
         </div>

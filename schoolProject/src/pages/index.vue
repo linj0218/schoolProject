@@ -54,6 +54,7 @@
                 <div class="drawer_title" @click='changeDrawerActIndex(index, li)' :class='drawerActIndex==index?"act":""'>{{li.week}}, {{li.date}} {{li.month}}</div>
                 <div class="drawer_list">
                   <div>
+
                     <router-link tag='div' class="flex drawer_li"
                                  :to='{path: "/homepage"}'
                                  v-for='task in li.taskList'
@@ -61,11 +62,9 @@
                       <div><span class="point_icon"></span></div>
                       <div>{{task.time}}</div>
                       <div>{{task.name}}</div>
-                      <div>{{task.address}}</div>
                       <div><span class="icon_right"></span></div>
                     </router-link>
-                    <!-- <div class="flex drawer_li" v-for='task in li.taskList'>
-                    </div> -->
+
                   </div>
                 </div>
               </div>
@@ -102,6 +101,8 @@
           thisMonth: new Date().getMonth() + 1,
           thisDate: new Date().getDate()
         },
+        // 当前日期所属的周数据
+        actWeekList: [],
         weekList: [],
         // Application
         applicationList: [
@@ -113,68 +114,77 @@
           {imgUrl: '', title: 'Doctor', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'}
         ],
         // 配置弹窗
-        showConfig: false,
-        weekTaskList: []
+        showConfig: false
       }
     },
     mounted () {
-      this.init()
+      // this.init()
       this.initAppList()
     },
     methods: {
       init () {
+        let startDate = this.actWeekList[0]
+        let endDate = this.actWeekList[6]
         this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
-          startDate: '2017-11-03',
-          endDate: '2017-11-19'
+          startDate: startDate.yearValue + '-' + startDate.monthValue + '-' + startDate.day,
+          endDate: endDate.yearValue + '-' + endDate.monthValue + '-' + endDate.day
         }).then((res) => {
-          let tempList = []
           let resData = res.data
-          if (!resData || resData.length === 0) return
-          let tempObj = {}
-          for (let i = 0, len = resData.length; i < len; i++) {
-            let field = resData[i]
-            tempObj = {
-              id: field.id,
-              time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
-              name: field.title,
-              tdate: field.start_date,
-              address: 'Qingpu'
+          // let tempList = []
+          // if (!resData || resData.length === 0) return
+          // let tempObj = {}
+          // for (let i = 0, len = resData.length; i < len; i++) {
+          //   let field = resData[i]
+          //   tempObj = {
+          //     id: field.id,
+          //     time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
+          //     name: field.title,
+          //     tdate: field.start_date,
+          //     address: 'Qingpu'
+          //   }
+          //   tempList.push(tempObj)
+          // }
+          // this.weekTaskList = tempList
+
+          // TODO更新周视图数据
+          console.log(this.weekList)
+          for (let i = 0, len = this.weekList.length; i < len; i++) {
+            let item = this.weekList[i]
+            let taskList = []
+            for (let i2 = 0, len2 = resData.length; i2 < len2; i2++) {
+              if (item.date === Number(resData[i2].start_date.split('-')[2])) {
+                taskList.push({
+                  id: resData[i2].id,
+                  time: resData[i2].day_flag === 1 ? 'All day' : resData[i2].start_time + '-' + resData[i2].end_time,
+                  name: resData[i2].title
+                })
+              }
             }
-            tempList.push(tempObj)
+            item.taskList = taskList
           }
-          this.weekTaskList = tempList
-          this.createWeekInfo()
         })
       },
       // 创建日历下周任务视图
       createWeekInfo () {
         let tempList = []
-        forEach(this.calendarList, (i, item) => {
-          forEach(item, (i2, item2) => {
-            if (item2.monthValue === this.actDateInfo.thisMonth && item2.day === this.actDateInfo.thisDate) {
-              this.drawerActIndex = i2
-              forEach(this.calendarList[i], (i3, item3) => {
-                let tempObj = {}
-                let dayTaskList = []
-                let tempObjDay = {}
-                forEach(this.weekTaskList, (i4, item4) => {
-                  let tDay = item4.tdate.split('-')[2]
-                  if (item3.day === Number(tDay)) {
-                    tempObjDay = this.weekTaskList[i4]
-                    dayTaskList.push(tempObjDay)
-                  }
-                })
-                tempObj = {
-                  week: weekMap[Number(i3) + 1].substr(0, 3),
-                  date: item3.day,
-                  month: monthMap[item3.monthValue].substr(0, 3),
-                  taskList: dayTaskList
-                }
-                tempList.push(tempObj)
-              })
-            }
-          })
+        forEach(this.actWeekList, (i, item) => {
+          if (item.monthValue === this.actDateInfo.thisMonth && item.day === this.actDateInfo.thisDate) {
+            this.drawerActIndex = i
+          }
+          let tempObj = {}
+          tempObj = {
+            week: weekMap[Number(i) + 1].substr(0, 3),
+            date: item.day,
+            month: monthMap[item.monthValue].substr(0, 3),
+            taskList: [
+              // {id: '1', time: '08:00-10:00', name: 'Title name'},
+              // {id: '2', time: '08:00-10:00', name: 'Title name'},
+              // {id: '3', time: '08:00-10:00', name: 'Title name'}
+            ]
+          }
+          tempList.push(tempObj)
         })
+
         this.weekList = tempList
       },
       // 切换周视图抽屉
@@ -185,7 +195,9 @@
         this.calendarList = calendarList
         this.thisDateInfo = thisDateInfo
         this.actDateInfo = actDateInfo
-        // console.log(calendarList, thisDateInfo, actDateInfo)
+        if (arguments[3]) {
+          this.actWeekList = arguments[3]
+        }
         this.createWeekInfo()
         this.init()
       },
@@ -254,7 +266,7 @@
           .drawer_list{
             padding: 0 20px;font-size: 16px;color: #003;height: 0;overflow: hidden;
             & > div{padding: 5px 0;}
-            & > div:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
+            & > div:empty:after{content: 'no event';padding: 10px;display: block;font-size: 18px;color: #333;}
             .point_icon{display: inline-block;width: 12px;height: 12px;border-radius: 50%;}
             .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
             .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
@@ -262,7 +274,7 @@
             .drawer_li{line-height: 24px;padding: 7px 0;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{
-              flex: 4;text-align: center;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
+              flex: 5;text-align: center;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
               .icon_right{display: inline-block;width: 24px;height: 24px;background: url('../images/icon_right.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
             }
             .drawer_li div:first-child, .drawer_li div:last-child{flex: 1;}
