@@ -130,24 +130,8 @@
           endDate: endDate.yearValue + '-' + endDate.monthValue + '-' + endDate.day
         }).then((res) => {
           let resData = res.data
-          // let tempList = []
-          // if (!resData || resData.length === 0) return
-          // let tempObj = {}
-          // for (let i = 0, len = resData.length; i < len; i++) {
-          //   let field = resData[i]
-          //   tempObj = {
-          //     id: field.id,
-          //     time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
-          //     name: field.title,
-          //     tdate: field.start_date,
-          //     address: 'Qingpu'
-          //   }
-          //   tempList.push(tempObj)
-          // }
-          // this.weekTaskList = tempList
 
           // TODO更新周视图数据
-          console.log(this.weekList)
           for (let i = 0, len = this.weekList.length; i < len; i++) {
             let item = this.weekList[i]
             let taskList = []
@@ -274,7 +258,7 @@
             .drawer_li{line-height: 24px;padding: 7px 0;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{
-              flex: 5;text-align: center;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
+              flex: 5;text-align: left;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
               .icon_right{display: inline-block;width: 24px;height: 24px;background: url('../images/icon_right.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
             }
             .drawer_li div:first-child, .drawer_li div:last-child{flex: 1;}
