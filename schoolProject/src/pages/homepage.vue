@@ -312,7 +312,7 @@
           endDate: endDate
         }).then((res) => {
           let resData = res.data
-          let emptyWeekFlg = true
+          // let emptyWeekFlg = true
           let tempList = []
           self.weekTaskList = []
 
@@ -365,7 +365,7 @@
                   tempObj.source = field
 
                   // 默认选中第一个Event
-                  if (emptyWeekFlg) {
+                  /* if (emptyWeekFlg) {
                     emptyWeekFlg = false
                     this.weekTaskListActId = field.id
                     this.taskDetailInfo = {
@@ -379,7 +379,7 @@
                       end: field.end_date,
                       description: field.description
                     }
-                  }
+                  } */
 
                   resData.splice(i2, 1, null)
                   break;
@@ -416,9 +416,17 @@
           return res
         })
       },
+      // 校验是否当前日期
       showTask (item) {
-        console.log(item)
-        return true
+        let thisActDate = this.actDateInfo.thisYear + '-' + this.actDateInfo.thisMonth + '-' + this.actDateInfo.thisDate
+        let startDate = item.source.start_date
+        let endDate = item.source.end_date
+        let actDateTime = new Date(thisActDate).getTime()
+        let startDateTime = new Date(startDate).getTime()
+        let endDateTime = new Date(endDate).getTime()
+
+        if (actDateTime >= startDateTime && actDateTime <= endDateTime) return true
+        else return false
       },
       // 从周视图同步数据到日历
       changeActDateFromWeekview (item) {
