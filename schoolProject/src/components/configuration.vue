@@ -291,13 +291,7 @@ export default {
       placesData: {
         name: '',
         places: [],
-        rooms: [
-          {value: '1', name: 'ClassRoom 101'},
-          {value: '2', name: 'ConferenceRoom 301'},
-          {value: '3', name: 'PlayGround'},
-          {value: '4', name: 'Primaire'},
-          {value: '5', name: 'PlayGround'}
-        ]
+        rooms: []
       },
       // Categories
       categoriesData: {
@@ -364,6 +358,23 @@ export default {
         this.categoriesData.nameList = categoryList
       })
     },
+    getRoomsById (id) {
+      let param = JSON.stringify({campus_id: id})
+      this.$http.post('/sharedcalendarSettingCtl/event/getPlacesByCampusId', {
+        data: param
+      }).then((res) => {
+        let resData = res.data
+        let objList = []
+        forEach(resData, (i, item) => {
+          let obj = {
+            value: item.id,
+            name: item.place_name
+          }
+          objList.push(obj)
+        })
+        this.placesData.rooms = objList
+      })
+    },
     closeConfig () {
       this.$emit('configurationToggleFunc')
     },
@@ -393,6 +404,7 @@ export default {
     placeChanged (item) {
       this.placesData.value = item.value
       this.placesData.name = item.name
+      this.getRoomsById(item.value)
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
       // console.log(calendarList, thisDateInfo, actDateInfo)
