@@ -349,6 +349,16 @@ export default {
         })
         this.categoriesData.nameList = categoryList
         this.categoriesData.colorList = colorList
+        let schoolYearList = []
+        forEach(resData.schoolYearList, (i, item) => {
+          let data = resData.schoolYearList[i]
+          let obj = {
+            value: data.id,
+            name: data.year_label
+          }
+          schoolYearList.push(obj)
+        })
+        this.schoolYearData.years = schoolYearList
       })
     },
     getRoomsById (id) {
