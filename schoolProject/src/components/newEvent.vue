@@ -268,7 +268,7 @@ export default {
     findEvent () {
       let self = this
       this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
-        data: JSON.stringify({event_id: this.eventType === 'new' ? 0 : this.eventId})
+        data: JSON.stringify({event_id: this.eventType === 'new' ? 0 : this.eventId || 0})
       }).then((res) => {
         let resData = res.data
 
@@ -365,9 +365,13 @@ export default {
       return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
         data: JSON.stringify(reqData)
       }).then((res) => {
-        console.log(res)
-        alert('保存成功')
-        this.closeConfig()
+        let result = {
+          status: 'ok',
+          data: {
+            msg: 'Save Successed'
+          }
+        }
+        this.closeConfig(result)
         return res
       })
     },
@@ -451,7 +455,8 @@ export default {
     },
     // 关闭弹窗
     closeConfig () {
-      this.$emit('closeEventModal')
+      if (arguments[0]) this.$emit('closeEventModal', arguments[0])
+      else this.$emit('closeEventModal')
     }
   }
 }

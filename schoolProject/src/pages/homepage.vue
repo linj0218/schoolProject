@@ -137,11 +137,14 @@
               <button type="button" class="btn btn-block">Educational Director</button>
               <button type="button" class="btn btn-block">Administration of Pud...</button>
               <button type="button" class="btn btn-block">Secondary school of...</button>
-              <div class="edit_btn">
-                <button type="button" class="btn btn-primary" @click='()=>{this.eventType="edit";this.showEvent=true}'>
-                  <span class="icon_btn_edit"></span> Edit Event
-                </button>
-              </div>
+            </div>
+            <div class="edit_btn">
+              <button type="button" class="btn btn-primary" @click='()=>{this.eventType="edit";this.showEvent=true}'>
+                <span class="icon icon_btn_edit"></span> Edit Event
+              </button>
+              <button type="button" class="btn btn-danger" @click='deleteEvent()'>
+                <span class="icon icon_btn_del"></span> Delete
+              </button>
             </div>
           </div>
         </div>
@@ -157,12 +160,17 @@
                  @closeEventModal='closeEventModal'>
       </new-event>
       
+      <banner :input-value='data.banner.bannerText'
+              :show-banner='data.banner.showBanner'
+              @closeBanner='()=>{this.data.banner.showBanner=false}'>
+      </banner>
     </div>
   </div>
 </template>
 
 <script>
   import headerr from '@/components/header'
+  import banner from '@/components/banner'
   import configuration from '@/components/configuration'
   import calendar from '@/components/calendar'
   import newEvent from '@/components/newEvent'
@@ -171,10 +179,16 @@
 
   export default {
     components: {
-      headerr, calendar, configuration, newEvent, drapdown
+      headerr, banner, calendar, configuration, newEvent, drapdown
     },
     data () {
       return {
+        data: {
+          banner: {
+            bannerText: 'aaa',
+            showBanner: false
+          }
+        },
         // part_1 ------------------------------------------------------------
         // Calendar
         calendarList: null,
@@ -446,9 +460,17 @@
       configurationToggleFunc () {
         this.showConfig = !this.showConfig
       },
-      // 新建事件弹窗切换事件
+      // Event弹窗关闭
       closeEventModal () {
         this.showEvent = !this.showEvent
+        let bannerInfo = arguments[0]
+        if (!bannerInfo) return
+        if (bannerInfo.status === 'ok') {
+          this.data.banner = {
+            bannerText: bannerInfo.data.msg,
+            showBanner: true
+          }
+        }
       },
       categoryChanged (item) {
         this.categoryId = item.value
@@ -475,6 +497,9 @@
           end: item.end_date,
           description: item.description
         }
+      },
+      deleteEvent () {
+        this.data.banner.showBanner = true
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
@@ -598,7 +623,7 @@
         .li:hover{cursor: default;}
       }
       .task_detail{
-        overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;
+        overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;
         .tast_detail_left{
           float: left;width: 500px;padding: 20px 0;height: 100%;
           .item{
@@ -613,10 +638,13 @@
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
           & > .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;}
-          .edit_btn{
-            position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;
-            .icon_btn_edit{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
-          }
+        }
+        .edit_btn{
+          position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;
+          .btn{margin: 0 5px;}
+          .icon{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;margin-right: 5px;}
+          .icon_btn_edit{background: url('../images/icon_btn_edit.png') 50% 50% / auto auto no-repeat;}
+          .icon_btn_del{background: url('../images/icon_btn_del.png') 50% 50% / auto auto no-repeat;}
         }
       }
     }
