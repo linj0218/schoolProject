@@ -150,7 +150,7 @@
                 let tempObjDay = {}
                 forEach(this.weekTaskList, (i4, item4) => {
                   let tDay = item4.tdate.split('-')[2]
-                  if (item3.day === tDay) {
+                  if (item3.day === Number(tDay)) {
                     tempObjDay = this.weekTaskList[i4]
                     dayTaskList.push(tempObjDay)
                   }
