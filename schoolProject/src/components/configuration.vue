@@ -411,7 +411,6 @@ export default {
     categoriesNameChanged (item) {
       this.categoriesData.value = item.value
       this.categoriesData.name = item.name
-      // this.schoolYearData.weekName = item.name
     },
     categoriesColorChanged (item) {
       this.categoriesData.color = item.value
