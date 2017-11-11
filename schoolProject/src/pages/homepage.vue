@@ -144,6 +144,7 @@
 
       <new-event :show-config='showEvent'
                  :event-type='eventType'
+                 :event-id='weekTaskListActId'
                  @closeEventModal='closeEventModal'>
       </new-event>
       
@@ -224,6 +225,7 @@
       }
     },
     mounted () {
+      this.getPlaces()
     },
     methods: {
       // 地址切换事件
@@ -272,7 +274,6 @@
         let endDateObj = tempList[tempList.length - 1]
         let endDate = endDateObj.thisYear + '-' + endDateObj.thisMonth + '-' + endDateObj.thisDate
         this.getWeekInfoData(startDate, endDate)
-        this.getPlaces()
       },
       getPlaces () {
         let self = this
@@ -344,6 +345,7 @@
           })
 
           if (emptyWeekFlg) {
+            this.weekTaskListActId = null
             this.taskDetailInfo = {
               title: '',
               categroy: '',
