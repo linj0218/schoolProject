@@ -113,20 +113,20 @@
     },
     methods: {
       init () {
-      	/*
-      	let param = '{"startDate": "2017-11-03","endDate": "2017-11-19","dayFlag":"0"}'
+        /*
+        let param = '{"startDate": "2017-11-03","endDate": "2017-11-19","dayFlag":"0"}'
         this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
-        	data : param
+          data : param
         })
         .then((res) => {
            console.log(res)
         })
         */
-			this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
+        this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
           startDate: '2017-11-03',
           endDate: '2017-11-19'
         }).then((res) => {
-        	
+
         })
       },
       // 创建日历下周任务视图

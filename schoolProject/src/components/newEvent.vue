@@ -157,32 +157,6 @@ export default {
     drapdown, dateSelect, addParticipantModal
   },
   data () {
-  	  let date = new Date();
-			let year = date.getFullYear()
-			let month = date.getMonth() + 1
-			let day = date.getDate()
-			let ddd = year+"-"+month+"-"+day
-			let hour = date.getHours();
-			if(hour<=12){
-				hour += hour+":00 AM"
-			}else{
-				hour += (hour-12)+":00 PM"
-			}
-			let time_list=[
-				{value: '7:00 AM', name: '7:00 AM'},
-				{value: '8:00 AM', name: '8:00 AM'},
-        {value: '9:00 AM', name: '9:00 AM'},
-        {value: '10:00 AM', name: '10:00 AM'},
-        {value: '11:00 AM', name: '11:00 AM'},
-        {value: '12:00 AM', name: '12:00 AM'},
-        {value: '1:00 PM', name: '1:00 PM'},
-        {value: '2:00 PM', name: '2:00 PM'},
-        {value: '3:00 PM', name: '3:00 PM'},
-        {value: '4:00 PM', name: '4:00 PM'},
-        {value: '5:00 PM', name: '5:00 PM'},
-        {value: '6:00 PM', name: '6:00 PM'},
-        {value: '7:00 PM', name: '7:00 PM'}
-			]
     return {
       data: {
         // part_left ------------------------------------------------------
@@ -218,15 +192,15 @@ export default {
           {value: '10088', name: 'ClassRoom3'}
         ],
         // Start
-        start_date: ddd,
-        start_time: hour,
-        startTimeName: hour,
-        startTimeList: time_list,
+        start_date: '',
+        start_time: '',
+        startTimeName: '',
+        startTimeList: '',
         // End
-        end_date: ddd,
-        end_time: hour,
-        endTimeName: hour,
-        endTimeList: time_list,
+        end_date: '',
+        end_time: '',
+        endTimeName: '',
+        endTimeList: '',
         // description
         description: '',
         // part_right ------------------------------------------------------
@@ -249,6 +223,33 @@ export default {
     }
   },
   mounted () {
+    let date = new Date();
+    let year = date.getFullYear()
+    let month = date.getMonth() + 1
+    let day = date.getDate()
+    this.data.start_date = year + '-' + month + '-' + day
+    this.data.end_date = year + '-' + month + '-' + day
+    let hour = date.getHours();
+    if (hour <= 12) {
+      hour += hour + ':00 AM'
+    } else {
+      hour += (hour - 12) + ':00 PM'
+    }
+    this.startTimeList = [
+      {value: '7:00 AM', name: '7:00 AM'},
+      {value: '8:00 AM', name: '8:00 AM'},
+      {value: '9:00 AM', name: '9:00 AM'},
+      {value: '10:00 AM', name: '10:00 AM'},
+      {value: '11:00 AM', name: '11:00 AM'},
+      {value: '12:00 AM', name: '12:00 AM'},
+      {value: '1:00 PM', name: '1:00 PM'},
+      {value: '2:00 PM', name: '2:00 PM'},
+      {value: '3:00 PM', name: '3:00 PM'},
+      {value: '4:00 PM', name: '4:00 PM'},
+      {value: '5:00 PM', name: '5:00 PM'},
+      {value: '6:00 PM', name: '6:00 PM'},
+      {value: '7:00 PM', name: '7:00 PM'}
+    ]
     this.copyData = JSON.parse(JSON.stringify(this.data))
   },
   watch: {
