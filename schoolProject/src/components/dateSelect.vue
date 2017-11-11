@@ -48,7 +48,14 @@
       }
     },
     created () {
-      var dateStrList = this.inputValue.split('-')
+      let dateStrList = []
+      if (this.inputValue.indexOf('-') > -1) {
+        dateStrList = this.inputValue.split('-')
+      } else if (this.inputValue.indexOf('/') > -1) {
+        dateStrList = this.inputValue.split('/').reverse()
+      } else {
+        console.error('日期格式错误')
+      }
       this.actDateInfo = {
         thisYear: Number(dateStrList[0]),
         thisMonth: Number(dateStrList[1]),

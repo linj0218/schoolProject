@@ -2,13 +2,22 @@
   <div id="body" v-cloak>
 
     <!-- 头部 -->
-    <headerr @configurationToggleFunc='configurationToggleFunc'></headerr>
+    <headerr :showConfiguration='false' @configurationToggleFunc='configurationToggleFunc'></headerr>
 
     <div class="page_body">
       <div class="page_body_box clearfix">
         <div class="part_1">
           <div class="apps container-fluid">
-            <div class="app col-lg-4" v-for='app in applicationList'><div class="icon"></div>{{app.name}}</div>
+            <!-- <div class="app col-lg-4" v-for='app in applicationList'> -->
+            <template v-for='app in applicationList'>
+              <a class="app col-lg-4" target="_blank" :href='app.baseaddress'>
+                <div class="icon">
+                  <img :src='"../images/app_" + app.id + ".png"'>
+                  <img class="icon_on" :src='"../images/app_" + app.id + "_on.png"'>
+                </div>
+                {{app.nom}}
+              </a>
+            </template>
           </div>
         </div>
         <div class="part_3">
@@ -32,7 +41,7 @@
         </div>
         <div class="part_2">
           <div class="calendar">
-            <div class="title">Calendar</div>
+            <router-link :to='{path: "/homepage"}' tag='div' class="title">Calendar</router-link>
             
             <!-- 日历组件 -->
             <calendar :inputActDateInfo='actDateInfo'
@@ -126,7 +135,7 @@
             let field = resData[i]
             tempObj = {
               id: field.id,
-              time: field.start_time + '-' + field.end_time,
+              time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
               name: field.title,
               tdate: field.start_date,
               address: 'Qingpu'
@@ -194,10 +203,7 @@
           let resData = res.data
           self.placesList = []
           forEach(resData, (i, item) => {
-            let obj = {
-              value: item.nom,
-              name: item.nom
-            }
+            let obj = item
             if (i < 6) {
               self.applicationList.push(obj)
             }
@@ -225,9 +231,16 @@
         height: 100%;padding: 0;
         .app{
           height: 50%;background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 22px;line-height: 140px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;
-          .icon{display: inline-block;width: 80px;height: 80px;background: #fff;border-radius: 50%;vertical-align: middle;margin-right: 15px;}
+          .icon{
+            display: inline-block;width: 80px;height: 80px;background: #fff;border-radius: 50%;vertical-align: middle;margin-right: 15px;position: relative;
+            img{width: 100%;height: 100%;position: absolute;left: 0;top: 0;}
+            img.icon_on{z-index: -1;}
+          }
         }
-        .app:hover{color: #fff;background: #4E81BD;}
+        .app:hover{
+          color: #fff;background: #4E81BD;text-decoration: none;
+          img.icon_on{z-index: 1;}
+        }
       }
     }
     .part_2{
@@ -241,14 +254,15 @@
           .drawer_list{
             padding: 0 20px;font-size: 16px;color: #003;height: 0;overflow: hidden;
             & > div{padding: 5px 0;}
+            & > div:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
             .point_icon{display: inline-block;width: 12px;height: 12px;border-radius: 50%;}
             .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
             .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
             .drawer_li:nth-child(3n+3) .point_icon{background: #00C1DF;}
-            .drawer_li{line-height: 24px;}
+            .drawer_li{line-height: 24px;padding: 7px 0;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{
-              flex: 4;text-align: center;
+              flex: 4;text-align: center;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
               .icon_right{display: inline-block;width: 24px;height: 24px;background: url('../images/icon_right.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
             }
             .drawer_li div:first-child, .drawer_li div:last-child{flex: 1;}

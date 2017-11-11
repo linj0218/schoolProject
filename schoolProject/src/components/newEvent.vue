@@ -63,7 +63,7 @@
                              @dataChange='startDateChange'>
                 </date-select>
                 <drapdown :input-value='data.start_time'
-                          :input-name='data.startTimeName'
+                          :input-name='data.start_time'
                           :input-select='data.startTimeList'
                           :input-disabled='data.day_flag'
                           @inputChange='startTimeChanged'>
@@ -78,7 +78,7 @@
                              @dataChange='endDateChange'>
                 </date-select>
                 <drapdown :input-value='data.end_time'
-                          :input-name='data.endTimeName'
+                          :input-name='data.end_time'
                           :input-select='data.endTimeList'
                           :input-disabled='data.day_flag'
                           @inputChange='endTimeChanged'>
@@ -151,6 +151,11 @@ export default {
       type: String,
       required: false,
       default: 'new'
+    },
+    eventId: {
+      type: [String, Number],
+      required: false,
+      default: 0
     }
   },
   components: {
@@ -164,42 +169,24 @@ export default {
         // All day
         day_flag: false,
         // Category
-        category_id: '1',
-        categoryName: 'Primaire',
+        category_id: '',
+        categoryName: '',
         categoryColor: 'bg_color_1',
-        categorys: [
-          {value: '1', name: 'Primaire', color: 'bg_color_1'},
-          {value: '2', name: 'Secondaire', color: 'bg_color_2'},
-          {value: '3', name: 'Orientation (salon, etc.)', color: 'bg_color_3'},
-          {value: '4', name: 'Examens', color: 'bg_color_4'},
-          {value: '5', name: 'Certifications', color: 'bg_color_5'},
-          {value: '6', name: 'Concours', color: 'bg_color_6'},
-          {value: '7', name: 'IT', color: 'bg_color_7'}
-        ],
+        categorys: [],
         // Place
-        place_id: '10086',
-        placeName: 'place1',
-        places: [
-          {value: '10086', name: 'place1'},
-          {value: '10087', name: 'place2'},
-          {value: '10088', name: 'place3'}
-        ],
-        roomId: '10086',
-        roomName: 'ClassRoom1',
-        rooms: [
-          {value: '10086', name: 'ClassRoom1'},
-          {value: '10087', name: 'ClassRoom2'},
-          {value: '10088', name: 'ClassRoom3'}
-        ],
+        place_id: '',
+        placeName: '',
+        places: [],
+        roomId: '',
+        roomName: '',
+        rooms: [],
         // Start
         start_date: '',
         start_time: '',
-        startTimeName: '',
         startTimeList: [],
         // End
         end_date: '',
         end_time: '',
-        endTimeName: '',
         endTimeList: [],
         // description
         description: '',
@@ -209,26 +196,18 @@ export default {
         showAddParticipantPopup: false,
         // Viewed by
         viewedAll: false,
-        viewedList: [
-          {id: '1', value: false, name: 'Administration of Qingpu'},
-          {id: '2', value: false, name: 'Educational Director'},
-          {id: '3', value: false, name: 'Secondary school of Qingpu'},
-          {id: '4', value: false, name: 'Secondary school of Qingpu'},
-          {id: '5', value: false, name: 'Administration of Pudong'},
-          {id: '6', value: false, name: 'Director'},
-          {id: '7', value: false, name: 'Primary school of Qingpu'}
-        ]
+        viewedList: []
       },
       copyData: {}
     }
   },
   created () {
-    let date = new Date();
+    let date = new Date()
     let year = date.getFullYear()
     let month = date.getMonth() + 1
     let day = date.getDate()
-    this.data.start_date = year + '-' + month + '-' + day
-    this.data.end_date = year + '-' + month + '-' + day
+    this.data.start_date = day + '/' + month + '/' + year
+    this.data.end_date = day + '/' + month + '/' + year
     let hour = date.getHours();
     if (hour <= 12) {
       hour = hour + ':00 AM'
@@ -261,7 +240,10 @@ export default {
       if (this.showConfig && this.eventType === 'new') {
         this.data = JSON.parse(JSON.stringify(this.copyData))
       }
-      this.getPlaces()
+      if (this.showConfig) {
+        this.findEvent()
+        // this.getPlaces()
+      }
     }
   },
   methods: {
@@ -282,8 +264,70 @@ export default {
         })
       })
     },
-    closeConfig () {
-      this.$emit('closeEventModal')
+    // 初始化Event
+    findEvent () {
+      let self = this
+      this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
+        data: JSON.stringify({event_id: this.eventType === 'new' ? 0 : this.eventId})
+      }).then((res) => {
+        let resData = res.data
+
+        // 初始化数据
+        let categorys = []
+        forEach(resData.categoryList, (i, item) => {
+          if (resData.eventInfo && resData.eventInfo.category_id === item.id) {
+            self.data.categoryName = item.category_no
+            self.data.color = item.category_remark
+          }
+          categorys.push({
+            value: item.id,
+            name: item.category_no,
+            color: item.category_remark
+          })
+        })
+        self.data.categorys = categorys
+
+        let places = []
+        forEach(resData.campusList, (i, item) => {
+          // TODO设置campus
+          places.push({
+            value: item.id,
+            name: item.address
+          })
+        })
+        self.data.places = places
+
+        let rooms = []
+        forEach(resData.placesList, (i, item) => {
+          // TODO设置place
+          rooms.push({
+            value: item.id,
+            name: item.place_name
+          })
+        })
+        self.data.rooms = rooms
+
+        let viewedList = []
+        forEach(resData.groupsList, (i, item) => {
+          viewedList.push({
+            id: item.id,
+            value: false,
+            name: item.group_name
+          })
+        })
+        self.data.viewedList = viewedList
+
+        // TODO将Event数据同步到表单
+        if (resData.eventInfo) {
+          self.data.title = resData.eventInfo.title
+          self.data.category_id = resData.eventInfo.category_id
+          self.data.day_flag = !!resData.eventInfo.day_flag
+          self.data.start_date = resData.eventInfo.start_date
+          self.data.start_time = resData.eventInfo.start_time
+          self.data.end_date = resData.eventInfo.end_date
+          self.data.end_time = resData.eventInfo.end_time
+        }
+      })
     },
     // 表单保存
     save () {
@@ -330,7 +374,7 @@ export default {
     checkAllDayChange () {
 
     },
-    // 全选切换
+    // 全选复选框切换
     checkAllChange () {
       setTimeout(() => {
         let flg = this.data.viewedAll
@@ -339,7 +383,7 @@ export default {
         })
       }, 0)
     },
-    // 员工切换
+    // 员工复选框切换
     checkChange (item) {
       setTimeout(() => {
         if (!item.value) {
@@ -356,18 +400,30 @@ export default {
       }, 0)
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
-      this.data.start_date = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
+      let dateStr = actDateInfo.thisDate + '/' + actDateInfo.thisMonth + '/' + actDateInfo.thisYear
+      if (!this.checkDateChange(dateStr, this.data.end_date)) return false
+      this.data.start_date = dateStr
     },
     endDateChange (calendarList, thisDateInfo, actDateInfo) {
-      this.data.end_date = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
+      let dateStr = actDateInfo.thisDate + '/' + actDateInfo.thisMonth + '/' + actDateInfo.thisYear
+      if (!this.checkDateChange(this.data.start_date, dateStr)) return false
+      this.data.end_date = actDateInfo.thisDate + '/' + actDateInfo.thisMonth + '/' + actDateInfo.thisYear
+    },
+    // 检验开始、结束日期
+    checkDateChange (startDateStr, endDateStr) {
+      let startDateTime = new Date(startDateStr.split('/').reverse().join('.')).getTime()
+      let endDateTime = new Date(endDateStr.split('/').reverse().join('.')).getTime()
+      if (startDateTime > endDateTime) {
+        alert('The end time cannot be earlier than the start time')
+        return false
+      }
+      return true
     },
     startTimeChanged (item) {
       this.data.start_time = item.value
-      this.data.startTimeName = item.name
     },
     endTimeChanged (item) {
       this.data.end_time = item.value
-      this.data.endTimeName = item.name
     },
     roomChanged (item) {
       this.data.roomId = item.value
@@ -392,6 +448,10 @@ export default {
     // 删除Participant
     deleteParticipant (index) {
       this.data.participants.splice(index, 1)
+    },
+    // 关闭弹窗
+    closeConfig () {
+      this.$emit('closeEventModal')
     }
   }
 }

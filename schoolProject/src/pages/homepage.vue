@@ -76,10 +76,17 @@
             </div>
             <div class="table_body">
               <div class="table_body_bg flex">
-                <div v-for='th in weekTableHead' :class='{"act": th.isActDate}'></div>
+                <div v-for='th in weekTableHead' :class='{"act": th.isActDate}' @click='changeActDateFromWeekview(th)'></div>
               </div>
               <div class="li" v-for='li in weekTaskList'>
-                <div v-for='td in li' :class='"task_" + td.spanNum'><div><div :class='td.color'>{{td.time}} {{td.title}}</div></div></div>
+                <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
+                  <div>
+                    <div :class='td.color'>
+                      <!-- <div class="time_line">{{td.time}}</div> -->
+                      <div class="title_line">{{td.title}}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -89,11 +96,10 @@
             <template v-for='li in weekTaskList'>
               <div class="li container-fluid"
                    v-for='td in li'
-                   v-if='td.spanNum!==0'
+                   v-if='td.spanNum!==0 && showTask(td)'
                    :class='{"act": td.id==weekTaskListActId}'
                    @click='weekTaskListActIndexChanged(td)'>
-                <div class="col-lg-6"><span :class='td.color'></span>{{td.time}}</div>
-                <div class="col-lg-6">{{td.place}}</div>
+                <div class="col-lg-12"><span :class='td.color'></span>{{td.time}}</div>
                 <div class="col-lg-12">{{td.title}}</div>
               </div>
             </template>
@@ -102,6 +108,9 @@
             <div class="tast_detail_left">
               <div class="item">
                 <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
+              </div>
+              <div class="item">
+                <span>Creater:</span><div>{{taskDetailInfo.creater ? taskDetailInfo.creater : '-'}} {{taskDetailInfo.create_time ? taskDetailInfo.create_time : ''}}</div>
               </div>
               <div class="item">
                 <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
@@ -210,6 +219,8 @@
         // Task info
         taskDetailInfo: {
           title: '',
+          creater: '',
+          create_time: '',
           categroy: '',
           color: '',
           place: '',
@@ -232,6 +243,7 @@
       placeSelectedChange (place) {
         place.isSelected = !place.isSelected
       },
+      // 周视图切换上下周
       switchWeek (targetStr) {
         let actDateTime = new Date(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate).getTime()
         let targetDate = null
@@ -268,11 +280,12 @@
         })
         this.weekTableHead = tempList
 
-        // 获取数据
+        // 获取周视图数据
         let startDateObj = tempList[0]
         let startDate = startDateObj.thisYear + '-' + startDateObj.thisMonth + '-' + startDateObj.thisDate
         let endDateObj = tempList[tempList.length - 1]
         let endDate = endDateObj.thisYear + '-' + endDateObj.thisMonth + '-' + endDateObj.thisDate
+
         this.getWeekInfoData(startDate, endDate)
       },
       getPlaces () {
@@ -291,7 +304,7 @@
           })
         })
       },
-      // 获取数据
+      // 获取周视图数据
       getWeekInfoData (startDate, endDate) {
         let self = this
         return this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
@@ -299,12 +312,27 @@
           endDate: endDate
         }).then((res) => {
           let resData = res.data
-          let emptyWeekFlg = true
+          // let emptyWeekFlg = true
           let tempList = []
           self.weekTaskList = []
 
-          if (!resData || resData.length === 0) return
+          if (!resData || resData.length === 0) {
+            // 默认Event详情
+            this.weekTaskListActId = null
+            this.taskDetailInfo = {
+              title: '',
+              creater: '',
+              create_time: '',
+              categroy: '',
+              color: '',
+              place: '',
+              start: '',
+              end: '',
+              description: ''
+            }
+          }
 
+          // 递归构建周视图
           let formatWeekInfo = () => {
             for (let i = 0, len = self.weekTableHead.length; i < len; i++) {
               let item = self.weekTableHead[i]
@@ -329,16 +357,46 @@
                     color: 'bg_color_3',
                     time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
                     title: field.title,
-                    place: 'QingPu'
+                    place: 'QingPu',
+                    thisYear: item.thisYear,
+                    thisMonth: item.thisMonth,
+                    thisDate: item.thisDate
                   }
                   tempObj.source = field
+
+                  // 默认选中第一个Event
+                  /* if (emptyWeekFlg) {
+                    emptyWeekFlg = false
+                    this.weekTaskListActId = field.id
+                    this.taskDetailInfo = {
+                      title: field.title,
+                      creater: field.create_userid,
+                      create_time: field.create_time,
+                      categroy: field.category_id,
+                      color: 'bg_color_3',
+                      place: 'QingPu',
+                      start: field.start_date,
+                      end: field.end_date,
+                      description: field.description
+                    }
+                  } */
+
                   resData.splice(i2, 1, null)
                   break;
                 }
               }
 
               if (JSON.stringify(tempObj) === '{}') {
-                tempObj = {id: '', spanNum: 0, color: '', time: '', title: '', place: ''}
+                tempObj = {
+                  id: '',
+                  spanNum: 0,
+                  color: '',
+                  time: '',
+                  title: '',
+                  place: '',
+                  thisYear: item.thisYear,
+                  thisMonth: item.thisMonth,
+                  thisDate: item.thisDate}
               }
               tempList.push(tempObj)
             }
@@ -354,25 +412,23 @@
           }
 
           formatWeekInfo()
-          console.log(self.weekTaskList)
-
-          // 默认列表第一个Event
-          if (emptyWeekFlg) {
-            this.weekTaskListActId = null
-            this.taskDetailInfo = {
-              title: '',
-              categroy: '',
-              color: '',
-              place: '',
-              start: '',
-              end: '',
-              description: ''
-            }
-          }
 
           return res
         })
       },
+      // 校验是否当前日期
+      showTask (item) {
+        let thisActDate = this.actDateInfo.thisYear + '-' + this.actDateInfo.thisMonth + '-' + this.actDateInfo.thisDate
+        let startDate = item.source.start_date
+        let endDate = item.source.end_date
+        let actDateTime = new Date(thisActDate).getTime()
+        let startDateTime = new Date(startDate).getTime()
+        let endDateTime = new Date(endDate).getTime()
+
+        if (actDateTime >= startDateTime && actDateTime <= endDateTime) return true
+        else return false
+      },
+      // 从周视图同步数据到日历
       changeActDateFromWeekview (item) {
         this.actDateInfo.thisYear = item.thisYear
         this.actDateInfo.thisMonth = item.thisMonth
@@ -404,14 +460,17 @@
         this.seeCategoryName = item.name
         this.seeCategoryColor = item.color
       },
+      // 点击任务列表同步Event详情
       weekTaskListActIndexChanged (o) {
         let item = o.source
         this.weekTaskListActId = item.id
         this.taskDetailInfo = {
           title: item.title,
+          creater: item.creater,
+          create_time: item.create_time,
           categroy: item.category_id,
           color: 'bg_color_3',
-          place: 'Qingpu ClassRoom 102',
+          place: 'QingPu',
           start: item.start_date,
           end: item.end_date,
           description: item.description
@@ -514,7 +573,11 @@
             .task_4 > div > div,
             .task_5 > div > div,
             .task_6 > div > div,
-            .task_7 > div > div{height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 10px;overflow: hidden;}
+            .task_7 > div > div{
+              height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 10px;
+              .time_line,
+              .title_line{overflow: hidden;text-overflow: ellipsis;height: 18px;}
+            }
             .task_0{flex: 1;}
           }
         }
@@ -524,16 +587,15 @@
       height: 533px;
       .task_title{
         float: left;width: 323px;height: 100%;overflow-y: auto;
-        &::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
+        &::-webkit-scrollbar {width: 0;height: 0;}
+        &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
         .li{
           height: 78px;line-height: 29px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #003;font-size: 16px;
+          .col-lg-12{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
           span{width: 12px;height: 12px;border-radius: 50%;position: absolute;left: 0;top: 50%;transform: translateY(-50%);}
         }
         .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
-        .li:hover{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);cursor: default;}
+        .li:hover{cursor: default;}
       }
       .task_detail{
         overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;

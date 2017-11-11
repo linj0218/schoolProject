@@ -12,3 +12,11 @@
 6.new events中viewed by多选样式调整
 -->
 7.new events，configuration增加收起动画
+
+1.首页-单日内event 如果当日没数据则显示“no event”
+2.Edit event内的原Event信息没有展示完整
+3.New event中start和end 时间显示错误
+4.End 的日期随start的日期改变，且加入限制：不可选择Start之前的日期
+5.Add participants中右侧的删除事件由整条改为仅删除图标
+6.Configuration 中所有的delete全部改为Cancel，delete功能移动到name右侧
+7.删除事件由整条改为仅删除图标
