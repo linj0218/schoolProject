@@ -195,12 +195,12 @@ export default {
         start_date: '',
         start_time: '',
         startTimeName: '',
-        startTimeList: '',
+        startTimeList: [],
         // End
         end_date: '',
         end_time: '',
         endTimeName: '',
-        endTimeList: '',
+        endTimeList: [],
         // description
         description: '',
         // part_right ------------------------------------------------------
@@ -222,7 +222,7 @@ export default {
       copyData: {}
     }
   },
-  mounted () {
+  created () {
     let date = new Date();
     let year = date.getFullYear()
     let month = date.getMonth() + 1
@@ -231,11 +231,15 @@ export default {
     this.data.end_date = year + '-' + month + '-' + day
     let hour = date.getHours();
     if (hour <= 12) {
-      hour += hour + ':00 AM'
+      hour = hour + ':00 AM'
     } else {
-      hour += (hour - 12) + ':00 PM'
+      hour = (hour - 12) + ':00 PM'
     }
-    this.startTimeList = [
+    this.data.start_time =
+    this.data.startTimeName =
+    this.data.end_time =
+    this.data.endTimeName = hour
+    this.data.startTimeList = this.data.endTimeList = [
       {value: '7:00 AM', name: '7:00 AM'},
       {value: '8:00 AM', name: '8:00 AM'},
       {value: '9:00 AM', name: '9:00 AM'},
