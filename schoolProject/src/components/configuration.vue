@@ -71,7 +71,7 @@
                             @addItem='showConfirm()'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='showConfirm()'></span>
+                  <span class="icon icon_edit" @click='showConfirm(yearNameChanged, schoolYearData.yearName)'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -147,7 +147,7 @@
                             @inputChange='placeChanged'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='showConfirm()'></span>
+                  <span class="icon icon_edit" @click='showConfirm(placeNameChanged, placesData.name)'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -180,10 +180,10 @@
                             :input-add='true'
                             :input-item-text='"New Categories"'
                             @addItem='showConfirm()'
-                            @inputChange='categoriesNameChanged'>
+                            @inputChange='categoriesChanged'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='showConfirm()'></span>
+                  <span class="icon icon_edit" @click='showConfirm(categoriesNameChanged, categoriesData.name)'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -209,20 +209,20 @@
           </div>
 
           <div v-show='tab==0' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>
+            <button type="button" class="btn btn-danger" @click="submitGroupsAndMember(-1)">Delete</button>
           </div>
           <div v-show='tab==1' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button>
+            <button type="button" class="btn btn-danger" @click="submitSchoolYear(-1)">Delete</button>
           </div>
           <div v-show='tab==2' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-primary" @click="submitPlaceAndRooms(0)">Save</button>
+            <button type="button" class="btn btn-danger" @click="submitPlaceAndRooms(-1)">Delete</button>
           </div>
           <div v-show='tab==3' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary">Save</button>
-            <button type="button" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-primary" @click="submitCategory(0)">Save</button>
+            <button type="button" class="btn btn-danger" @click="submitCategory(-1)">Delete</button>
           </div>
         </div>
       </div>
@@ -359,7 +359,10 @@ export default {
           let data = resData.schoolYearList[i]
           let obj = {
             value: data.id,
-            name: data.year_label
+            name: data.year_label,
+            startDate: data.start_date,
+            endDate: data.end_date,
+            weekName: data.week_flag
           }
           schoolYearList.push(obj)
         })
@@ -415,6 +418,9 @@ export default {
     yearChanged (item) {
       this.schoolYearData.yearId = item.value
       this.schoolYearData.yearName = item.name
+      this.schoolYearData.startDate = item.startDate
+      this.schoolYearData.endDate = item.endDate
+      this.schoolYearData.weekName = item.weekName
     },
     weekChanged (item) {
       this.schoolYearData.weekId = item.value
@@ -440,7 +446,7 @@ export default {
     deleteRoom (index) {
       this.placesData.rooms.splice(index, 1)
     },
-    categoriesNameChanged (item) {
+    categoriesChanged (item) {
       this.categoriesData.value = item.value
       this.categoriesData.name = item.name
       this.categoriesData.color = item.color
@@ -461,8 +467,57 @@ export default {
     groupsNameChanged (str) {
       this.groupsData.name = str
     },
+    yearNameChanged (str) {
+      this.schoolYearData.yearName = str
+    },
+    placeNameChanged (str) {
+      this.placesData.name = str
+    },
+    categoriesNameChanged (str) {
+      this.categoriesData.name = str
+    },
     addGroup (str) {
       console.log(str)
+    },
+    submitGroupsAndMember (opt) {
+      let param = JSON.stringify({'id': this.groupsData.value, 'group_name': this.groupsData.name, 'operation_flag': opt})
+      this.$http.post('/sharedcalendarSettingCtl/event/editGroups', {
+        data: param
+      }).then((res) => {
+        if (res.success) {
+          alert('SUCCESS!')
+        }
+      })
+    },
+    submitSchoolYear (opt) {
+      let param = JSON.stringify({'id': this.schoolYearData.yearId, 'year_label': this.schoolYearData.yearName, 'start_date': this.schoolYearData.startDate, 'end_date': this.schoolYearData.endDate, 'week_flag': this.schoolYearData.weekName, 'operation_flag': opt})
+      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYear', {
+        data: param
+      }).then((res) => {
+        if (res.success) {
+          alert('SUCCESS!')
+        }
+      })
+    },
+    submitPlaceAndRooms (opt) {
+      let param = JSON.stringify({'id': this.placesData.value, 'place_name': this.placesData.name, 'operation_flag': opt})
+      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+        data: param
+      }).then((res) => {
+        if (res.success) {
+          alert('SUCCESS!')
+        }
+      })
+    },
+    submitCategory (opt) {
+      let param = JSON.stringify({'id': this.categoriesData.value, 'category_no': this.categoriesData.name, 'category_remark': this.categoriesData.color, 'operation_flag': opt})
+      this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
+        data: param
+      }).then((res) => {
+        if (res.success) {
+          alert('SUCCESS!')
+        }
+      })
     }
   }
 }
