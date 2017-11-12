@@ -374,7 +374,7 @@
                     id: field.id,
                     spanNum: field.days,
                     color: 'bg_color_3',
-                    time: field.day_flag === 1 ? 'All day' : field.start_time + '-' + field.end_time,
+                    time: field.day_flag === 1 ? 'All day' : formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.start_date, 'dd/mm') + ' ' + field.end_time,
                     title: field.title,
                     place: 'QingPu',
                     thisYear: item.thisYear,
@@ -390,15 +390,16 @@
                     this.actDateInfo.thisDate === taskStartDate) {
                     emptyWeekFlg = false
                     this.weekTaskListActId = field.id
+                    let createTime = field.create_time.split(' ')
                     this.taskDetailInfo = {
                       title: field.title,
                       creater: field.create_userid,
-                      create_time: field.create_time,
+                      create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
                       categroy: field.category_id,
                       color: 'bg_color_3',
                       place: 'QingPu',
-                      start: field.start_date,
-                      end: field.end_date,
+                      start: formatDate(field.start_date, 'dd/mm/yy') + ' ' + field.start_time,
+                      end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
                       description: field.description
                     }
                   }
@@ -498,15 +499,16 @@
       weekTaskListActIndexChanged (o) {
         let item = o.source
         this.weekTaskListActId = item.id
+        let createTime = item.create_time.split(' ')
         this.taskDetailInfo = {
           title: item.title,
           creater: item.creater,
-          create_time: item.create_time,
+          create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
           categroy: item.category_id,
           color: 'bg_color_3',
           place: 'QingPu',
-          start: item.start_date,
-          end: item.end_date,
+          start: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
+          end: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
           description: item.description
         }
       },

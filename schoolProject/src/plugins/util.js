@@ -30,7 +30,6 @@ export const weekMap = {'1': 'Monday', '2': 'Tuesday', '3': 'Wednesday', '4': 'T
 // 月
 export const monthMap = {'1': 'January', '2': 'February', '3': 'March', '4': 'April', '5': 'May', '6': 'June', '7': 'July', '8': 'August', '9': 'September', '10': 'October', '11': 'November', '12': 'December'};
 
-// 格式化时间格式
 /**
  * [格式化时间格式]
  * @param  {[String]} targetTime [传入需要格式化的时间参数(需要4位年份，月份、日期不做规定)eg:yyyy-mm-dd yyyy/mm/dd]
@@ -58,11 +57,20 @@ export const formatDate = (targetTime, format) => {
     case 'yyyy-mm-dd':
       result = [timeList[0], timeList[1], timeList[2]].map(formatNumber).join('-')
       break;
+    case 'yyyy-m-d':
+      result = [timeList[0], timeList[1], timeList[2]].map((n) => { return Number(n) }).join('-')
+      break;
     case 'yyyy/mm/dd':
       result = [timeList[0], timeList[1], timeList[2]].map(formatNumber).join('/')
       break;
     case 'dd/mm/yyyy':
       result = [timeList[2], timeList[1], timeList[0]].map(formatNumber).join('/')
+      break;
+    case 'dd/mm/yy':
+      result = [timeList[2], timeList[1], timeList[0].substr(timeList[0].length - 2, 2)].map(formatNumber).join('/')
+      break;
+    case 'dd/mm':
+      result = [timeList[2], timeList[1]].map(formatNumber).join('/')
       break;
     default:
       result = targetTime
