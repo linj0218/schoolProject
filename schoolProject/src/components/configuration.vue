@@ -159,8 +159,8 @@
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in placesData.rooms'>
                     {{item.name}}
-                    <span class="action_icon icon_edit" @click='showConfirm(placeRoomchanged, placesData.room)'></span>
-                    <span class="action_icon icon_delete" @click='deleteRoom(index)'></span>
+                    <span class="action_icon icon_edit" @click='showConfirm(editPlaceRoom, item.name)'></span>
+                    <span class="action_icon icon_delete" @click='delPlaceRoom(index)'></span>
                   </div>
                 </div>
               </div>
@@ -447,9 +447,6 @@ export default {
       // console.log(calendarList, thisDateInfo, actDateInfo)
       this.schoolYearData.endDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
     },
-    deleteRoom (index) {
-      this.placesData.rooms.splice(index, 1)
-    },
     categoriesChanged (item) {
       this.categoriesData.value = item.value
       this.categoriesData.name = item.name
@@ -477,9 +474,6 @@ export default {
     placeNameChanged (str) {
       this.placesData.name = str
     },
-    placeRoomchanged (str) {
-      this.placesData.rooms = str
-    },
     categoriesNameChanged (str) {
       this.categoriesData.name = str
     },
@@ -494,7 +488,50 @@ export default {
     addPlace (str) {
       this.placesData.name = str
     },
+    editPlaceRoom (str, oldStr) {
+      // console.log(str, oldStr)
+      for (let i = 0, len = this.placesData.rooms.length; i < len; i++) {
+        let item = this.placesData.rooms[i]
+        if (oldStr === item.name) {
+          let param = JSON.stringify({'campus_id': this.placesData.value, 'place_name': str, 'operation_flag': 0, id: item.value})
+          this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+            data: param
+          }).then((res) => {
+            if (res.success) {
+              alert('SUCCESS!')
+              this.init()
+            }
+          })
+          return true
+        }
+      }
+      // this.placesData.rooms = str
+    },
     addPlaceRoom (str) {
+      let param = JSON.stringify({'campus_id': this.placesData.value, 'place_name': str, 'operation_flag': 0, id: 0})
+      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+        data: param
+      }).then((res) => {
+        if (res.success) {
+          alert('SUCCESS!')
+          this.init()
+        }
+      })
+    },
+    delPlaceRoom (index) {
+      if (!confirm('Confirm the deletion')) return false
+
+      let param = JSON.stringify({'campus_id': this.placesData.value, 'place_name': '', 'operation_flag': 1, id: this.placesData.rooms[index].value})
+      this.placesData.rooms.splice(index, 1)
+
+      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+        data: param
+      }).then((res) => {
+        if (res.success) {
+          alert('SUCCESS!')
+          this.init()
+        }
+      })
     },
     addCategory (str) {
       this.categoriesData.name = str

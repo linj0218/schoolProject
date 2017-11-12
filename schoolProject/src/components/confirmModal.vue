@@ -37,6 +37,7 @@
     },
     data () {
       return {
+        oldText: '',
         text: '',
         callback: ''
       }
@@ -44,6 +45,7 @@
     watch: {
       showPopup () {
         if (this.showPopup) {
+          this.oldText = this.inputValue
           this.text = this.inputValue
           this.callback = this.inputMethod
         }
@@ -56,7 +58,7 @@
         if (typeof this.callback === 'string') {
           console.log('组件错误，请传入回调函数')
         } else {
-          (this.callback)(this.text)
+          (this.callback)(this.text, this.oldText)
         }
 
         this.closePopup()
