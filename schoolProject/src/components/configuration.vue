@@ -29,7 +29,7 @@
                             @inputChange='groupsChanged'>
                   </drapdown>
                   
-                  <span class="icon icon_edit" @click='showConfirm(groupNameChanged, groupsData.name)'></span>
+                  <span class="icon icon_edit" @click='showConfirm(groupsNameChanged, groupsData.name)'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -458,7 +458,7 @@ export default {
     closeTextInput () {
       this.textInput.showInputPopup = false
     },
-    groupNameChanged (str) {
+    groupsNameChanged (str) {
       this.groupsData.name = str
     },
     addGroup (str) {

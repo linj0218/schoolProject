@@ -96,7 +96,7 @@
             <template v-for='li in weekTaskList'>
               <div class="li container-fluid"
                    v-for='td in li'
-                   v-if='td.spanNum!==0 && showTask(td)'
+                   v-if='showTask(td)'
                    :class='{"act": td.id==weekTaskListActId}'
                    @click='weekTaskListActIndexChanged(td)'>
                 <div class="col-lg-12"><span :class='td.color'></span>{{td.time}}</div>
@@ -328,6 +328,7 @@
           let resData = res.data
           // let emptyWeekFlg = true
           let tempList = []
+          let list = []
           self.weekTaskList = []
 
           if (!resData || resData.length === 0) {
@@ -358,7 +359,7 @@
               let tempObj = {}
 
               for (let i2 = 0, len2 = resData.length; i2 < len2; i2++) {
-                let field = resData[i2]
+                let field = JSON.parse(JSON.stringify(resData[i2]))
                 if (field === null) continue
 
                 let dateList = field.start_date.split('-')
@@ -419,7 +420,8 @@
               }
               tempList.push(tempObj)
             }
-            self.weekTaskList.push(tempList)
+            list.push(tempList)
+            self.weekTaskList = list
 
             for (let i = 0, len = resData.length; i < len; i++) {
               if (resData[i] != null) {
@@ -437,7 +439,10 @@
       },
       // 校验是否当前日期
       showTask (item) {
-        let thisActDate = this.actDateInfo.thisYear + '-' + this.actDateInfo.thisMonth + '-' + this.actDateInfo.thisDate
+        if (item.spanNum === 0) return false
+        if (item.spanNum === 1 && item.time !== 'All day') return false
+
+        let thisActDate = [this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-')
         let startDate = item.source.start_date
         let endDate = item.source.end_date
         let actDateTime = new Date(thisActDate).getTime()
