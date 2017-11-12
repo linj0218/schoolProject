@@ -53,9 +53,13 @@
     },
     methods: {
       confirm () {
-        (this.callback)(this.text)
+        if (typeof this.callback === 'string') {
+          console.log('组件错误，请传入回调函数')
+        } else {
+          (this.callback)(this.text)
+        }
 
-        this.$emit('closePopup')
+        this.closePopup()
       },
       closePopup () {
         this.$emit('closePopup')
