@@ -49,7 +49,8 @@
                     <span class="icon_btn_add"></span> Members/Groups
                   </button>
 
-                  <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
+                  <add-participant-modal :show-popup='groupsData.showAddParticipantPopup'
+                                         :data-list='[]'
                                          @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
                   </add-participant-modal>
 
