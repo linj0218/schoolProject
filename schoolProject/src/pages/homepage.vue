@@ -106,13 +106,16 @@
           <div class="task_detail" >
             <div class="tast_detail_right">
               <div class="title">Participants</div>
-              <button type="button" class="btn btn-block"><span></span>Administration o...</button>
-              <button type="button" class="btn btn-block"><span></span>Kan Chen</button>
+              <button type="button" class="btn btn-block" v-for='item in eventsUserGroupList'>
+                <span class="icon" :class='item.type'></span>{{item.name}}
+              </button>
+              <button type="button" class="btn btn-block" v-for='item in eventsUserList'>
+                <span class="icon" :class='item.type'></span>{{item.name}}
+              </button>
               <div class="title margin_top">Viewed by</div>
-              <button type="button" class="btn btn-block">Administration of Qi...</button>
-              <button type="button" class="btn btn-block">Educational Director</button>
-              <button type="button" class="btn btn-block">Administration of Pud...</button>
-              <button type="button" class="btn btn-block">Secondary school of...</button>
+              <button type="button" class="btn btn-block" v-for='item in eventsGroupList'>
+                {{item.name}}
+              </button>
             </div>
             <div class="tast_detail_left">
               <div class="item">
@@ -197,6 +200,8 @@
           thisMonth: new Date().getMonth() + 1,
           thisDate: new Date().getDate()
         },
+        // 当前日期所属的周数据
+        actWeekList: [],
         // Places
         placesList: [
         ],
@@ -241,6 +246,9 @@
           end: '',
           description: ''
         },
+        eventsUserGroupList: [],
+        eventsUserList: [],
+        eventsGroupList: [],
         // 配置弹窗
         showConfig: false,
         // 新建事件弹窗
@@ -248,8 +256,14 @@
         eventType: null
       }
     },
-    mounted () {
-      this.getPlaces()
+    created () {
+      this.getPlaces().then(() => {
+        let startDate = this.actWeekList[0]
+        let endDate = this.actWeekList[6]
+        let _startDate = formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd')
+        let _endDate = formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
+        this.getWeekInfoData(_startDate, _endDate)
+      })
     },
     methods: {
       // 地址切换事件
@@ -303,9 +317,9 @@
       },
       getPlaces () {
         let self = this
-        this.$http.post('/sharedcalendarDetailCtl/queryCampus', {}).then((res) => {
+        return this.$http.post('/sharedcalendarDetailCtl/queryCampus', {}).then((res) => {
           let resData = res.data
-          self.placesList = []
+          let placesList = []
           forEach(resData, (i, item) => {
             let obj = {
               id: item.id,
@@ -313,16 +327,24 @@
               address: item.address,
               isSelected: true
             }
-            self.placesList.push(obj)
+            placesList.push(obj)
           })
+          self.placesList = placesList
+
+          return res
         })
       },
       // 获取周视图数据
       getWeekInfoData (startDate, endDate) {
         let self = this
-        return this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
+        let params = {
+          dayFlag: 0,
           startDate: formatDate(startDate, 'yyyy-mm-dd'),
-          endDate: formatDate(endDate, 'yyyy-mm-dd')
+          endDate: formatDate(endDate, 'yyyy-mm-dd'),
+          place: this.placesList.map((o) => { return '\'' + o.name + '\'' }).join(',')
+        }
+        return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
+          data: JSON.stringify(params)
         }).then((res) => {
           let resData = res.data
           let emptyWeekFlg = true
@@ -402,6 +424,7 @@
                       end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
                       description: field.description
                     }
+                    this.getViews()
                   }
 
                   resData.splice(i2, 1, null)
@@ -467,6 +490,7 @@
         this.calendarList = calendarList
         this.thisDateInfo = thisDateInfo
         this.actDateInfo = actDateInfo
+        this.actWeekList = arguments[3] || {}
         this.createWeekInfo()
       },
       // 配置弹窗切换事件
@@ -511,6 +535,17 @@
           end: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
           description: item.description
         }
+        this.getViews()
+      },
+      // 获取Event详情右边的views
+      getViews () {
+        this.$http.post('/sharedcalendarSettingCtl/event/getEventsDetailByEventId', {
+          data: JSON.stringify({event_id: this.weekTaskListActId})
+        }).then((res) => {
+          if (res.success) {
+            console.log(res)
+          }
+        })
       },
       deleteEvent () {
         this.data.banner.showBanner = true
@@ -652,7 +687,12 @@
           float: right;width: 260px;padding: 30px 30px 94px 30px;height: 100%;position: relative;
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
-          & > .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;}
+          & > .btn{
+            border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;
+            .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}
+            .icon_member{left: 16px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
+            .icon_members{left: 16px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
+          }
         }
         .edit_btn{
           position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;

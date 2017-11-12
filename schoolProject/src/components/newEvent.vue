@@ -373,22 +373,23 @@ export default {
     },
     // 表单保存
     save () {
-      let groupIds = []
       let userIds = []
+      let userGroupId = []
       forEach(this.data.participants, (i, item) => {
         if (item.type === 'icon_member') {
-          userIds.push(item.value)
+          userIds.push(item.id)
         } else {
-          groupIds.push(item.value)
+          userGroupId.push(item.id)
         }
       })
 
-      let userGroupId = []
+      let groupIds = []
       forEach(this.data.viewedList, (i, item) => {
-        if (item.value) userGroupId.push(item.id)
+        if (item.value) groupIds.push(item.id)
       })
 
       let reqData = {
+        id: this.eventId || 0,
         title: this.data.title,
         day_flag: this.data.day_flag ? 1 : 0,
         category_id: this.data.category_id,
