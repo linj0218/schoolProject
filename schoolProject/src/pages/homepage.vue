@@ -18,7 +18,7 @@
             <button type="button" class="btn btn-block"
                     v-for='place in placesList'
                     :class='place.isSelected ? "act" : ""'
-                    @click='placeSelectedChange(place)'>
+                    @click='placeSelectedChanged(place)'>
               {{place.name}}<span></span>
             </button>
           </div>
@@ -81,9 +81,8 @@
               <div class="li" v-for='li in weekTaskList'>
                 <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
                   <div>
-                    <div :class='td.color'>
-                      <!-- <div class="time_line">{{td.time}}</div> -->
-                      <div class="title_line">{{td.title}}</div>
+                    <div :class='td.spanNum==1 && td.time!="All day" ? "" : td.color'>
+                      <div class="title_line" v-text='td.spanNum==1 && td.time!="All day" ? "" : td.title'></div>
                     </div>
                   </div>
                 </div>
@@ -254,7 +253,7 @@
     },
     methods: {
       // 地址切换事件
-      placeSelectedChange (place) {
+      placeSelectedChanged (place) {
         place.isSelected = !place.isSelected
       },
       // 周视图切换上下周
@@ -326,7 +325,7 @@
           endDate: formatDate(endDate, 'yyyy-mm-dd')
         }).then((res) => {
           let resData = res.data
-          // let emptyWeekFlg = true
+          let emptyWeekFlg = true
           let tempList = []
           let list = []
           self.weekTaskList = []
@@ -385,7 +384,10 @@
                   tempObj.source = field
 
                   // 默认选中第一个Event
-                  /* if (emptyWeekFlg) {
+                  if (emptyWeekFlg &&
+                    this.actDateInfo.thisYear === taskStartYear &&
+                    this.actDateInfo.thisMonth === taskStartMonth &&
+                    this.actDateInfo.thisDate === taskStartDate) {
                     emptyWeekFlg = false
                     this.weekTaskListActId = field.id
                     this.taskDetailInfo = {
@@ -399,7 +401,7 @@
                       end: field.end_date,
                       description: field.description
                     }
-                  } */
+                  }
 
                   resData.splice(i2, 1, null)
                   break;
@@ -437,12 +439,12 @@
           return res
         })
       },
-      // 校验是否当前日期
+      // Event list校验显示当前日期对应的Events
       showTask (item) {
         if (item.spanNum === 0) return false
-        if (item.spanNum === 1 && item.time !== 'All day') return false
+        // if (item.spanNum === 1 && item.time !== 'All day') return false
 
-        let thisActDate = [this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-')
+        let thisActDate = formatDate([this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-'), 'yyyy-mm-dd')
         let startDate = item.source.start_date
         let endDate = item.source.end_date
         let actDateTime = new Date(thisActDate).getTime()
