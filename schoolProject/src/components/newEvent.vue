@@ -311,7 +311,7 @@ export default {
         forEach(resData.placesList, (i, item) => {
           if (resData.eventInfo && resData.eventInfo.place_name === item.place_name) {
             self.data.roomId = item.id
-            self.data.roomName = item.campus_name
+            self.data.roomName = item.place_name
           }
           // TODO设置place
           rooms.push({
@@ -355,7 +355,6 @@ export default {
           self.data.end_time = resData.eventInfo.end_time
           self.data.description = resData.eventInfo.description
         }
-
         return res
       })
     },
