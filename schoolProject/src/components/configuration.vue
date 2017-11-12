@@ -45,10 +45,14 @@
               <div class="button_box">
                 <span class="lab"></span>
                 <div class="name_value">
-                  <button type="button" class="btn btn-primary" @click='()=>{this.groupsData.showAddParticipantPopup=true}'>
+                  <!--<button type="button" class="btn btn-primary" @click='()=>{this.groupsData.showAddParticipantPopup=true}'>
                     <span class="icon_btn_add"></span> Members/Groups
-                  </button>
+                  </button>-->
 
+                  <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
+                  	                     :data-list='[]'
+                                         @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
+                  </add-participant-modal>
                   <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
                                          @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
                   </add-participant-modal>
@@ -68,7 +72,7 @@
                             :input-add='true'
                             :input-item-text='"New School years"'
                             @inputChange='yearChanged'
-                            @addItem='showConfirm()'>
+                            @addItem='showConfirm(addSchoolYear)'>
                   </drapdown>
 
                   <span class="icon icon_edit" @click='showConfirm(yearNameChanged, schoolYearData.yearName)'></span>
@@ -143,7 +147,7 @@
                             :input-select='placesData.places'
                             :input-add='true'
                             :input-item-text='"New Places"'
-                            @addItem='showConfirm()'
+                            @addItem='showConfirm(addPlace)'
                             @inputChange='placeChanged'>
                   </drapdown>
 
@@ -155,7 +159,7 @@
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in placesData.rooms'>
                     {{item.name}}
-                    <span class="action_icon icon_edit" @click='showConfirm()'></span>
+                    <span class="action_icon icon_edit" @click='showConfirm(placeRoomchanged, placesData.room)'></span>
                     <span class="action_icon icon_delete" @click='deleteRoom(index)'></span>
                   </div>
                 </div>
@@ -163,7 +167,7 @@
               <div class="button_box">
                 <span class="lab"></span>
                 <div class="name_value">
-                  <button type="button" class="btn btn-primary" @click='showConfirm()'>
+                  <button type="button" class="btn btn-primary" @click='showConfirm(addPlaceRoom)'>
                     <span class="icon_btn_add"></span> New places
                   </button>
                 </div>
@@ -179,7 +183,7 @@
                             :input-select='categoriesData.nameList'
                             :input-add='true'
                             :input-item-text='"New Categories"'
-                            @addItem='showConfirm()'
+                            @addItem='showConfirm(addCategory)'
                             @inputChange='categoriesChanged'>
                   </drapdown>
 
@@ -209,8 +213,8 @@
           </div>
 
           <div v-show='tab==0' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>
-            <button type="button" class="btn btn-danger" @click="submitGroupsAndMember(-1)">Delete</button>
+            <!--<button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>-->
+            <!--<button type="button" class="btn btn-danger" @click="submitGroupsAndMember(-1)">Delete</button>-->
           </div>
           <div v-show='tab==1' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button>
@@ -473,11 +477,27 @@ export default {
     placeNameChanged (str) {
       this.placesData.name = str
     },
+    placeRoomchanged (str) {
+      this.placesData.rooms = str
+    },
     categoriesNameChanged (str) {
       this.categoriesData.name = str
     },
     addGroup (str) {
+      this.groupsData.name = str
       console.log(str)
+    },
+    addSchoolYear (str) {
+      this.schoolYearData.yearId = 0
+      this.schoolYearData.yearName = str
+    },
+    addPlace (str) {
+      this.placesData.name = str
+    },
+    addPlaceRoom (str) {
+    },
+    addCategory (str) {
+      this.categoriesData.name = str
     },
     submitGroupsAndMember (opt) {
       let param = JSON.stringify({'id': this.groupsData.value, 'group_name': this.groupsData.name, 'operation_flag': opt})
@@ -486,6 +506,7 @@ export default {
       }).then((res) => {
         if (res.success) {
           alert('SUCCESS!')
+          this.init()
         }
       })
     },
@@ -496,6 +517,7 @@ export default {
       }).then((res) => {
         if (res.success) {
           alert('SUCCESS!')
+          this.init()
         }
       })
     },
@@ -506,6 +528,7 @@ export default {
       }).then((res) => {
         if (res.success) {
           alert('SUCCESS!')
+          this.init()
         }
       })
     },
@@ -516,6 +539,7 @@ export default {
       }).then((res) => {
         if (res.success) {
           alert('SUCCESS!')
+          this.init()
         }
       })
     }
