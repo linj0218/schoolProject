@@ -96,8 +96,10 @@
             <div>
               <span class="lab">Participants</span>
               <div class="participants">
-                <div class="li" v-for='(item, index) in data.participants'>
-                  <span class="icon" :class='item.type'></span>{{item.name}}<span class="action_icon icon_delete" @click='deleteParticipant(index)'></span>
+                <div style="height: 100%;overflow: auto;">
+                  <div class="li" v-for='(item, index) in data.participants'>
+                    <span class="icon" :class='item.type'></span>{{item.name}}<span class="action_icon icon_delete" @click='deleteParticipant(index)'></span>
+                  </div>
                 </div>
                 <button type="button" class="btn btn-primary" @click='()=>{this.data.showAddParticipantPopup=true}'>
                   <span class="icon_btn_add"></span> Participants
@@ -128,7 +130,7 @@
       </div>
       <div class="btns">
         <button type="button" class="btn btn-primary" @click='save()'>Save</button>
-        <button type="button" class="btn btn-danger" v-show='eventType=="new"'>Save and continue</button>
+        <button type="button" class="btn btn-danger" v-show='eventType=="new"' @click='saveAndContinue()'>Save and continue</button>
         <button type="button" class="btn cancel" @click='closeConfig()'>Cancel</button>
       </div>
     </div>
@@ -171,7 +173,7 @@ export default {
         // Category
         category_id: '',
         categoryName: '',
-        categoryColor: 'bg_color_1',
+        categoryColor: '',
         categorys: [],
         // Place
         place_id: '',
@@ -193,6 +195,7 @@ export default {
         // part_right ------------------------------------------------------
         // Participants
         participants: [],
+        allParticipants: [],
         showAddParticipantPopup: false,
         // Viewed by
         viewedAll: false,
@@ -241,7 +244,9 @@ export default {
         this.data = JSON.parse(JSON.stringify(this.copyData))
       }
       if (this.showConfig) {
-        this.findEvent()
+        this.findEvent().then(() => {
+          this.getUsers()
+        })
         // this.getPlaces()
       }
     }
@@ -267,7 +272,7 @@ export default {
     // 初始化Event
     findEvent () {
       let self = this
-      this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
+      return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
         data: JSON.stringify({event_id: this.eventType === 'new' ? 0 : this.eventId || 0})
       }).then((res) => {
         let resData = res.data
@@ -317,6 +322,17 @@ export default {
         })
         self.data.viewedList = viewedList
 
+        // TODO设置participants包含groups和users
+        let groupList = []
+        forEach(resData.groupsList, (i, item) => {
+          groupList.push({
+            id: item.id,
+            name: item.group_name,
+            type: 'icon_members'
+          })
+        })
+        self.data.allParticipants = groupList
+
         // TODO将Event数据同步到表单
         if (resData.eventInfo) {
           self.data.title = resData.eventInfo.title
@@ -327,6 +343,27 @@ export default {
           self.data.end_date = resData.eventInfo.end_date
           self.data.end_time = resData.eventInfo.end_time
         }
+
+        return res
+      })
+    },
+    // 获取users
+    getUsers () {
+      let self = this
+      this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
+        data: JSON.stringify({flag: 1})
+      }).then((res) => {
+        let resData = res.data
+        let userList = []
+        forEach(resData, (i, item) => {
+          userList.push({
+            id: item.id,
+            name: item.nom,
+            type: 'icon_member'
+          })
+        })
+        self.data.allParticipants = self.data.allParticipants.concat(userList)
+        console.log(self.data.allParticipants.length)
       })
     },
     // 表单保存
@@ -375,6 +412,11 @@ export default {
         return res
       })
     },
+    saveAndContinue () {
+      this.save().then(() => {
+        this.data = JSON.parse(JSON.stringify(this.copyData))
+      })
+    },
     checkAllDayChange () {
 
     },
@@ -405,8 +447,9 @@ export default {
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
       let dateStr = [actDateInfo.thisDate, actDateInfo.thisMonth, actDateInfo.thisYear].join('/')
-      if (!this.checkDateChange(dateStr, this.data.end_date)) return false
+      // if (!this.checkDateChange(dateStr, this.data.end_date)) return false
       this.data.start_date = dateStr
+      this.data.end_date = dateStr
     },
     endDateChange (calendarList, thisDateInfo, actDateInfo) {
       let dateStr = [actDateInfo.thisDate, actDateInfo.thisMonth, actDateInfo.thisYear].join('/')

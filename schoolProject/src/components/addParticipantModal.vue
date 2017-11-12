@@ -59,8 +59,7 @@
           {value: '4', type: 'icon_member', name: 'Primaire', isSelected: false},
           {value: '5', type: 'icon_member', name: 'SQLDebugger', isSelected: false}
         ],
-        selectedList: [
-        ]
+        selectedList: []
       }
     },
     mounted () {
