@@ -175,7 +175,7 @@
   import calendar from '@/components/calendar'
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
-  import {weekMap, forEach, getMonthWeek, getYearWeek} from '@/plugins/util'
+  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate} from '@/plugins/util'
 
   export default {
     components: {
@@ -322,8 +322,8 @@
       getWeekInfoData (startDate, endDate) {
         let self = this
         return this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
-          startDate: startDate,
-          endDate: endDate
+          startDate: formatDate(startDate, 'yyyy-mm-dd'),
+          endDate: formatDate(endDate, 'yyyy-mm-dd')
         }).then((res) => {
           let resData = res.data
           // let emptyWeekFlg = true
@@ -346,8 +346,13 @@
             }
           }
 
+          let count = 0
+
           // 递归构建周视图
           let formatWeekInfo = () => {
+            if (count > 15) return
+            count++
+
             for (let i = 0, len = self.weekTableHead.length; i < len; i++) {
               let item = self.weekTableHead[i]
               let tempObj = {}
@@ -569,7 +574,8 @@
           .th:last-child{border-right: 0;}
         }
         .table_body{
-          min-height: 229px;position: relative;padding: 4px 0;z-index: 0;
+          height: 229px;position: relative;padding: 4px 0;z-index: 0;overflow: auto;
+          &::-webkit-scrollbar {width: 0;height: 0;}
           .table_body_bg{
             position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: -1;
             div{flex: 1;border-right: 1px solid #eee;}

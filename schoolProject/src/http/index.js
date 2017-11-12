@@ -5,8 +5,8 @@ import qs from 'qs'
 axios.defaults.timeout = 5000
 axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
-// axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
-axios.defaults.baseURL = 'http://192.168.8.104:8081/HTMS_WeChat/'
+axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
+// axios.defaults.baseURL = 'http://192.168.8.104:8081/HTMS_WeChat/'
 
 // request
 axios.interceptors.request.use((config) => {

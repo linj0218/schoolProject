@@ -160,11 +160,7 @@
             week: weekMap[Number(i) + 1].substr(0, 3),
             date: item.day,
             month: monthMap[item.monthValue].substr(0, 3),
-            taskList: [
-              // {id: '1', time: '08:00-10:00', name: 'Title name'},
-              // {id: '2', time: '08:00-10:00', name: 'Title name'},
-              // {id: '3', time: '08:00-10:00', name: 'Title name'}
-            ]
+            taskList: []
           }
           tempList.push(tempObj)
         })
@@ -174,6 +170,16 @@
       // 切换周视图抽屉
       changeDrawerActIndex (i, item) {
         this.drawerActIndex = i
+
+        for (let i = 0, len = this.actWeekList.length; i < len; i++) {
+          let field = this.actWeekList[i]
+          if (item.date === field.day) {
+            this.actDateInfo.thisYear = field.yearValue
+            this.actDateInfo.thisMonth = field.monthValue
+            this.actDateInfo.thisDate = field.day
+            return true
+          }
+        }
       },
       syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
         this.calendarList = calendarList
@@ -242,20 +248,21 @@
     .part_2{
       overflow: hidden;background: #fff;box-shadow: 0 0 1px #ddd;height: 900px;padding: 0 20px;
       .calendar{
-        .title{font-size: 40px;color: #4A90E2;text-align: center;height: 85px;line-height: 85px;border-bottom: 1px solid #f5f5f5;}
+        .title{font-size: 40px;color: #4A90E2;text-align: center;height: 85px;line-height: 85px;border-bottom: 1px solid #f5f5f5;cursor: pointer;}
+        .title:hover{text-decoration: underline;}
         .homePageLink{right: 25px;font-size: 20px;color: #00f;display: block;text-align: right;padding: 0 20px;}
         .week_cal{
           padding: 0 20px;color: #003;
           .drawer_title{background: rgba(74,144,226,0.1);line-height: 40px;font-size: 18px;padding-left: 16px;border-bottom: 1px solid #fff;border-left: 4px solid #4A90E2;}
           .drawer_list{
-            padding: 0 20px;font-size: 16px;color: #003;height: 0;overflow: hidden;
+            padding: 0 10px;font-size: 16px;color: #003;height: 0;overflow: hidden;
             & > div{padding: 5px 0;}
             & > div:empty:after{content: 'no event';padding: 10px;display: block;font-size: 18px;color: #333;}
             .point_icon{display: inline-block;width: 12px;height: 12px;border-radius: 50%;}
             .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
             .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
             .drawer_li:nth-child(3n+3) .point_icon{background: #00C1DF;}
-            .drawer_li{line-height: 24px;padding: 7px 0;}
+            .drawer_li{line-height: 24px;padding: 7px 10px;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{
               flex: 5;text-align: left;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;

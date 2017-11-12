@@ -139,7 +139,7 @@
 import drapdown from '@/components/drapdown'
 import dateSelect from '@/components/dateSelect'
 import addParticipantModal from '@/components/addParticipantModal'
-import {forEach} from '@/plugins/util'
+import {forEach, formatDate} from '@/plugins/util'
 export default {
   props: {
     showConfig: {
@@ -350,9 +350,9 @@ export default {
         title: this.data.title,
         day_flag: this.data.day_flag ? 1 : 0,
         category_id: this.data.category_id,
-        start_date: this.data.start_date,
+        start_date: formatDate(this.data.start_date, 'yyyy-mm-dd'),
         start_time: this.data.day_flag ? '' : this.data.start_time,
-        end_date: this.data.end_date,
+        end_date: formatDate(this.data.end_date, 'yyyy-mm-dd'),
         end_time: this.data.day_flag ? '' : this.data.end_time,
         description: this.data.description,
         place_id: this.data.place_id,
@@ -360,7 +360,7 @@ export default {
         userIds: userIds.join(','),
         userGroupId: userGroupId.join(',')
       }
-      console.log(reqData)
+      // console.log(reqData)
 
       return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
         data: JSON.stringify(reqData)
@@ -404,14 +404,14 @@ export default {
       }, 0)
     },
     startDateChange (calendarList, thisDateInfo, actDateInfo) {
-      let dateStr = actDateInfo.thisDate + '/' + actDateInfo.thisMonth + '/' + actDateInfo.thisYear
+      let dateStr = [actDateInfo.thisDate, actDateInfo.thisMonth, actDateInfo.thisYear].join('/')
       if (!this.checkDateChange(dateStr, this.data.end_date)) return false
       this.data.start_date = dateStr
     },
     endDateChange (calendarList, thisDateInfo, actDateInfo) {
-      let dateStr = actDateInfo.thisDate + '/' + actDateInfo.thisMonth + '/' + actDateInfo.thisYear
+      let dateStr = [actDateInfo.thisDate, actDateInfo.thisMonth, actDateInfo.thisYear].join('/')
       if (!this.checkDateChange(this.data.start_date, dateStr)) return false
-      this.data.end_date = actDateInfo.thisDate + '/' + actDateInfo.thisMonth + '/' + actDateInfo.thisYear
+      this.data.end_date = dateStr
     },
     // 检验开始、结束日期
     checkDateChange (startDateStr, endDateStr) {
