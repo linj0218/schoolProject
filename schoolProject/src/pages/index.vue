@@ -86,7 +86,7 @@
   import headerr from '@/components/header'
   import calendar from '@/components/calendar'
   import configuration from '@/components/configuration'
-  import {weekMap, monthMap, forEach} from '@/plugins/util'
+  import {weekMap, monthMap, forEach, formatDate} from '@/plugins/util'
   export default {
     components: {
       headerr, calendar, configuration
@@ -126,8 +126,8 @@
         let startDate = this.actWeekList[0]
         let endDate = this.actWeekList[6]
         this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
-          startDate: startDate.yearValue + '-' + startDate.monthValue + '-' + startDate.day,
-          endDate: endDate.yearValue + '-' + endDate.monthValue + '-' + endDate.day
+          startDate: formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd'),
+          endDate: formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
         }).then((res) => {
           let resData = res.data
 
