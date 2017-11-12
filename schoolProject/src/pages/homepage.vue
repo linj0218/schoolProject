@@ -53,8 +53,6 @@
                 <!-- 下拉组件 -->
                 <drapdown :input-value='seeCategoryId'
                           :input-name='seeCategoryName'
-                          :input-color-type='"circle"'
-                          :input-color='seeCategoryColor'
                           :input-select='seeCategorys'
                           @inputChange='seeCategoryChanged'>
                 </drapdown>
@@ -107,15 +105,17 @@
             <div class="tast_detail_right">
               <div class="title">Participants</div>
               <button type="button" class="btn btn-block" v-for='item in eventsUserGroupList'>
-                <span class="icon" :class='item.type'></span>{{item.name}}
+                <span class="icon icon_members"></span>{{item.group_alias_name}}
               </button>
               <button type="button" class="btn btn-block" v-for='item in eventsUserList'>
-                <span class="icon" :class='item.type'></span>{{item.name}}
+                <span class="icon icon_member"></span>{{item.nom}}
               </button>
               <div class="title margin_top">Viewed by</div>
-              <button type="button" class="btn btn-block" v-for='item in eventsGroupList'>
-                {{item.name}}
-              </button>
+              <template v-for='(item, index) in eventsGroupList'>
+                <button type="button" class="btn btn-block">
+                  {{item.group_alias_name}}
+                </button>
+              </template>
             </div>
             <div class="tast_detail_left">
               <div class="item">
@@ -141,7 +141,7 @@
               </div>
             </div>
             <div class="edit_btn">
-              <button type="button" class="btn btn-primary" @click='()=>{this.eventType="edit";this.showEvent=true}'>
+              <button type="button" class="btn btn-primary" @click='editEvent()'>
                 <span class="icon icon_btn_edit"></span> Edit Event
               </button>
               <button type="button" class="btn btn-danger" @click='deleteEvent()'>
@@ -186,8 +186,9 @@
     data () {
       return {
         data: {
+          initOver: false,
           banner: {
-            bannerText: 'aaa',
+            bannerText: '',
             showBanner: false
           }
         },
@@ -203,8 +204,7 @@
         // 当前日期所属的周数据
         actWeekList: [],
         // Places
-        placesList: [
-        ],
+        placesList: [],
         // part_2 ------------------------------------------------------------
         // Week info
         categoryId: '-1',
@@ -258,17 +258,19 @@
     },
     created () {
       this.getPlaces().then(() => {
-        let startDate = this.actWeekList[0]
-        let endDate = this.actWeekList[6]
-        let _startDate = formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd')
-        let _endDate = formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
-        this.getWeekInfoData(_startDate, _endDate)
+        this.data.initOver = true
+        this.getWeekInfoData().then(() => {
+          this.getViews()
+        })
       })
     },
     methods: {
       // 地址切换事件
       placeSelectedChanged (place) {
         place.isSelected = !place.isSelected
+        this.getWeekInfoData().then(() => {
+          this.getViews()
+        })
       },
       // 周视图切换上下周
       switchWeek (targetStr) {
@@ -308,12 +310,11 @@
         this.weekTableHead = tempList
 
         // 获取周视图数据
-        let startDateObj = tempList[0]
-        let startDate = startDateObj.thisYear + '-' + startDateObj.thisMonth + '-' + startDateObj.thisDate
-        let endDateObj = tempList[tempList.length - 1]
-        let endDate = endDateObj.thisYear + '-' + endDateObj.thisMonth + '-' + endDateObj.thisDate
-
-        this.getWeekInfoData(startDate, endDate)
+        if (this.data.initOver) {
+          this.getWeekInfoData().then(() => {
+            this.getViews()
+          })
+        }
       },
       getPlaces () {
         let self = this
@@ -335,13 +336,21 @@
         })
       },
       // 获取周视图数据
-      getWeekInfoData (startDate, endDate) {
+      getWeekInfoData () {
+        let startDate = this.actWeekList[0]
+        let endDate = this.actWeekList[6]
+        let _startDate = formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd')
+        let _endDate = formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
+
+        let placesList = []
+        this.placesList.map((o) => { if (o.isSelected) { placesList.push('\'' + o.name + '\'') } })
+
         let self = this
         let params = {
           dayFlag: 0,
-          startDate: formatDate(startDate, 'yyyy-mm-dd'),
-          endDate: formatDate(endDate, 'yyyy-mm-dd'),
-          place: this.placesList.map((o) => { return '\'' + o.name + '\'' }).join(',')
+          startDate: _startDate,
+          endDate: _endDate,
+          place: placesList.join(',')
         }
         return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
           data: JSON.stringify(params)
@@ -352,20 +361,18 @@
           let list = []
           self.weekTaskList = []
 
-          if (!resData || resData.length === 0) {
-            // 默认Event详情
-            this.weekTaskListActId = null
-            this.taskDetailInfo = {
-              title: '',
-              creater: '',
-              create_time: '',
-              categroy: '',
-              color: '',
-              place: '',
-              start: '',
-              end: '',
-              description: ''
-            }
+          // 默认Event详情
+          this.weekTaskListActId = null
+          this.taskDetailInfo = {
+            title: '',
+            creater: '',
+            create_time: '',
+            categroy: '',
+            color: '',
+            place: '',
+            start: '',
+            end: '',
+            description: ''
           }
 
           let count = 0
@@ -396,7 +403,7 @@
                     id: field.id,
                     spanNum: field.days,
                     color: 'bg_color_3',
-                    time: field.day_flag === 1 ? 'All day' : formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.start_date, 'dd/mm') + ' ' + field.end_time,
+                    time: field.day_flag === 1 ? 'All day' : formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.end_date, 'dd/mm') + ' ' + field.end_time,
                     title: field.title,
                     place: 'QingPu',
                     thisYear: item.thisYear,
@@ -424,7 +431,6 @@
                       end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
                       description: field.description
                     }
-                    this.getViews()
                   }
 
                   resData.splice(i2, 1, null)
@@ -532,23 +538,50 @@
           color: 'bg_color_3',
           place: 'QingPu',
           start: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
-          end: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
+          end: formatDate(item.end_date, 'dd/mm/yy') + ' ' + item.end_time,
           description: item.description
         }
         this.getViews()
       },
       // 获取Event详情右边的views
       getViews () {
+        if (!this.weekTaskListActId) {
+          this.eventsUserGroupList = []
+          this.eventsUserList = []
+          this.eventsGroupList = []
+          return false
+        }
+        let self = this
         this.$http.post('/sharedcalendarSettingCtl/event/getEventsDetailByEventId', {
           data: JSON.stringify({event_id: this.weekTaskListActId})
         }).then((res) => {
           if (res.success) {
-            console.log(res)
+            let resData = res.data
+
+            self.eventsUserGroupList = resData.eventsUserGroupList
+            self.eventsUserList = resData.eventsUserList
+            self.eventsGroupList = resData.eventsGroupList
           }
         })
       },
+      editEvent () {
+        if (!this.weekTaskListActId) return false
+        this.eventType = 'edit'
+        this.showEvent = true
+      },
+      // 删除Event
       deleteEvent () {
-        this.data.banner.showBanner = true
+        if (!this.weekTaskListActId) return false
+        if (!confirm('Confirm the deletion')) return false
+        this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
+          data: JSON.stringify({id: this.weekTaskListActId, operation_flag: -1})
+        }).then((res) => {
+          if (res.success) {
+            this.data.banner.bannerText = 'Delete Successed'
+            this.data.banner.showBanner = true
+            return res
+          }
+        })
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
@@ -688,10 +721,10 @@
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
           & > .btn{
-            border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;
-            .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}
-            .icon_member{left: 16px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
-            .icon_members{left: 16px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
+            border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;position: relative;padding: 6px 48px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
+            .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;position: absolute;}
+            .icon_member{left: 12px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
+            .icon_members{left: 12px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
           }
         }
         .edit_btn{

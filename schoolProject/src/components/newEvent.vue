@@ -130,7 +130,7 @@
         </div>
       </div>
       <div class="btns">
-        <button type="button" class="btn btn-primary" @click='save()'>Save</button>
+        <button type="button" class="btn btn-primary" @click='saveAndClose()'>Save</button>
         <button type="button" class="btn btn-danger" v-show='eventType=="new"' @click='saveAndContinue()'>Save and continue</button>
         <button type="button" class="btn cancel" @click='closeConfig()'>Cancel</button>
       </div>
@@ -283,7 +283,7 @@ export default {
         forEach(resData.categoryList, (i, item) => {
           if (resData.eventInfo && resData.eventInfo.category_id === item.id) {
             self.data.categoryName = item.category_no
-            self.data.color = item.category_remark
+            self.data.categoryColor = item.category_remark
           }
           categorys.push({
             value: item.id,
@@ -295,6 +295,10 @@ export default {
 
         let places = []
         forEach(resData.campusList, (i, item) => {
+          if (resData.eventInfo && resData.eventInfo.campus_name === item.campus_name) {
+            self.data.place_id = item.id
+            self.data.placeName = item.campus_name
+          }
           // TODO设置campus
           places.push({
             value: item.id,
@@ -305,6 +309,10 @@ export default {
 
         let rooms = []
         forEach(resData.placesList, (i, item) => {
+          if (resData.eventInfo && resData.eventInfo.place_name === item.place_name) {
+            self.data.roomId = item.id
+            self.data.roomName = item.campus_name
+          }
           // TODO设置place
           rooms.push({
             value: item.id,
@@ -345,6 +353,7 @@ export default {
           self.data.start_time = resData.eventInfo.start_time
           self.data.end_date = resData.eventInfo.end_date
           self.data.end_time = resData.eventInfo.end_time
+          self.data.description = resData.eventInfo.description
         }
 
         return res
@@ -398,16 +407,21 @@ export default {
         end_date: formatDate(this.data.end_date, 'yyyy-mm-dd'),
         end_time: this.data.day_flag ? '' : this.data.end_time,
         description: this.data.description,
-        place_id: this.data.place_id,
+        place_id: this.data.roomId,
         groupIds: groupIds.join(','),
         userIds: userIds.join(','),
         userGroupId: userGroupId.join(',')
       }
-      // console.log(reqData)
+      console.log(reqData)
 
       return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
         data: JSON.stringify(reqData)
       }).then((res) => {
+        return res
+      })
+    },
+    saveAndClose () {
+      this.save().then(() => {
         let result = {
           status: 'ok',
           data: {
@@ -415,7 +429,6 @@ export default {
           }
         }
         this.closeConfig(result)
-        return res
       })
     },
     saveAndContinue () {

@@ -98,7 +98,7 @@
   @import '../styles/mixin';
   .dropdown-menu > .isSelected > a{color: #337ab7;}
   .dropdown-menu a.background {color: #fff !important;}
-  .dropdown-menu > li > a{height: 34px;line-height: 28px;position: relative;}
+  .dropdown-menu > li > a{height: 34px;line-height: 28px;position: relative;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
   .dropdown-menu li:nth-child(odd) a{background: #f9f9f9;}
   .dropdown-menu .li_add a{
     color: #4E81BD;
