@@ -16,11 +16,14 @@
                        @keyup.enter='formSearch()'>
               </div>
             </div>
-            <div class="li" v-for='(item, index) in preSelectList'
-                 :class='{"disabled": item.isSelected}'>
-              <span class="icon" :class='item.type'></span>
-              {{item.name}}
-              <span class="action_icon icon_add" @click='addItem(index)'></span>
+            <div>
+              <template v-for='(item, index) in preSelectList'>
+                <div class="li" :class='{"disabled": item.selected}' v-show='item.show'>
+                  <span class="icon" :class='item.type'></span>
+                  {{item.name}}
+                  <span class="action_icon icon_add" @click='addItem(item, index)'></span>
+                </div>
+              </template>
             </div>
           </div>
           <div class="mid"></div>
@@ -47,18 +50,16 @@
       showPopup: {
         type: Boolean,
         required: true
+      },
+      dataList: {
+        type: Array,
+        required: true
       }
     },
     data () {
       return {
         searchValue: '',
-        preSelectList: [
-          {value: '1', type: 'icon_member', name: 'ClassRoom 101', isSelected: false},
-          {value: '2', type: 'icon_members', name: 'ConferenceRoom 301', isSelected: false},
-          {value: '3', type: 'icon_member', name: 'PlayGround', isSelected: false},
-          {value: '4', type: 'icon_member', name: 'Primaire', isSelected: false},
-          {value: '5', type: 'icon_member', name: 'SQLDebugger', isSelected: false}
-        ],
+        preSelectList: [],
         selectedList: []
       }
     },
@@ -66,31 +67,40 @@
     },
     watch: {
       showPopup () {
-        // TODO 查询列表
-        // console.log('1')
+        if (this.showPopup) {
+          this.preSelectList = this.dataList
+        }
       }
     },
     methods: {
-      // 回车查询
+      // 回车查询 忽略大小写
       formSearch () {
-        console.log(this.searchValue)
+        forEach(this.preSelectList, (i, item) => {
+          if (item.name.toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1) {
+            item.show = true
+          } else {
+            item.show = false
+          }
+        })
       },
       // 关闭弹窗
       closePopup () {
         this.$emit('closePopup')
       },
       // 添加选项
-      addItem (index) {
-        this.preSelectList[index].isSelected = true
-        this.selectedList.push(this.preSelectList[index])
+      addItem (item, index) {
+        item.selected = true
+        this.selectedList.push(item)
       },
       // 删除选项
       deleteItem (item, index) {
-        forEach(this.preSelectList, (i, obj) => {
-          if (obj.value === item.value) {
-            obj.isSelected = false
+        for (let i = 0, len = this.preSelectList.length; i < len; i++) {
+          let obj = this.preSelectList[i]
+          if (obj.id === item.id) {
+            obj.selected = false
+            break;
           }
-        })
+        }
         this.selectedList.splice(index, 1)
       },
       // 提交选项
@@ -118,12 +128,17 @@
       .popup_body{
         padding: 20px 30px 10px;
         .left .search_box{
-          padding: 7px;
+          padding: 7px;position: absolute;width: 100%;z-index: 1;background: #f5f5f5;
           .form-control{border-radius: 34px;background: url('../images/icon_search.png') 10px 50% no-repeat;height: 38px;padding-left: 40px;}
+        }
+        .left .search_box + div{
+          height: 100%;padding-top: 52px;overflow: auto;
+          &::-webkit-scrollbar {width: 0;height: 0;}
         }
         .left,
         .right{
-          flex: 1;height: 352px;background: #f5f5f5;border-radius: 1px;
+          flex: 1;height: 352px;background: #f5f5f5;border-radius: 1px;overflow: auto;position: relative;
+          &::-webkit-scrollbar {width: 0;height: 0;}
           .li{
             position: relative;line-height: 42px;padding: 0 16px;color: #333;text-align: left;
             .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}

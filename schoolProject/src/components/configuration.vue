@@ -23,39 +23,39 @@
                   <drapdown :input-value='groupsData.name'
                             :input-name='groupsData.name'
                             :input-select='groupsData.names'
-                            :input-add='true'
+                            :input-add='false'
                             :input-item-text='"New Groups"'
                             @addItem='showConfirm(addGroup)'
                             @inputChange='groupsChanged'>
                   </drapdown>
                   
-                  <span class="icon icon_edit" @click='showConfirm(groupsNameChanged, groupsData.name)'></span>
+                  <!-- <span class="icon icon_edit" @click='showConfirm(groupsNameChanged, groupsData.name)'></span> -->
                 </div>
               </div>
               <div class="member_box">
                 <span class="lab">Members:</span>
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in groupsData.membersList'>
-                    <span class="icon" :class='item.type'></span>
+                    <!-- <span class="icon" :class='item.type'></span> -->
                     {{item.name}}
-                    <span class="action_icon icon_delete" @click='delMember(index)'></span>
+                    <!-- <span class="action_icon icon_delete" @click='delMember(index)'></span> -->
                   </div>
                 </div>
               </div>
               <div class="button_box">
                 <span class="lab"></span>
                 <div class="name_value">
-                  <!--<button type="button" class="btn btn-primary" @click='()=>{this.groupsData.showAddParticipantPopup=true}'>
+                  <!-- <button type="button" class="btn btn-primary" @click='()=>{this.groupsData.showAddParticipantPopup=true}'>
                     <span class="icon_btn_add"></span> Members/Groups
-                  </button>-->
+                  </button> -->
 
-                  <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
+                  <!-- <add-participant-modal :show-popup='groupsData.showAddParticipantPopup'
                   	                     :data-list='[]'
                                          @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
-                  </add-participant-modal>
-                  <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
+                  </add-participant-modal> -->
+                  <!-- <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
                                          @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
-                  </add-participant-modal>
+                  </add-participant-modal> -->
 
                 </div>
               </div>
@@ -168,7 +168,7 @@
                 <span class="lab"></span>
                 <div class="name_value">
                   <button type="button" class="btn btn-primary" @click='showConfirm(addPlaceRoom)'>
-                    <span class="icon_btn_add"></span> New places
+                    <span class="icon_btn_add"></span> New room
                   </button>
                 </div>
               </div>
@@ -212,21 +212,21 @@
 
           </div>
 
-          <div v-show='tab==0' class="nav_content_1_btn">
-            <!--<button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>-->
-            <!--<button type="button" class="btn btn-danger" @click="submitGroupsAndMember(-1)">Delete</button>-->
-          </div>
+          <!-- <div v-show='tab==0' class="nav_content_1_btn">
+            <button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>
+            <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
+          </div> -->
           <div v-show='tab==1' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button>
-            <button type="button" class="btn btn-danger" @click="submitSchoolYear(-1)">Delete</button>
+            <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==2' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="submitPlaceAndRooms(0)">Save</button>
-            <button type="button" class="btn btn-danger" @click="submitPlaceAndRooms(-1)">Delete</button>
+            <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==3' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="submitCategory(0)">Save</button>
-            <button type="button" class="btn btn-danger" @click="submitCategory(-1)">Delete</button>
+            <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
         </div>
       </div>
@@ -485,7 +485,7 @@ export default {
     },
     addGroup (str) {
       this.groupsData.name = str
-      console.log(str)
+      // console.log(str)
     },
     addSchoolYear (str) {
       this.schoolYearData.yearId = 0
@@ -599,6 +599,7 @@ export default {
           .nav_content_1_btn{
             text-align: center;
             .btn{width: 150px;margin-top: 50px;}
+            .cancel{background: #ccc;color: #fff;}
           }
         }
       }

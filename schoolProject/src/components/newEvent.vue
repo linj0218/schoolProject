@@ -8,7 +8,8 @@
       <div class="content">
         
         <!-- 选择成员弹窗 -->
-        <add-participant-modal :showPopup='data.showAddParticipantPopup'
+        <add-participant-modal :show-popup='data.showAddParticipantPopup'
+                               :data-list='data.allParticipants'
                                @closePopup='closeAddParticipantModal'>
         </add-participant-modal>
 
@@ -328,7 +329,9 @@ export default {
           groupList.push({
             id: item.id,
             name: item.group_name,
-            type: 'icon_members'
+            type: 'icon_members',
+            selected: false,
+            show: true
           })
         })
         self.data.allParticipants = groupList
@@ -359,11 +362,13 @@ export default {
           userList.push({
             id: item.id,
             name: item.nom,
-            type: 'icon_member'
+            type: 'icon_member',
+            selected: false,
+            show: true
           })
         })
         self.data.allParticipants = self.data.allParticipants.concat(userList)
-        console.log(self.data.allParticipants.length)
+        // console.log(self.data.allParticipants.length)
       })
     },
     // 表单保存

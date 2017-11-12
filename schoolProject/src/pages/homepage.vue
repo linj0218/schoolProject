@@ -104,6 +104,16 @@
             </template>
           </div>
           <div class="task_detail" >
+            <div class="tast_detail_right">
+              <div class="title">Participants</div>
+              <button type="button" class="btn btn-block"><span></span>Administration o...</button>
+              <button type="button" class="btn btn-block"><span></span>Kan Chen</button>
+              <div class="title margin_top">Viewed by</div>
+              <button type="button" class="btn btn-block">Administration of Qi...</button>
+              <button type="button" class="btn btn-block">Educational Director</button>
+              <button type="button" class="btn btn-block">Administration of Pud...</button>
+              <button type="button" class="btn btn-block">Secondary school of...</button>
+            </div>
             <div class="tast_detail_left">
               <div class="item">
                 <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
@@ -126,16 +136,6 @@
               <div class="item">
                 <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
               </div>
-            </div>
-            <div class="tast_detail_right">
-              <div class="title">Participants</div>
-              <button type="button" class="btn btn-block"><span></span>Administration o...</button>
-              <button type="button" class="btn btn-block"><span></span>Kan Chen</button>
-              <div class="title margin_top">Viewed by</div>
-              <button type="button" class="btn btn-block">Administration of Qi...</button>
-              <button type="button" class="btn btn-block">Educational Director</button>
-              <button type="button" class="btn btn-block">Administration of Pud...</button>
-              <button type="button" class="btn btn-block">Secondary school of...</button>
             </div>
             <div class="edit_btn">
               <button type="button" class="btn btn-primary" @click='()=>{this.eventType="edit";this.showEvent=true}'>
@@ -640,7 +640,7 @@
       .task_detail{
         overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;
         .tast_detail_left{
-          float: left;width: 500px;padding: 20px 0;height: 100%;
+          overflow: hidden;padding: 20px 0;height: 100%;
           .item{
             line-height: 24px;padding: 10px 0;
             span{float: left;width: 140px;text-align: right;color: #999;font-size: 16px;margin-right: 10px;}
@@ -649,7 +649,7 @@
           }
         }
         .tast_detail_right{
-          overflow: hidden;padding: 30px 30px 94px 30px;height: 100%;position: relative;
+          float: right;width: 260px;padding: 30px 30px 94px 30px;height: 100%;position: relative;
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
           & > .btn{border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;}
