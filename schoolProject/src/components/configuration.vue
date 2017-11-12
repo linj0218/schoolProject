@@ -19,16 +19,17 @@
               <div class="name_box">
                 <span class="lab">Name:</span>
                 <div class="name_value">
+
                   <drapdown :input-value='groupsData.name'
                             :input-name='groupsData.name'
                             :input-select='groupsData.names'
                             :input-add='true'
                             :input-item-text='"New Groups"'
-                            @addItem='()=>{this.showConfirmPopup=true}'
+                            @addItem='showConfirm(addGroup)'
                             @inputChange='groupsChanged'>
                   </drapdown>
                   
-                  <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
+                  <span class="icon icon_edit" @click='showConfirm(groupNameChanged, groupsData.name)'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -67,10 +68,10 @@
                             :input-add='true'
                             :input-item-text='"New School years"'
                             @inputChange='yearChanged'
-                            @addItem='()=>{this.showConfirmPopup=true}'>
+                            @addItem='showConfirm()'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
+                  <span class="icon icon_edit" @click='showConfirm()'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -142,11 +143,11 @@
                             :input-select='placesData.places'
                             :input-add='true'
                             :input-item-text='"New Places"'
-                            @addItem='()=>{this.showConfirmPopup=true}'
+                            @addItem='showConfirm()'
                             @inputChange='placeChanged'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
+                  <span class="icon icon_edit" @click='showConfirm()'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -154,7 +155,7 @@
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in placesData.rooms'>
                     {{item.name}}
-                    <span class="action_icon icon_edit" @click='showConfirmPopupFunc()'></span>
+                    <span class="action_icon icon_edit" @click='showConfirm()'></span>
                     <span class="action_icon icon_delete" @click='deleteRoom(index)'></span>
                   </div>
                 </div>
@@ -162,7 +163,7 @@
               <div class="button_box">
                 <span class="lab"></span>
                 <div class="name_value">
-                  <button type="button" class="btn btn-primary" @click='showConfirmPopupFunc()'>
+                  <button type="button" class="btn btn-primary" @click='showConfirm()'>
                     <span class="icon_btn_add"></span> New places
                   </button>
                 </div>
@@ -178,11 +179,11 @@
                             :input-select='categoriesData.nameList'
                             :input-add='true'
                             :input-item-text='"New Categories"'
-                            @addItem='()=>{this.showConfirmPopup=true}'
+                            @addItem='showConfirm()'
                             @inputChange='categoriesNameChanged'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='()=>{this.showConfirmPopup=true}'></span>
+                  <span class="icon icon_edit" @click='showConfirm()'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -198,10 +199,15 @@
                 </div>
               </div>
             </div>
-            <confirm-modal :showPopup='showConfirmPopup'
-                           @closePopup='()=>{this.showConfirmPopup=false}'>
+
+            <confirm-modal :show-popup='textInput.showInputPopup'
+                           :input-value='textInput.inputValue'
+                           :input-method='textInput.inputMethod'
+                           @closePopup='closeTextInput'>
             </confirm-modal>
+
           </div>
+
           <div v-show='tab==0' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary">Save</button>
             <button type="button" class="btn btn-danger">Delete</button>
@@ -252,13 +258,6 @@ export default {
         membersList: [],
         showAddParticipantPopup: false
       },
-      groupId: '10086',
-      groupName: 'Administrator',
-      groups: [
-        {value: '10086', name: 'Administrator'},
-        {value: '10087', name: 'Administrator2'},
-        {value: '10088', name: 'Administrator3'}
-      ],
       // School years data
       schoolYearData: {
         yearId: '1',
@@ -296,7 +295,11 @@ export default {
         color: '',
         colorList: []
       },
-      showConfirmPopup: false,
+      textInput: {
+        showInputPopup: false,
+        inputValue: '',
+        inputMethod: ''
+      },
       showWeekSelectModal: false
     }
   },
@@ -390,7 +393,8 @@ export default {
         forEach(resData, (i, item) => {
           let obj = {
             value: item.id,
-            name: item.nom
+            name: item.nom,
+            type: 'icon_member'
           }
           objList.push(obj)
         })
@@ -407,10 +411,6 @@ export default {
     },
     delMember (index) {
       this.groupsData.membersList.splice(index, 1)
-    },
-    groupChanged (item) {
-      this.groupId = item.value
-      this.groupName = item.name
     },
     yearChanged (item) {
       this.schoolYearData.yearId = item.value
@@ -437,9 +437,6 @@ export default {
       // console.log(calendarList, thisDateInfo, actDateInfo)
       this.schoolYearData.endDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
     },
-    showConfirmPopupFunc () {
-      this.showConfirmPopup = true
-    },
     deleteRoom (index) {
       this.placesData.rooms.splice(index, 1)
     },
@@ -450,6 +447,22 @@ export default {
     },
     categoriesColorChanged (item) {
       this.categoriesData.color = item.value
+    },
+    // 编辑文本 --------------------------------------------------------------------
+    showConfirm (method, text) {
+      this.textInput.inputValue = text || ''
+      this.textInput.inputMethod = method || ''
+
+      this.textInput.showInputPopup = true
+    },
+    closeTextInput () {
+      this.textInput.showInputPopup = false
+    },
+    groupNameChanged (str) {
+      this.groupsData.name = str
+    },
+    addGroup (str) {
+      console.log(str)
     }
   }
 }

@@ -8,11 +8,11 @@
       </div>
       <div class="popup_body">
         <div class="input_box">
-          <input type="text" class="form-control">
+          <input type="text" class="form-control" v-model='text'>
         </div>
       </div>
       <div class="popup_footer">
-        <button type="button" class="btn btn-primary">Confirm</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
       </div>
     </div>
   </div>
@@ -24,18 +24,38 @@
       showPopup: {
         type: Boolean,
         required: true
+      },
+      inputMethod: {
+        type: [Function, String],
+        required: true
+      },
+      inputValue: {
+        type: String,
+        required: false,
+        default: ''
       }
     },
     data () {
       return {
-        searchValue: ''
+        text: '',
+        callback: ''
+      }
+    },
+    watch: {
+      showPopup () {
+        if (this.showPopup) {
+          this.text = this.inputValue
+          this.callback = this.inputMethod
+        }
       }
     },
     mounted () {
     },
     methods: {
-      formSearch () {
-        console.log(this.searchValue)
+      confirm () {
+        (this.callback)(this.text)
+
+        this.$emit('closePopup')
       },
       closePopup () {
         this.$emit('closePopup')
