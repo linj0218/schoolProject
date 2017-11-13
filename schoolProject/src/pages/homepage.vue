@@ -102,51 +102,53 @@
             </template>
           </div>
           <div class="task_detail" >
-            <div class="tast_detail_right">
-              <div class="title">Participants</div>
-              <button type="button" class="btn btn-block" v-for='item in eventsUserGroupList'>
-                <span class="icon icon_members"></span>{{item.group_name}}
-              </button>
-              <button type="button" class="btn btn-block" v-for='item in eventsUserList'>
-                <span class="icon icon_member"></span>{{item.nom}}
-              </button>
-              <div class="title margin_top">Viewed by</div>
-              <template v-for='(item, index) in eventsGroupList'>
-                <button type="button" class="btn btn-block">
-                  {{item.group_alias_name}}
+            <div v-if='weekTaskListActId!=null'>
+              <div class="tast_detail_right">
+                <div class="title">Participants</div>
+                <button type="button" class="btn btn-block" v-for='item in eventsUserGroupList'>
+                  <span class="icon icon_members"></span>{{item.group_name}}
                 </button>
-              </template>
-            </div>
-            <div class="tast_detail_left">
-              <div class="item">
-                <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
+                <button type="button" class="btn btn-block" v-for='item in eventsUserList'>
+                  <span class="icon icon_member"></span>{{item.nom}}
+                </button>
+                <div class="title margin_top">Viewed by</div>
+                <template v-for='(item, index) in eventsGroupList'>
+                  <button type="button" class="btn btn-block">
+                    {{item.group_alias_name}}
+                  </button>
+                </template>
               </div>
-              <div class="item">
-                <span>Creater:</span><div>{{taskDetailInfo.creater ? taskDetailInfo.creater : '-'}} {{taskDetailInfo.create_time ? taskDetailInfo.create_time : ''}}</div>
+              <div class="tast_detail_left">
+                <div class="item">
+                  <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
+                </div>
+                <div class="item">
+                  <span>Creater:</span><div>{{taskDetailInfo.creater ? taskDetailInfo.creater : '-'}} {{taskDetailInfo.create_time ? taskDetailInfo.create_time : ''}}</div>
+                </div>
+                <div class="item">
+                  <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
+                </div>
+                <div class="item">
+                  <span>Place:</span><div>{{taskDetailInfo.place ? taskDetailInfo.place : '-'}} {{taskDetailInfo.room}}</div>
+                </div>
+                <div class="item">
+                  <span>Start:</span><div>{{taskDetailInfo.start ? taskDetailInfo.start : '-'}}</div>
+                </div>
+                <div class="item">
+                  <span>End:</span><div>{{taskDetailInfo.end ? taskDetailInfo.end : '-'}}</div>
+                </div>
+                <div class="item">
+                  <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
+                </div>
               </div>
-              <div class="item">
-                <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
+              <div class="edit_btn">
+                <button type="button" class="btn btn-primary" @click='editEvent()'>
+                  <span class="icon icon_btn_edit"></span> Edit Event
+                </button>
+                <button type="button" class="btn btn-danger" @click='deleteEvent()'>
+                  <span class="icon icon_btn_del"></span> Delete
+                </button>
               </div>
-              <div class="item">
-                <span>Place:</span><div>{{taskDetailInfo.place ? taskDetailInfo.place : '-'}} {{taskDetailInfo.room}}</div>
-              </div>
-              <div class="item">
-                <span>Start:</span><div>{{taskDetailInfo.start ? taskDetailInfo.start : '-'}}</div>
-              </div>
-              <div class="item">
-                <span>End:</span><div>{{taskDetailInfo.end ? taskDetailInfo.end : '-'}}</div>
-              </div>
-              <div class="item">
-                <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
-              </div>
-            </div>
-            <div class="edit_btn">
-              <button type="button" class="btn btn-primary" @click='editEvent()'>
-                <span class="icon icon_btn_edit"></span> Edit Event
-              </button>
-              <button type="button" class="btn btn-danger" @click='deleteEvent()'>
-                <span class="icon icon_btn_del"></span> Delete
-              </button>
             </div>
           </div>
         </div>
@@ -730,6 +732,7 @@
       }
       .task_detail{
         overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;
+        &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
         .tast_detail_left{
           overflow: hidden;padding: 20px 0;height: 100%;
           .item{
