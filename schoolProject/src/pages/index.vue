@@ -56,7 +56,7 @@
                   <div>
 
                     <router-link tag='div' class="flex drawer_li"
-                                 :to='{path: "/homepage"}'
+                                 :to='{path: "/homepage", query: {year: actDateInfo.thisYear, month: actDateInfo.thisMonth, date: actDateInfo.thisDate}}'
                                  v-for='task in li.taskList'
                                  :key='task.id'>
                       <div><span class="point_icon"></span></div>

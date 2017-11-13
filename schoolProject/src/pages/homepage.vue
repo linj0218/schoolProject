@@ -251,6 +251,12 @@
       }
     },
     created () {
+      if (JSON.stringify(this.$route.query) !== '{}') {
+        this.actDateInfo.thisYear = this.$route.query.year
+        this.actDateInfo.thisMonth = this.$route.query.month
+        this.actDateInfo.thisDate = this.$route.query.date
+      }
+      // console.log(this.$route.query)
       this.initPageData().then(() => {
         this.data.initOver = true
         this.getWeekInfoData().then(() => {
