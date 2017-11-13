@@ -423,24 +423,32 @@
                   tempObj.source = field
 
                   // 默认选中第一个Event
-                  if (emptyWeekFlg &&
-                    this.actDateInfo.thisYear === taskStartYear &&
-                    this.actDateInfo.thisMonth === taskStartMonth &&
-                    this.actDateInfo.thisDate === taskStartDate) {
-                    emptyWeekFlg = false
-                    this.weekTaskListActId = field.id
-                    let createTime = field.create_time.split(' ')
-                    this.taskDetailInfo = {
-                      title: field.title,
-                      creater: field.create_userid,
-                      create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
-                      categroy: field.category_id,
-                      color: field.category_remark,
-                      place: field.campus_name,
-                      room: field.place_name,
-                      start: formatDate(field.start_date, 'dd/mm/yy') + ' ' + field.start_time,
-                      end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
-                      description: field.description
+                  if (emptyWeekFlg) {
+                    let endDateList = field.end_date.split('-')
+                    let taskEndYear = Number(endDateList[0])
+                    let taskEndMonth = Number(endDateList[1])
+                    let taskEndDate = Number(endDateList[2])
+
+                    let actDate = new Date(formatDate([this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-'))).getTime()
+                    let _taskStartDate = new Date(formatDate([taskStartYear, taskStartMonth, taskStartDate].join('-'))).getTime()
+                    let _taskEndDate = new Date(formatDate([taskEndYear, taskEndMonth, taskEndDate].join('-'))).getTime()
+
+                    if (actDate >= _taskStartDate && actDate <= _taskEndDate) {
+                      emptyWeekFlg = false
+                      this.weekTaskListActId = field.id
+                      let createTime = field.create_time.split(' ')
+                      this.taskDetailInfo = {
+                        title: field.title,
+                        creater: field.create_userid,
+                        create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
+                        categroy: field.category_id,
+                        color: field.category_remark,
+                        place: field.campus_name,
+                        room: field.place_name,
+                        start: formatDate(field.start_date, 'dd/mm/yy') + ' ' + field.start_time,
+                        end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
+                        description: field.description
+                      }
                     }
                   }
 
