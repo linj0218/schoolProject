@@ -125,9 +125,13 @@
       init () {
         let startDate = this.actWeekList[0]
         let endDate = this.actWeekList[6]
-        this.$http.post('/sharedcalendarDetailCtl/queryWeekEvents', {
+        let params = {
+          dayFlag: 0,
           startDate: formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd'),
           endDate: formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
+        }
+        this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
+          data: JSON.stringify(params)
         }).then((res) => {
           let resData = res.data
 
