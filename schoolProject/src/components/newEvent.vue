@@ -246,7 +246,9 @@ export default {
       }
       if (this.showConfig) {
         this.findEvent().then(() => {
-          this.getUsers()
+          this.getUsers().then(() => {
+            this.getViews()
+          })
         })
         // this.getPlaces()
       }
@@ -349,19 +351,63 @@ export default {
           self.data.title = resData.eventInfo.title
           self.data.category_id = resData.eventInfo.category_id
           self.data.day_flag = !!resData.eventInfo.day_flag
-          self.data.start_date = resData.eventInfo.start_date
+          self.data.start_date = formatDate(resData.eventInfo.start_date, 'dd/mm/yyyy')
           self.data.start_time = resData.eventInfo.start_time
-          self.data.end_date = resData.eventInfo.end_date
+          self.data.end_date = formatDate(resData.eventInfo.end_date, 'dd/mm/yyyy')
           self.data.end_time = resData.eventInfo.end_time
           self.data.description = resData.eventInfo.description
         }
         return res
       })
     },
+    // 获取groups users
+    getViews () {
+      if (!this.eventId || this.eventId === 0) return false
+      let self = this
+      this.$http.post('/sharedcalendarSettingCtl/event/getEventsDetailByEventId', {
+        data: JSON.stringify({event_id: this.eventId})
+      }).then((res) => {
+        if (res.success) {
+          let resData = res.data
+          // console.log(resData)
+          for (let i = 0, len = resData.eventsGroupList.length; i < len; i++) {
+            let item = resData.eventsGroupList[i]
+            for (let i2 = 2, len2 = self.data.viewedList.length; i2 < len2; i2++) {
+              let item2 = self.data.viewedList[i2]
+              if (item.group_id === item2.id) {
+                item2.value = true
+              }
+            }
+          }
+          let participants = []
+          forEach(resData.eventsUserGroupList, (i, item) => {
+            let tempObj = {
+              id: item.id,
+              name: item.group_alias_name,
+              type: 'icon_members',
+              selected: true,
+              show: true
+            }
+            participants.push(tempObj)
+          })
+          forEach(resData.eventsUserList, (i, item) => {
+            let tempObj = {
+              id: item.user_id,
+              name: item.nom,
+              type: 'icon_member',
+              selected: true,
+              show: true
+            }
+            participants.push(tempObj)
+          })
+          self.data.participants = participants
+        }
+      })
+    },
     // 获取users
     getUsers () {
       let self = this
-      this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
+      return this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
         data: JSON.stringify({flag: 1})
       }).then((res) => {
         let resData = res.data
@@ -377,6 +423,7 @@ export default {
         })
         self.data.allParticipants = self.data.allParticipants.concat(userList)
         // console.log(self.data.allParticipants.length)
+        return res
       })
     },
     // 表单保存
