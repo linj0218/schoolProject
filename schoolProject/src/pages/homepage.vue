@@ -128,7 +128,7 @@
                 <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
               </div>
               <div class="item">
-                <span>Place:</span><div>{{taskDetailInfo.place ? taskDetailInfo.place : '-'}}</div>
+                <span>Place:</span><div>{{taskDetailInfo.place ? taskDetailInfo.place : '-'}} {{taskDetailInfo.room}}</div>
               </div>
               <div class="item">
                 <span>Start:</span><div>{{taskDetailInfo.start ? taskDetailInfo.start : '-'}}</div>
@@ -233,6 +233,7 @@
           categroy: '',
           color: '',
           place: '',
+          room: '',
           start: '',
           end: '',
           description: ''
@@ -375,6 +376,7 @@
             categroy: '',
             color: '',
             place: '',
+            room: '',
             start: '',
             end: '',
             description: ''
@@ -411,6 +413,7 @@
                     time: field.day_flag === 1 ? 'All day' : formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.end_date, 'dd/mm') + ' ' + field.end_time,
                     title: field.title,
                     place: field.campus_name,
+                    room: field.place_name,
                     thisYear: item.thisYear,
                     thisMonth: item.thisMonth,
                     thisDate: item.thisDate
@@ -432,6 +435,7 @@
                       categroy: field.category_id,
                       color: field.category_remark,
                       place: field.campus_name,
+                      room: field.place_name,
                       start: formatDate(field.start_date, 'dd/mm/yy') + ' ' + field.start_time,
                       end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
                       description: field.description
@@ -451,6 +455,7 @@
                   time: '',
                   title: '',
                   place: '',
+                  room: '',
                   thisYear: item.thisYear,
                   thisMonth: item.thisMonth,
                   thisDate: item.thisDate}
@@ -550,6 +555,7 @@
           categroy: item.category_id,
           color: item.category_remark,
           place: item.campus_name,
+          room: item.place_name,
           start: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
           end: formatDate(item.end_date, 'dd/mm/yy') + ' ' + item.end_time,
           description: item.description

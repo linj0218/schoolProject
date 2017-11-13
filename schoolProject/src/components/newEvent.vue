@@ -247,6 +247,7 @@ export default {
       if (this.showConfig) {
         this.findEvent().then(() => {
           this.getUsers().then(() => {
+            if (this.eventType === 'new') return
             this.getViews()
           })
         })
@@ -526,10 +527,6 @@ export default {
     endTimeChanged (item) {
       this.data.end_time = item.value
     },
-    roomChanged (item) {
-      this.data.roomId = item.value
-      this.data.roomName = item.name
-    },
     categoryChanged (item) {
       this.data.category_id = item.value
       this.data.categoryName = item.name
@@ -538,6 +535,26 @@ export default {
     placeChanged (item) {
       this.data.place_id = item.value
       this.data.placeName = item.name
+
+      this.data.roomId =
+      this.data.roomName = ''
+      this.$http.post('/sharedcalendarSettingCtl/event/getPlacesByCampusId', {
+        data: JSON.stringify({campus_id: item.value})
+      }).then((res) => {
+        let rooms = []
+        forEach(res.data, (i, item) => {
+          let tempObj = {
+            value: item.id,
+            name: item.place_name
+          }
+          rooms.push(tempObj)
+        })
+        this.data.rooms = rooms
+      })
+    },
+    roomChanged (item) {
+      this.data.roomId = item.value
+      this.data.roomName = item.name
     },
     // 关闭Participant弹窗
     closeAddParticipantModal (resData) {
