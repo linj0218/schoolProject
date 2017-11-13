@@ -510,14 +510,16 @@
       },
       // Event弹窗关闭
       closeEventModal () {
-        this.showEvent = !this.showEvent
         let bannerInfo = arguments[0]
-        if (!bannerInfo) return
-        if (bannerInfo.status === 'ok') {
+        if (bannerInfo && bannerInfo.status === 'ok') {
           this.data.banner = {
             bannerText: bannerInfo.data.msg,
             showBanner: true
           }
+        }
+        let closeFlg = arguments[1]
+        if (closeFlg === undefined) {
+          this.showEvent = !this.showEvent
         }
       },
       categoryChanged (item) {

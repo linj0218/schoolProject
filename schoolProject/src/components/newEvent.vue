@@ -440,7 +440,7 @@ export default {
         userIds: userIds.join(','),
         userGroupId: userGroupId.join(',')
       }
-      console.log(reqData)
+      // console.log(reqData)
 
       return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
         data: JSON.stringify(reqData)
@@ -449,7 +449,7 @@ export default {
       })
     },
     saveAndClose () {
-      this.save().then(() => {
+      this.save().then((res) => {
         let result = {
           status: 'ok',
           data: {
@@ -460,7 +460,14 @@ export default {
       })
     },
     saveAndContinue () {
-      this.save().then(() => {
+      this.save().then((res) => {
+        let result = {
+          status: 'ok',
+          data: {
+            msg: 'Save Successed'
+          }
+        }
+        this.closeConfig(result, 'false')
         this.data = JSON.parse(JSON.stringify(this.copyData))
       })
     },
@@ -545,7 +552,8 @@ export default {
     },
     // 关闭弹窗
     closeConfig () {
-      if (arguments[0]) this.$emit('closeEventModal', arguments[0])
+      if (arguments[1]) this.$emit('closeEventModal', arguments[0], arguments[1])
+      else if (arguments[0]) this.$emit('closeEventModal', arguments[0])
       else this.$emit('closeEventModal')
     }
   }

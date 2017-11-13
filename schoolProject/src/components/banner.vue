@@ -42,7 +42,7 @@
 <style lang='scss' scoped>
   @import '../styles/mixin';
   .banner{
-    background: #48CFAD;color: #fff;font-size: 32px;text-align: center;position: absolute;width: 100%;top: 0;left: 0;height: 0;line-height: 68px;overflow: hidden;transition: all 0.2s;-webkit-transition:all 0.2s;
+    background: #48CFAD;color: #fff;font-size: 32px;text-align: center;position: absolute;width: 100%;top: 0;left: 0;height: 0;line-height: 68px;overflow: hidden;transition: all 0.2s;-webkit-transition:all 0.2s;z-index: 999;
   }
   .banner.isFixed{position: fixed;top: 0;}
   .banner.on{height: 68px;}
