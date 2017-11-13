@@ -105,7 +105,7 @@
             <div class="tast_detail_right">
               <div class="title">Participants</div>
               <button type="button" class="btn btn-block" v-for='item in eventsUserGroupList'>
-                <span class="icon icon_members"></span>{{item.group_alias_name}}
+                <span class="icon icon_members"></span>{{item.group_name}}
               </button>
               <button type="button" class="btn btn-block" v-for='item in eventsUserList'>
                 <span class="icon icon_member"></span>{{item.nom}}
@@ -407,10 +407,10 @@
                   tempObj = {
                     id: field.id,
                     spanNum: field.days,
-                    color: 'bg_color_3',
+                    color: field.category_remark,
                     time: field.day_flag === 1 ? 'All day' : formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.end_date, 'dd/mm') + ' ' + field.end_time,
                     title: field.title,
-                    place: 'QingPu',
+                    place: field.campus_name,
                     thisYear: item.thisYear,
                     thisMonth: item.thisMonth,
                     thisDate: item.thisDate
@@ -430,8 +430,8 @@
                       creater: field.create_userid,
                       create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
                       categroy: field.category_id,
-                      color: 'bg_color_3',
-                      place: 'QingPu',
+                      color: field.category_remark,
+                      place: field.campus_name,
                       start: formatDate(field.start_date, 'dd/mm/yy') + ' ' + field.start_time,
                       end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
                       description: field.description
@@ -516,6 +516,9 @@
             bannerText: bannerInfo.data.msg,
             showBanner: true
           }
+          this.getWeekInfoData().then(() => {
+            this.getViews()
+          })
         }
         let closeFlg = arguments[1]
         if (closeFlg === undefined) {
@@ -545,8 +548,8 @@
           creater: item.creater,
           create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
           categroy: item.category_id,
-          color: 'bg_color_3',
-          place: 'QingPu',
+          color: item.category_remark,
+          place: item.campus_name,
           start: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
           end: formatDate(item.end_date, 'dd/mm/yy') + ' ' + item.end_time,
           description: item.description
@@ -591,6 +594,10 @@
             this.data.banner.showBanner = true
             return res
           }
+        }).then(() => {
+          this.getWeekInfoData().then(() => {
+            this.getViews()
+          })
         })
       },
       getMonthWeek () {
