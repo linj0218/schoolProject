@@ -202,7 +202,7 @@ export default {
         allParticipants: [],
         showAddParticipantPopup: false,
         // Viewed by
-        viewedAll: false,
+        viewedAll: true,
         viewedList: []
       },
       copyData: {}
@@ -313,7 +313,7 @@ export default {
         forEach(resData.groupsList, (i, item) => {
           viewedList.push({
             id: item.id,
-            value: false,
+            value: true,
             name: item.group_name
           })
         })
