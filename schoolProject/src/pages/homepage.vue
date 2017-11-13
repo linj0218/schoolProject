@@ -275,7 +275,7 @@
           })
           self.placesList = placesList
 
-          let categorys = [{id: '0', name: 'All', color: ''}]
+          let categorys = [{value: '0', name: 'All', color: ''}]
           forEach(resData.categoryList, (i, item) => {
             let obj = {
               value: item.id,
