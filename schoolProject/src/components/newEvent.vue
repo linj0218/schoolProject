@@ -352,16 +352,27 @@ export default {
       }).then((res) => {
         if (res.success) {
           let resData = res.data
-          // console.log(resData)
+
           for (let i = 0, len = resData.eventsGroupList.length; i < len; i++) {
             let item = resData.eventsGroupList[i]
-            for (let i2 = 2, len2 = self.data.viewedList.length; i2 < len2; i2++) {
+
+            for (let i2 = 0, len2 = self.data.viewedList.length; i2 < len2; i2++) {
               let item2 = self.data.viewedList[i2]
               if (item.group_id === item2.id) {
+                console.log(item2.name)
                 item2.value = true
               }
             }
           }
+
+          let flg = true
+          forEach(this.data.viewedList, (i, obj) => {
+            if (!obj.value) {
+              flg = false
+            }
+          })
+          this.data.viewedAll = flg
+
           let participants = []
           forEach(resData.eventsUserGroupList, (i, item) => {
             let tempObj = {
