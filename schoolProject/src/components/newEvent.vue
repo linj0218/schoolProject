@@ -250,28 +250,10 @@ export default {
             this.getViews()
           })
         })
-        // this.getPlaces()
       }
     }
   },
   methods: {
-    // 获取地址
-    getPlaces () {
-      this.$http.post('/sharedcalendarDetailCtl/queryCampus', {}).then((res) => {
-        let resData = res.data
-        this.data.places = []
-        forEach(resData, (i, item) => {
-          this.data.places.push({
-            value: item.id,
-            name: item.campus_name
-          })
-          if (i === '0') {
-            this.data.place_id = item.id
-            this.data.placeName = item.campus_name
-          }
-        })
-      })
-    },
     // 初始化Event
     findEvent () {
       let self = this
@@ -444,7 +426,7 @@ export default {
       })
 
       let reqData = {
-        id: this.eventId || 0,
+        id: this.eventType === 'new' ? 0 : this.eventId || 0,
         title: this.data.title,
         day_flag: this.data.day_flag ? 1 : 0,
         category_id: this.data.category_id,

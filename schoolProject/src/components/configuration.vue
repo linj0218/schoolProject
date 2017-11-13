@@ -308,7 +308,13 @@ export default {
     }
   },
   mounted () {
-    this.init()
+  },
+  watch: {
+    showConfig () {
+      if (this.showConfig) {
+        this.init()
+      }
+    }
   },
   methods: {
     init () {

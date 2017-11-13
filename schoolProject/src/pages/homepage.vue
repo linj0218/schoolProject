@@ -210,16 +210,7 @@
         categoryId: '-1',
         categoryName: 'All',
         categoryColor: '',
-        categorys: [
-          {value: '-1', name: 'All', color: ''},
-          {value: '2', name: 'Primaire', color: 'bg_color_1'},
-          {value: '3', name: 'Secondaire', color: 'bg_color_2'},
-          {value: '4', name: 'Orientation (salon, etc.)', color: 'bg_color_3'},
-          {value: '9', name: 'Examens', color: 'bg_color_4'},
-          {value: '11', name: 'Certifications', color: 'bg_color_5'},
-          {value: '14', name: 'Concours', color: 'bg_color_6'},
-          {value: '15', name: 'IT', color: 'bg_color_7'}
-        ],
+        categorys: [],
         seeCategoryId: '-1',
         seeCategoryName: 'All',
         seeCategoryColor: '',
@@ -257,7 +248,7 @@
       }
     },
     created () {
-      this.getPlaces().then(() => {
+      this.initPageData().then(() => {
         this.data.initOver = true
         this.getWeekInfoData().then(() => {
           this.getViews()
@@ -265,6 +256,38 @@
       })
     },
     methods: {
+      initPageData () {
+        let self = this
+        return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
+          data: JSON.stringify({event_id: 0})
+        }).then((res) => {
+          let resData = res.data
+
+          let placesList = []
+          forEach(resData.campusList, (i, item) => {
+            let obj = {
+              id: item.id,
+              name: item.campus_name,
+              address: item.address,
+              isSelected: true
+            }
+            placesList.push(obj)
+          })
+          self.placesList = placesList
+
+          let categorys = [{id: '-1', name: 'All', color: ''}]
+          forEach(resData.categoryList, (i, item) => {
+            let obj = {
+              id: item.id,
+              name: item.category_no,
+              color: item.category_remark
+            }
+            categorys.push(obj)
+          })
+          self.categorys = categorys
+          return res
+        })
+      },
       // 地址切换事件
       placeSelectedChanged (place) {
         place.isSelected = !place.isSelected
@@ -316,25 +339,6 @@
           })
         }
       },
-      getPlaces () {
-        let self = this
-        return this.$http.post('/sharedcalendarDetailCtl/queryCampus', {}).then((res) => {
-          let resData = res.data
-          let placesList = []
-          forEach(resData, (i, item) => {
-            let obj = {
-              id: item.id,
-              name: item.campus_name,
-              address: item.address,
-              isSelected: true
-            }
-            placesList.push(obj)
-          })
-          self.placesList = placesList
-
-          return res
-        })
-      },
       // 获取周视图数据
       getWeekInfoData () {
         let startDate = this.actWeekList[0]
@@ -350,7 +354,8 @@
           dayFlag: 0,
           startDate: _startDate,
           endDate: _endDate,
-          place: placesList.join(',')
+          place: placesList.join(','),
+          category_id: this.categoryId
         }
         return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
           data: JSON.stringify(params)
@@ -519,6 +524,9 @@
         this.categoryId = item.value
         this.categoryName = item.name
         this.categoryColor = item.color
+        this.getWeekInfoData().then(() => {
+          this.getViews()
+        })
       },
       seeCategoryChanged (item) {
         this.seeCategoryId = item.value
