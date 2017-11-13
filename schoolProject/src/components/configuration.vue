@@ -336,11 +336,11 @@ export default {
         })
         this.groupsData.names = objList
         let placesList = []
-        forEach(resData.placesList, (i, item) => {
-          let data = resData.placesList[i]
+        forEach(resData.campusList, (i, item) => {
+          let data = resData.campusList[i]
           let obj = {
             value: data.id,
-            name: data.place_name
+            name: data.campus_name
           }
           placesList.push(obj)
         })
