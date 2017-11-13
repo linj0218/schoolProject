@@ -207,11 +207,11 @@
         placesList: [],
         // part_2 ------------------------------------------------------------
         // Week info
-        categoryId: '-1',
+        categoryId: '0',
         categoryName: 'All',
         categoryColor: '',
         categorys: [],
-        seeCategoryId: '-1',
+        seeCategoryId: '0',
         seeCategoryName: 'All',
         seeCategoryColor: '',
         seeCategorys: [
@@ -275,10 +275,10 @@
           })
           self.placesList = placesList
 
-          let categorys = [{id: '-1', name: 'All', color: ''}]
+          let categorys = [{id: '0', name: 'All', color: ''}]
           forEach(resData.categoryList, (i, item) => {
             let obj = {
-              id: item.id,
+              value: item.id,
               name: item.category_no,
               color: item.category_remark
             }
