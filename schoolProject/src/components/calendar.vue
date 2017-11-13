@@ -185,6 +185,12 @@
       changeActWeek (index, selectModel) {
         if (selectModel === 'week') {
           this.actWeek = index
+          this.actDateInfo = {
+            thisYear: this.calendarList[index][0].yearValue,
+            thisMonth: this.calendarList[index][0].monthValue,
+            thisDate: this.calendarList[index][0].day
+          }
+          this.syncData()
         }
       },
       // 切换日期

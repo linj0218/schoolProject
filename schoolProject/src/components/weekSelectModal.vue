@@ -9,17 +9,17 @@
       <div class="popup_body">
         <div class="">
 
-          <calendar :showMonthInfo='false'
+          <calendar :show-month-info='false'
                     :showABWeek='false'
-                    :inputActDateInfo='actDateInfo'
-                    :selectModel='"week"'
+                    :input-act-date-info='actDateInfo'
+                    :select-model='"week"'
                     @syncDataFunc='syncDataFunc'>
           </calendar>
 
         </div>
       </div>
       <div class="popup_footer">
-        <button type="button" class="btn btn-primary">Confirm</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
       </div>
     </div>
   </div>
@@ -35,7 +35,8 @@
       },
       inputValue: {
         type: String,
-        required: true
+        required: false,
+        default: ''
       }
     },
     components: {
@@ -44,25 +45,39 @@
     data () {
       return {
         isOpen: false,
-        actDateInfo: null // 目标日期
+        actDateInfo: null, // 目标日期
+        actWeekInfo: null // 选中周
       }
     },
     created () {
-      var dateStrList = this.inputValue.split('-')
-      this.actDateInfo = {
-        thisYear: Number(dateStrList[0]),
-        thisMonth: Number(dateStrList[1]),
-        thisDate: Number(dateStrList[2])
+      if (this.inputValue === '') {
+        let date = new Date()
+        this.actDateInfo = {
+          thisYear: date.getFullYear(),
+          thisMonth: date.getMonth() + 1,
+          thisDate: date.getDate()
+        }
+      } else {
+        var dateStrList = this.inputValue.split('-')
+        this.actDateInfo = {
+          thisYear: Number(dateStrList[0]),
+          thisMonth: Number(dateStrList[1]),
+          thisDate: Number(dateStrList[2])
+        }
       }
     },
     methods: {
       closePopup () {
         this.$emit('closePopup')
       },
-      syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
-        // console.log(calendarList, thisDateInfo, actDateInfo)
+      syncDataFunc (calendarList, thisDateInfo, actDateInfo, actWeekInfo) {
+        // console.log(calendarList, thisDateInfo, actDateInfo, actWeekInfo)
+        this.actWeekInfo = actWeekInfo
         // this.isOpen = false
         this.$emit('dataChange', calendarList, thisDateInfo, actDateInfo)
+      },
+      confirm () {
+        this.$emit('inputChange', this.actWeekInfo)
       }
     }
   }

@@ -10,6 +10,7 @@
         <!-- 选择成员弹窗 -->
         <add-participant-modal :show-popup='data.showAddParticipantPopup'
                                :data-list='data.allParticipants'
+                               :data-checked-list='data.participants'
                                @closePopup='closeAddParticipantModal'>
         </add-participant-modal>
 
@@ -99,7 +100,9 @@
               <div class="participants">
                 <div style="height: 100%;overflow: auto;">
                   <div class="li" v-for='(item, index) in data.participants'>
-                    <span class="icon" :class='item.type'></span>{{item.name}}<span class="action_icon icon_delete" @click='deleteParticipant(index)'></span>
+                    <span class="icon" :class='item.type'></span>
+                    {{item.name}}
+                    <span class="action_icon icon_delete" @click='deleteParticipant(item, index)'></span>
                   </div>
                 </div>
                 <button type="button" class="btn btn-primary" @click='()=>{this.data.showAddParticipantPopup=true}'>
@@ -359,7 +362,7 @@ export default {
             for (let i2 = 0, len2 = self.data.viewedList.length; i2 < len2; i2++) {
               let item2 = self.data.viewedList[i2]
               if (item.group_id === item2.id) {
-                console.log(item2.name)
+                // console.log(item2.name)
                 item2.value = true
               }
             }
@@ -376,7 +379,7 @@ export default {
           let participants = []
           forEach(resData.eventsUserGroupList, (i, item) => {
             let tempObj = {
-              id: item.id,
+              id: item.group_id,
               name: item.group_alias_name,
               type: 'icon_members',
               selected: true,
@@ -395,6 +398,17 @@ export default {
             participants.push(tempObj)
           })
           self.data.participants = participants
+
+          // 同步allParticipants中选中项
+          forEach(self.data.participants, (i, item) => {
+            for (let i2 = 0, len2 = self.data.allParticipants.length; i2 < len2; i2++) {
+              let item2 = self.data.allParticipants[i2]
+              if (item.id === item2.id) {
+                item2.selected = true
+                break;
+              }
+            }
+          })
         }
       })
     },
@@ -575,7 +589,7 @@ export default {
       }
     },
     // 删除Participant
-    deleteParticipant (index) {
+    deleteParticipant (item, index) {
       this.data.participants.splice(index, 1)
     },
     // 关闭弹窗

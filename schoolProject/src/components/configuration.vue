@@ -102,7 +102,7 @@
                 <span class="lab long_text">Define First Week A/B:</span>
                 <div class="name_value">
 
-                  <drapdown :input-value='schoolYearData.weekId'
+                  <drapdown :input-value='schoolYearData.weekName'
                             :input-name='schoolYearData.weekName'
                             :input-color-type='"background"'
                             :input-color='schoolYearData.weekColor'
@@ -117,7 +117,7 @@
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in schoolYearData.holidays'>
                     {{item.name}}
-                    <span class="action_icon icon_delete" @click='delHoliday(index)'></span>
+                    <span class="action_icon icon_delete" @click='delHoliday(item)'></span>
                   </div>
                 </div>
               </div>
@@ -129,8 +129,8 @@
                   </button>
 
                   <week-select-modal :show-popup='showWeekSelectModal'
-                                     :input-value='"2017-10-22"'
-                                     @closePopup='()=>{this.showWeekSelectModal=false}'>
+                                     @closePopup='()=>{this.showWeekSelectModal=false}'
+                                     @inputChange='selectWeekChanged'>
                   </week-select-modal>
 
                 </div>
@@ -240,7 +240,7 @@ import dateSelect from '@/components/dateSelect'
 import confirmModal from '@/components/confirmModal'
 import addParticipantModal from '@/components/addParticipantModal'
 import weekSelectModal from '@/components/weekSelectModal'
-import {forEach} from '@/plugins/util'
+import {forEach, formatDate} from '@/plugins/util'
 export default {
   props: {
     showConfig: {
@@ -264,27 +264,18 @@ export default {
       },
       // School years data
       schoolYearData: {
-        yearId: '1',
-        yearName: '2017-2018 school years',
-        years: [
-          {value: '1', name: '2017-2018 school years'},
-          {value: '2', name: '2018-2019 school years'},
-          {value: '3', name: '2019-2020 school years'}
-        ],
+        yearId: '',
+        yearName: '',
+        years: [],
         startDate: '2017-10-22',
-        endDate: '2017-10-23',
-        weekId: '1',
+        endDate: '2017-10-22',
         weekName: 'A',
         weekColor: 'bg_color_10',
         weeks: [
-          {value: '1', name: 'A', color: 'bg_color_10'},
-          {value: '2', name: 'B', color: 'bg_color_11'}
+          {value: 'A', name: 'A', color: 'bg_color_10'},
+          {value: 'B', name: 'B', color: 'bg_color_11'}
         ],
-        holidays: [
-          {value: '1', name: '1.Oct,2017 - 8.Oct,2017'},
-          {value: '2', name: '25.Dec,2017 - 3.Jan,2018'},
-          {value: '3', name: '25.Dec,2017 - 3.Jan,2018'}
-        ]
+        holidays: []
       },
       // Places
       placesData: {
@@ -312,7 +303,9 @@ export default {
   watch: {
     showConfig () {
       if (this.showConfig) {
-        this.init()
+        this.init().then(() => {
+          this.getHoliday()
+        })
       }
     }
   },
@@ -320,7 +313,7 @@ export default {
     init () {
       let self = this
       let param = '{"event_id": 0}'
-      this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
+      return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
         data: param
       }).then((res) => {
         let resData = res.data
@@ -366,17 +359,26 @@ export default {
         this.categoriesData.colorList = colorList
         let schoolYearList = []
         forEach(resData.schoolYearList, (i, item) => {
-          let data = resData.schoolYearList[i]
+          if (i === '0') {
+            self.schoolYearData.yearId = item.id
+            self.schoolYearData.yearName = item.year_label
+            self.schoolYearData.startDate = item.start_date
+            self.schoolYearData.endDate = item.end_date
+            self.schoolYearData.weekName = item.week_flag
+            self.schoolYearData.weekColor = item.week_flag === 'A' ? 'bg_color_10' : 'bg_color_11'
+          }
           let obj = {
-            value: data.id,
-            name: data.year_label,
-            startDate: data.start_date,
-            endDate: data.end_date,
-            weekName: data.week_flag
+            value: item.id,
+            name: item.year_label,
+            startDate: item.start_date,
+            endDate: item.end_date,
+            weekName: item.week_flag
           }
           schoolYearList.push(obj)
         })
         this.schoolYearData.years = schoolYearList
+
+        return res
       })
     },
     getRoomsById (id) {
@@ -431,14 +433,69 @@ export default {
       this.schoolYearData.startDate = item.startDate
       this.schoolYearData.endDate = item.endDate
       this.schoolYearData.weekName = item.weekName
+      this.schoolYearData.weekColor = item.weekName === 'A' ? 'bg_color_10' : 'bg_color_11'
+
+      this.getHoliday()
     },
     weekChanged (item) {
-      this.schoolYearData.weekId = item.value
       this.schoolYearData.weekName = item.name
       this.schoolYearData.weekColor = item.color
     },
-    delHoliday (index) {
-      this.schoolYearData.holidays.splice(index, 1)
+    getHoliday () {
+      this.$http.post('/sharedcalendarSettingCtl/event/getHoildayByYearId', {
+        data: JSON.stringify({schoolyear_id: this.schoolYearData.yearId})
+      }).then((res) => {
+        let holidays = []
+        forEach(res.data, (i, item) => {
+          let tempObj = {
+            value: item.id,
+            start_date: item.start_date,
+            end_date: item.end_date,
+            name: [item.start_date, item.end_date].join(' - ')
+          }
+          holidays.push(tempObj)
+        })
+
+        this.schoolYearData.holidays = holidays
+      })
+    },
+    addHoliday (weekList) {
+      if (this.schoolYearData.yearId === '') return false
+      let start = weekList[0]
+      let end = weekList[6]
+
+      let params = {
+        schoolyear_id: this.schoolYearData.yearId,
+        start_date: formatDate([start.yearValue, start.monthValue, start.day].join('-'), 'yyyy-mm-dd'),
+        end_date: formatDate([end.yearValue, end.monthValue, end.day].join('-'), 'yyyy-mm-dd'),
+        operation_flag: 0
+      }
+      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYearHoilday', {
+        data: JSON.stringify(params)
+      }).then((res) => {
+        if (res.success) {
+          this.getHoliday()
+          alert('SUCCESS')
+        }
+      })
+    },
+    delHoliday (item) {
+      if (this.schoolYearData.yearId === '') return false
+      if (!confirm('Confirm the deletion')) return false
+
+      let params = {
+        schoolyear_id: this.schoolYearData.yearId,
+        id: item.value,
+        operation_flag: 1
+      }
+      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYearHoilday', {
+        data: JSON.stringify(params)
+      }).then((res) => {
+        if (res.success) {
+          this.getHoliday()
+          alert('SUCCESS')
+        }
+      })
     },
     placeChanged (item) {
       this.placesData.value = item.value
@@ -585,6 +642,11 @@ export default {
           this.init()
         }
       })
+    },
+    selectWeekChanged (weekList) {
+      // console.log(weekList)
+      this.addHoliday(weekList)
+      this.showWeekSelectModal = false
     }
   }
 }

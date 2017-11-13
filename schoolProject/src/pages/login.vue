@@ -8,7 +8,7 @@
       </div>
       <div class="form_cont">
         <input class="form-control" type="text" placeholder="User" v-model='userName'>
-        <input class="form-control" type="password" placeholder="Password" v-model='passWord'>
+        <input class="form-control" type="password" placeholder="Password" v-model='passWord' @keyup.enter='login()'>
       </div>
       <div class="forget_pwd">
         <a href="javascripe:void(0);">Forget your Password?</a>
@@ -47,6 +47,7 @@ export default {
         if (!res.success) { // 登录失败
           alert('Login failed')
         } else {
+          sessionStorage.setItem('userinfo', JSON.stringify(res.data))
           self.$router.push({ path: '/' })
         }
       })

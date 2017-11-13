@@ -12,6 +12,10 @@ axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
 axios.interceptors.request.use((config) => {
   // console.log('请求参数：', config)
   if (config.method === 'post') {
+    let param = JSON.parse(config.data.data)
+    let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+    param.userId = userinfo.id
+    config.data = {data: JSON.stringify(param)}
     config.data = qs.stringify(config.data)
   }
   return config
