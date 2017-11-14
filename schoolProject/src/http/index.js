@@ -14,9 +14,10 @@ axios.interceptors.request.use((config) => {
   if (config.method === 'post') {
     let param = JSON.parse(config.data.data)
     let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
-    param.userId = userinfo.id
-    config.data = {data: JSON.stringify(param)}
-    config.data = qs.stringify(config.data)
+    if (userinfo !== null) {
+      param.userId = userinfo.id
+    }
+    config.data = qs.stringify({data: JSON.stringify(param)})
   }
   return config
 }, (err) => {
