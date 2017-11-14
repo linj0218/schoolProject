@@ -8,7 +8,7 @@ const Homepage = r => require.ensure([], () => r(require('@/pages/homepage')), '
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/test',
@@ -29,3 +29,13 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (sessionStorage.getItem('userinfo') !== null || to.path === '/login') {
+    next()
+  } else {
+    next({path: '/login'})
+  }
+})
+
+export default router

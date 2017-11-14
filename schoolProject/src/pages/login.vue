@@ -11,7 +11,7 @@
         <input class="form-control" type="password" placeholder="Password" v-model='passWord' @keyup.enter='login()'>
       </div>
       <div class="forget_pwd">
-        <a href="javascripe:void(0);">Forget your Password?</a>
+        <!-- <a href="javascripe:void(0);">Forget your Password?</a> -->
       </div>
       <div class="login_btn">
         <button type="button" class="btn btn-primary btn-block" @click='login()'>
@@ -32,6 +32,12 @@ export default {
       passWord: ''
     }
   },
+  created () {
+    let cacheUserName = localStorage.getItem('USERNAME')
+    if (cacheUserName) {
+      this.userName = cacheUserName
+    }
+  },
   methods: {
     login () {
       if (this.userName === '' || this.passWord === '') {
@@ -47,6 +53,7 @@ export default {
         if (!res.success) { // 登录失败
           alert('Login failed')
         } else {
+          localStorage.setItem('USERNAME', this.userName)
           sessionStorage.setItem('userinfo', JSON.stringify(res.data))
           self.$router.push({ path: '/' })
         }
