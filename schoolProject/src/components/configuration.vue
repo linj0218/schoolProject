@@ -7,7 +7,7 @@
       </div>
       <div class="content">
         <div class="nav_tab flex">
-          <div><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div>
+          <!-- <div><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div> -->
           <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>School years</div></div>
           <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>Places</div></div>
           <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>Categories</div></div>
@@ -218,6 +218,7 @@
           </div> -->
           <div v-show='tab==1' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button>
+            <button type="button" class="btn btn-danger" @click="submitSchoolYear(-1)">Delete</button>
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==2' class="nav_content_1_btn">
@@ -254,7 +255,7 @@ export default {
   },
   data () {
     return {
-      tab: 0,
+      tab: 1,
       // Groups data
       groupsData: {
         name: '',
@@ -611,6 +612,9 @@ export default {
       })
     },
     submitSchoolYear (opt) {
+      if (opt === -1) {
+        if (!confirm('Confirm the deletion')) return false
+      }
       let param = JSON.stringify({'id': this.schoolYearData.yearId, 'year_label': this.schoolYearData.yearName, 'start_date': this.schoolYearData.startDate, 'end_date': this.schoolYearData.endDate, 'week_flag': this.schoolYearData.weekName, 'operation_flag': opt})
       this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYear', {
         data: param

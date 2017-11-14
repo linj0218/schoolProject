@@ -10,7 +10,6 @@
         <!-- 选择成员弹窗 -->
         <add-participant-modal :show-popup='data.showAddParticipantPopup'
                                :data-list='data.allParticipants'
-                               :data-checked-list='data.participants'
                                @closePopup='closeAddParticipantModal'>
         </add-participant-modal>
 
@@ -587,7 +586,7 @@ export default {
     closeAddParticipantModal (resData) {
       this.data.showAddParticipantPopup = false
       if (resData && resData.status === 'ok') {
-        this.data.participants = resData.data
+        this.data.participants = this.data.participants.concat(resData.data)
       }
     },
     // 删除Participant

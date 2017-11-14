@@ -78,7 +78,7 @@
               </div>
               <div class="li" v-for='li in weekTaskList'>
                 <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
-                  <div>
+                  <div :title='td.title' data-toggle="tooltip">
                     <div :class='td.spanNum==1 && td.time!="All day" ? "" : td.color'>
                       <div class="title_line" v-text='td.spanNum==1 && td.time!="All day" ? "" : td.title'></div>
                     </div>
@@ -216,12 +216,7 @@
         seeCategoryId: '0',
         seeCategoryName: 'All',
         seeCategoryColor: '',
-        seeCategorys: [
-          {value: '-1', name: 'All', color: ''},
-          {value: '1', name: 'Admin', color: 'bg_color_1'},
-          {value: '2', name: 'Super User', color: 'bg_color_2'},
-          {value: '3', name: 'User', color: 'bg_color_3'}
-        ],
+        seeCategorys: [],
         weekTableHead: [
         ],
         weekTaskListActId: null,
@@ -294,6 +289,18 @@
             categorys.push(obj)
           })
           self.categorys = categorys
+
+          // groups
+          let seeCategorys = [{value: '0', name: 'All'}]
+          forEach(resData.groupsList, (i, item) => {
+            let obj = {
+              value: item.id,
+              name: item.group_name
+            }
+            seeCategorys.push(obj)
+          })
+          self.seeCategorys = seeCategorys
+
           return res
         })
       },
@@ -364,7 +371,8 @@
           startDate: _startDate,
           endDate: _endDate,
           place: placesList.join(','),
-          category_id: this.categoryId
+          category_id: this.categoryId,
+          group_id: this.seeCategoryId
         }
         return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
           data: JSON.stringify(params)
@@ -445,9 +453,9 @@
                       let createTime = field.create_time.split(' ')
                       this.taskDetailInfo = {
                         title: field.title,
-                        creater: field.create_userid,
+                        creater: field.nom,
                         create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
-                        categroy: field.category_id,
+                        categroy: field.category_no,
                         color: field.category_remark,
                         place: field.campus_name,
                         room: field.place_name,
@@ -558,6 +566,9 @@
         this.seeCategoryId = item.value
         this.seeCategoryName = item.name
         this.seeCategoryColor = item.color
+        this.getWeekInfoData().then(() => {
+          this.getViews()
+        })
       },
       // 点击任务列表同步Event详情
       weekTaskListActIndexChanged (o) {
@@ -566,9 +577,9 @@
         let createTime = item.create_time.split(' ')
         this.taskDetailInfo = {
           title: item.title,
-          creater: item.creater,
+          creater: item.nom,
           create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
-          categroy: item.category_id,
+          categroy: item.category_no,
           color: item.category_remark,
           place: item.campus_name,
           room: item.place_name,
@@ -713,7 +724,7 @@
             .task_4 > div,
             .task_5 > div,
             .task_6 > div,
-            .task_7 > div{padding: 4px 8px;height: 100%;display: table;width: 100%;}
+            .task_7 > div{padding: 4px 8px;height: 100%;display: table;width: 100%;position: relative;}
             .task_1 > div > div,
             .task_2 > div > div,
             .task_3 > div > div,
@@ -776,5 +787,9 @@
         }
       }
     }
+    [data-toggle="tooltip"]:before{content: '';position: absolute;width: 0;height: 0;border: 10px solid transparent;border-bottom-color: #000;left: 50%;bottom: 0;transform: translateX(-50%);z-index: 1;display: none;}
+    [data-toggle="tooltip"]:after{content: attr(title);position: absolute;bottom: -30px;overflow: hidden;white-space: nowrap;left: 50%;background: #000;color: #fff;padding: 5px 20px;transform: translateX(-50%);z-index: 1;border-radius: 5px;display: none;}
+    [data-toggle="tooltip"]:hover:before,
+    [data-toggle="tooltip"]:hover:after{display: block;}
   }
 </style>

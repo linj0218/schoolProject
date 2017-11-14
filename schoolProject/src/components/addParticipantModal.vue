@@ -55,11 +55,6 @@
       dataList: {
         type: Array,
         required: true
-      },
-      // 已选中数据源
-      dataCheckedList: {
-        type: Array,
-        required: true
       }
     },
     data () {
@@ -75,7 +70,7 @@
       showPopup () {
         if (this.showPopup) {
           this.preSelectList = this.dataList
-          this.selectedList = this.dataCheckedList
+          this.selectedList = []
         }
       }
     },

@@ -13,7 +13,7 @@
       <li v-for='item in inputSelect'
           :class='{"isSelected": item.value == inputValue}'
           @click='chooseItem(item)'>
-        <a href="javascript:void(0)"
+        <a href="javascript:void(0)" :title='item.name'
            :class='[{"background": inputColorType=="background"}, inputColorType=="background" && item.color]'>
          {{item.name}}
          <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle" && item.color'></span>
@@ -105,7 +105,7 @@
     .icon_li_add{display: inline-block;width: 16px;height: 16px;background: url('../images/icon_li_add.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;margin-right: 5px;}
   }
   .btn-default{
-    width: 100%;position: relative;text-align: left;height: 34px;padding: 4px;
+    width: 100%;position: relative;text-align: left;height: 34px;padding: 4px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
     .button_bg{display: block;margin-right: 35px;padding-left: 8px;height: 24px;line-height: 24px;border-radius: 2px;}
   }
   .btn-default.background .button_bg{color: #fff;}
@@ -113,5 +113,5 @@
   .icon_circle{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);border-radius: 50%;display: none;}
   .circle .icon_circle{display: inline-block;}
   .li_icon_circle{position: absolute;width: 22px;height: 22px;right: 15px;top: 50%;transform: translateY(-50%);border-radius: 50%;}
-  .opening>.dropdown-menu{width: 100%;}
+  .open > .dropdown-menu{width: 100%;overflow: hidden;}
 </style>

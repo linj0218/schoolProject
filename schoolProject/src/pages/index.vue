@@ -250,11 +250,11 @@
       }
     }
     .part_2{
-      overflow: hidden;background: #fff;box-shadow: 0 0 1px #ddd;height: 900px;padding: 0 20px;
+      overflow: hidden;background: #fff;box-shadow: 0 0 1px #ddd;min-height: 900px;padding: 0 20px;
       .calendar{
         .title{font-size: 40px;color: #4A90E2;text-align: center;height: 85px;line-height: 85px;border-bottom: 1px solid #f5f5f5;cursor: pointer;}
         .title:hover{text-decoration: underline;}
-        .homePageLink{right: 25px;font-size: 20px;color: #00f;display: block;text-align: right;padding: 0 20px;}
+        .homePageLink{right: 25px;font-size: 20px;color: #00f;display: block;text-align: right;padding: 10px 20px;}
         .week_cal{
           padding: 0 20px;color: #003;
           .drawer_title{background: rgba(74,144,226,0.1);line-height: 40px;font-size: 18px;padding-left: 16px;border-bottom: 1px solid #fff;border-left: 4px solid #4A90E2;}

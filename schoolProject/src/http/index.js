@@ -13,9 +13,11 @@ axios.interceptors.request.use((config) => {
   // console.log('请求参数：', config)
   if (config.method === 'post') {
     let param = JSON.parse(config.data.data)
-    let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
-    if (userinfo !== null) {
-      param.userId = userinfo.id
+    if (config.url.indexOf('/login') === -1) {
+      let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+      if (userinfo !== null) {
+        param.userId = userinfo.id
+      }
     }
     config.data = qs.stringify({data: JSON.stringify(param)})
   }

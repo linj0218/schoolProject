@@ -3,9 +3,9 @@
       <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
       <div class="title">LFS Applications Portal</div>
       <div class="userInfo">
-        Welcome Administrator, <span>William Trang</span>
+        Welcome {{permission}}, <span>{{userName}}</span>
         <div class="icon head_portrait">
-          WT
+          {{shortName}}
           <ul class="drop_down">
             <div class="icon_other1"></div>
             <li><span class="icon1"></span>Profile</li>
@@ -36,8 +36,19 @@
     },
     data () {
       return {
-        language: 'english'
+        language: 'english',
+        userName: '',
+        permission: '',
+        shortName: ''
       }
+    },
+    mounted () {
+      let userInfo = JSON.parse(sessionStorage.getItem('userinfo'))
+      this.userName = userInfo.nom
+      this.permission = userInfo.permission_title
+      let name = userInfo.nom.split(' ')
+      let shortName = [name[0].substr(0, 1).toUpperCase(), name[1].substr(0, 1).toUpperCase()].join('')
+      this.shortName = shortName
     },
     methods: {
       changeLanguage (lang) {
