@@ -250,7 +250,7 @@
         eventType: null
       }
     },
-    created () {
+    mounted () {
       if (JSON.stringify(this.$route.query) !== '{}') {
         this.actDateInfo.thisYear = this.$route.query.year
         this.actDateInfo.thisMonth = this.$route.query.month
