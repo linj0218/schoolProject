@@ -202,7 +202,7 @@ export default {
         allParticipants: [],
         showAddParticipantPopup: false,
         // Viewed by
-        viewedAll: true,
+        viewedAll: false,
         viewedList: []
       },
       copyData: {}
@@ -309,11 +309,13 @@ export default {
         })
         self.data.rooms = rooms
 
+        if (self.eventType === 'new') self.data.viewedAll = true
+        else self.data.viewedAll = false
         let viewedList = []
         forEach(resData.groupsList, (i, item) => {
           viewedList.push({
             id: item.id,
-            value: true,
+            value: self.eventType === 'new',
             name: item.group_name
           })
         })
