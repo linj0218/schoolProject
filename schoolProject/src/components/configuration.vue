@@ -690,7 +690,7 @@ export default {
             .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
             .member_box{margin-top: 14px;}
             .member_value{
-              display: inline-block;width: 350px;height: 293px;background: #fff;border: 1px solid #ddd;border-radius: 2px;text-align: left;overflow: auto;
+              display: inline-block;width: 350px;height: 293px;background: #fff;border: 1px solid #ddd;border-radius: 2px;text-align: left;overflow-y: auto;overflow-x: hidden;
               .li{
                 position: relative;line-height: 34px;padding: 0 16px;color: #333;
                 .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}

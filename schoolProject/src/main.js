@@ -4,6 +4,7 @@ import Vue from 'vue'
 import router from '@/router'
 import axios from '@/http'
 
+import 'babel-polyfill'
 import 'jquery/dist/jquery.min.js'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
