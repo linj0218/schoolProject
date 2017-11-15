@@ -224,20 +224,32 @@ export default {
     this.data.startTimeName =
     this.data.end_time =
     this.data.endTimeName = hour
-    this.data.startTimeList = this.data.endTimeList = [
+    this.data.startTimeList =
+    this.data.endTimeList = [
+      {value: '0:00 AM', name: '0:00 AM'},
+      {value: '1:00 AM', name: '1:00 AM'},
+      {value: '2:00 AM', name: '2:00 AM'},
+      {value: '3:00 AM', name: '3:00 AM'},
+      {value: '4:00 AM', name: '4:00 AM'},
+      {value: '5:00 AM', name: '5:00 AM'},
+      {value: '6:00 AM', name: '6:00 AM'},
       {value: '7:00 AM', name: '7:00 AM'},
       {value: '8:00 AM', name: '8:00 AM'},
       {value: '9:00 AM', name: '9:00 AM'},
       {value: '10:00 AM', name: '10:00 AM'},
       {value: '11:00 AM', name: '11:00 AM'},
-      {value: '12:00 AM', name: '12:00 AM'},
+      {value: '0:00 PM', name: '0:00 PM'},
       {value: '1:00 PM', name: '1:00 PM'},
       {value: '2:00 PM', name: '2:00 PM'},
       {value: '3:00 PM', name: '3:00 PM'},
       {value: '4:00 PM', name: '4:00 PM'},
       {value: '5:00 PM', name: '5:00 PM'},
       {value: '6:00 PM', name: '6:00 PM'},
-      {value: '7:00 PM', name: '7:00 PM'}
+      {value: '7:00 PM', name: '7:00 PM'},
+      {value: '8:00 PM', name: '8:00 PM'},
+      {value: '9:00 PM', name: '9:00 PM'},
+      {value: '10:00 PM', name: '10:00 PM'},
+      {value: '11:00 PM', name: '11:00 PM'}
     ]
     this.copyData = JSON.parse(JSON.stringify(this.data))
   },

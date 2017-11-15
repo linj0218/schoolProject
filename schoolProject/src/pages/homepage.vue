@@ -107,18 +107,24 @@
             <div v-if='weekTaskListActId!=null'>
               <div class="tast_detail_right">
                 <div class="title">Participants</div>
-                <button type="button" class="btn btn-block" v-for='item in eventsUserGroupList'>
-                  <span class="icon icon_members"></span>{{item.group_name}}
-                </button>
-                <button type="button" class="btn btn-block" v-for='item in eventsUserList'>
-                  <span class="icon icon_member"></span>{{item.nom}}
-                </button>
+                <template v-for='(item, index) in eventsUserGroupList'>
+                  <button type="button" class="btn btn-block" v-if='index < 4'>
+                    <span class="icon icon_members"></span>{{item.group_name}}
+                  </button>
+                </template>
+                <template v-for='(item, index) in eventsUserList'>
+                  <button type="button" class="btn btn-block" v-if='eventsUserGroupList.length < 4 && index < 4 - eventsUserGroupList.length'>
+                    <span class="icon icon_member"></span>{{item.nom}}
+                  </button>
+                </template>
+                <div v-if='eventsUserGroupList.length + eventsUserList.length > 4'>...</div>
                 <div class="title margin_top">Viewed by</div>
                 <template v-for='(item, index) in eventsGroupList'>
-                  <button type="button" class="btn btn-block">
+                  <button type="button" class="btn btn-block" v-if='index < 4'>
                     {{item.group_alias_name}}
                   </button>
                 </template>
+                <div v-if='eventsGroupList.length > 4'>...</div>
               </div>
               <div class="tast_detail_left">
                 <div class="item">
@@ -145,9 +151,9 @@
               </div>
               <div class="edit_btn">
                 <button type="button" class="btn btn-primary" @click='editEvent()'>
-                  <span class="icon icon_btn_edit"></span> Edit Event
+                  <span class="icon icon_btn_edit"></span> Edit
                 </button>
-                <button type="button" class="btn btn-danger" @click='deleteEvent()'>
+                <button type="button" class="btn btn-danger" @click='confirm(deleteEvent)'>
                   <span class="icon icon_btn_del"></span> Delete
                 </button>
               </div>
@@ -170,6 +176,12 @@
               :show-banner='data.banner.showBanner'
               @closeBanner='()=>{this.data.banner.showBanner=false}'>
       </banner>
+
+      <delete-confirm-modal :show-popup='data.confirm.showPopup'
+                            :input-value='data.confirm.text'
+                            :input-method='data.confirm.inputMethod'
+                            @closePopup='() => { this.data.confirm.showPopup = false }'>
+      </delete-confirm-modal>
     </div>
   </div>
 </template>
@@ -181,11 +193,12 @@
   import calendar from '@/components/calendar'
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
+  import deleteConfirmModal from '@/components/deleteConfirmModal'
   import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate} from '@/plugins/util'
 
   export default {
     components: {
-      headerr, banner, calendar, configuration, newEvent, drapdown
+      headerr, banner, calendar, configuration, newEvent, drapdown, deleteConfirmModal
     },
     data () {
       return {
@@ -194,6 +207,11 @@
           banner: {
             bannerText: '',
             showBanner: false
+          },
+          confirm: {
+            showPopup: false,
+            text: 'Confirm the Deletion?',
+            inputMethod: ''
           }
         },
         // part_1 ------------------------------------------------------------
@@ -513,7 +531,7 @@
           return res
         })
       },
-      // 周视图是否是空行
+      // 周视图隐藏空行
       showli (li) {
         let showFlg = false
         forEach(li, (i, item) => {
@@ -628,15 +646,16 @@
           }
         })
       },
+      // Event详情编辑按钮
       editEvent () {
         if (!this.weekTaskListActId) return false
         this.eventType = 'edit'
         this.showEvent = true
       },
-      // 删除Event
+      // Event详情删除按钮
       deleteEvent () {
         if (!this.weekTaskListActId) return false
-        if (!confirm('Confirm the deletion')) return false
+        // if (!confirm('Confirm the deletion')) return false
         this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
           data: JSON.stringify({id: this.weekTaskListActId, operation_flag: -1})
         }).then((res) => {
@@ -650,6 +669,13 @@
             this.getViews()
           })
         })
+      },
+      // 打开confirm组件
+      confirm (method, text) {
+        if (text) this.data.confirm.text = text
+        this.data.confirm.inputMethod = method || ''
+
+        this.data.confirm.showPopup = true
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
@@ -798,7 +824,7 @@
         }
         .edit_btn{
           position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;
-          .btn{margin: 0 5px;}
+          .btn{margin: 0 5px;width: 120px;}
           .icon{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;margin-right: 5px;}
           .icon_btn_edit{background: url('../images/icon_btn_edit.png') 50% 50% / auto auto no-repeat;}
           .icon_btn_del{background: url('../images/icon_btn_del.png') 50% 50% / auto auto no-repeat;}

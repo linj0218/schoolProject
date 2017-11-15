@@ -113,5 +113,5 @@
   .icon_circle{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);border-radius: 50%;display: none;}
   .circle .icon_circle{display: inline-block;}
   .li_icon_circle{position: absolute;width: 22px;height: 22px;right: 15px;top: 50%;transform: translateY(-50%);border-radius: 50%;}
-  .open > .dropdown-menu{width: 100%;overflow: hidden;}
+  .open > .dropdown-menu{width: 100%;overflow-y: auto;max-height: 300px;overflow-x: hidden;}
 </style>
