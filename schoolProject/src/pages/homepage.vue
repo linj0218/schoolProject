@@ -76,15 +76,17 @@
               <div class="table_body_bg flex">
                 <div v-for='th in weekTableHead' :class='{"act": th.isActDate}' @click='changeActDateFromWeekview(th)'></div>
               </div>
-              <div class="li" v-for='li in weekTaskList'>
-                <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
-                  <div :title='td.title' data-toggle="tooltip" v-show='!(td.spanNum==1 && td.time!="All day")'>
-                    <div :class='td.color'>
-                      <div class="title_line" v-text='td.title'></div>
+              <template v-for='li in weekTaskList'>
+                <div class="li" v-show='showli(li)'>
+                  <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
+                    <div :title='td.title' v-show='!(td.spanNum==1 && td.time!="All day")'>
+                      <div :class='td.color'>
+                        <div class="title_line" v-text='td.title'></div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </template>
             </div>
           </div>
         </div>
@@ -511,6 +513,14 @@
           return res
         })
       },
+      // 周视图是否是空行
+      showli (li) {
+        let showFlg = false
+        forEach(li, (i, item) => {
+          if (item.spanNum > 1 || item.time === 'All day') showFlg = true
+        })
+        return showFlg
+      },
       // Event list校验显示当前日期对应的Events
       showTask (item) {
         if (item.spanNum === 0) return false
@@ -795,9 +805,5 @@
         }
       }
     }
-    [data-toggle="tooltip"]:before{content: '';position: absolute;width: 0;height: 0;border: 10px solid transparent;border-bottom-color: #000;left: 50%;bottom: 0;transform: translateX(-50%);z-index: 1;display: none;}
-    [data-toggle="tooltip"]:after{content: attr(title);position: absolute;bottom: -30px;overflow: hidden;white-space: nowrap;left: 50%;background: #000;color: #fff;padding: 5px 20px;transform: translateX(-50%);z-index: 1;border-radius: 5px;display: none;}
-    [data-toggle="tooltip"]:hover:before,
-    [data-toggle="tooltip"]:hover:after{display: block;}
   }
 </style>
