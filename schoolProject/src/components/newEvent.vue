@@ -496,6 +496,9 @@ export default {
         }
         this.closeConfig(result, 'false')
         this.data = JSON.parse(JSON.stringify(this.copyData))
+        this.findEvent().then(() => {
+          this.getUsers()
+        })
       })
     },
     checkAllDayChange () {
