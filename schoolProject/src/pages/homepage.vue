@@ -78,9 +78,9 @@
               </div>
               <div class="li" v-for='li in weekTaskList'>
                 <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
-                  <div :title='td.title' data-toggle="tooltip">
-                    <div :class='td.spanNum==1 && td.time!="All day" ? "" : td.color'>
-                      <div class="title_line" v-text='td.spanNum==1 && td.time!="All day" ? "" : td.title'></div>
+                  <div :title='td.title' data-toggle="tooltip" v-show='!(td.spanNum==1 && td.time!="All day")'>
+                    <div :class='td.color'>
+                      <div class="title_line" v-text='td.title'></div>
                     </div>
                   </div>
                 </div>
@@ -422,11 +422,19 @@
                   if (field.days > 1) {
                     i = i + field.days - 1
                   }
+                  let time = ''
+                  if (field.day_flag === 1) {
+                    time = 'All day'
+                  } else if (field.days > 1) {
+                    time = formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.end_date, 'dd/mm') + ' ' + field.end_time
+                  } else {
+                    time = field.start_time + ' - ' + field.end_time
+                  }
                   tempObj = {
                     id: field.id,
                     spanNum: field.days,
                     color: field.category_remark,
-                    time: field.day_flag === 1 ? 'All day' : formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.end_date, 'dd/mm') + ' ' + field.end_time,
+                    time: time,
                     title: field.title,
                     place: field.campus_name,
                     room: field.place_name,

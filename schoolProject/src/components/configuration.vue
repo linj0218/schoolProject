@@ -331,10 +331,13 @@ export default {
         this.groupsData.names = objList
         let placesList = []
         forEach(resData.campusList, (i, item) => {
-          let data = resData.campusList[i]
+          if (i === '0') {
+            self.placesData.name = item.campus_name
+          }
+          self.getRoomsById(item.id)
           let obj = {
-            value: data.id,
-            name: data.campus_name
+            value: item.id,
+            name: item.campus_name
           }
           placesList.push(obj)
         })
