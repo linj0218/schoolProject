@@ -9,7 +9,7 @@
           <!-- 日历组件 -->
           <calendar :inputActDateInfo='actDateInfo'
                     :showMonthInfo='false'
-                    @afterInit='syncDataFunc'
+                    @afterInit='afterInit'
                     @syncDataFunc='syncDataFunc'>
           </calendar>
 
@@ -109,7 +109,7 @@
                 <div class="title">Participants</div>
                 <template v-for='(item, index) in eventsUserGroupList'>
                   <button type="button" class="btn btn-block" v-if='index < 4'>
-                    <span class="icon icon_members"></span>{{item.group_name}}
+                    <span class="icon icon_members"></span>{{item.group_alias_name}}
                   </button>
                 </template>
                 <template v-for='(item, index) in eventsUserList'>
@@ -119,12 +119,12 @@
                 </template>
                 <div v-if='eventsUserGroupList.length + eventsUserList.length > 4'>...</div>
                 <div class="title margin_top">Viewed by</div>
-                <template v-for='(item, index) in eventsGroupList'>
-                  <button type="button" class="btn btn-block" v-if='index < 4'>
+                <button type="button" class="btn btn-block" v-if='eventsGroupList.length == 7'>All Employees</button>
+                <template v-for='(item, index) in eventsGroupList' v-else>
+                  <button type="button" class="btn btn-block">
                     {{item.group_alias_name}}
                   </button>
                 </template>
-                <div v-if='eventsGroupList.length > 4'>...</div>
               </div>
               <div class="tast_detail_left">
                 <div class="item">
@@ -265,11 +265,16 @@
         eventType: null
       }
     },
+    created () {
+      if (JSON.stringify(this.$route.query) !== '{}') {
+        this.actDateInfo.thisYear = Number(this.$route.query.year)
+        this.actDateInfo.thisMonth = Number(this.$route.query.month)
+        this.actDateInfo.thisDate = Number(this.$route.query.date)
+      }
+    },
     mounted () {
       if (JSON.stringify(this.$route.query) !== '{}') {
-        this.actDateInfo.thisYear = this.$route.query.year
-        this.actDateInfo.thisMonth = this.$route.query.month
-        this.actDateInfo.thisDate = this.$route.query.date
+        this.createWeekInfo()
       }
       // console.log(this.$route.query)
       this.initPageData().then(() => {
@@ -390,9 +395,11 @@
           dayFlag: 0,
           startDate: _startDate,
           endDate: _endDate,
-          place: placesList.join(','),
           category_id: this.categoryId,
           group_id: this.seeCategoryId
+        }
+        if (placesList.length > 0) {
+          params.place = placesList.join(',')
         }
         return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
           data: JSON.stringify(params)
@@ -563,6 +570,13 @@
       },
       // 日历日期切换事件
       syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
+        this.calendarList = calendarList
+        this.thisDateInfo = thisDateInfo
+        this.actDateInfo = actDateInfo
+        this.actWeekList = arguments[3] || {}
+        this.createWeekInfo()
+      },
+      afterInit (calendarList, thisDateInfo, actDateInfo) {
         this.calendarList = calendarList
         this.thisDateInfo = thisDateInfo
         this.actDateInfo = actDateInfo
@@ -806,8 +820,8 @@
           overflow: hidden;padding: 20px 0;height: 100%;
           .item{
             line-height: 24px;padding: 10px 0;
-            span{float: left;width: 140px;text-align: right;color: #999;font-size: 16px;margin-right: 10px;}
-            div{overflow: hidden;font-size: 18px;color: #333;}
+            span{float: left;width: 140px;text-align: right;color: #999;font-size: 14px;margin-right: 10px;}
+            div{overflow: hidden;font-size: 14px;color: #333;}
             i{display: inline-block;width: 20px;height: 20px;border-radius: 50%;vertical-align: middle;}
           }
         }

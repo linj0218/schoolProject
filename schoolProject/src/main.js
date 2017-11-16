@@ -4,6 +4,7 @@ import Vue from 'vue'
 import router from '@/router'
 import axios from '@/http'
 
+// 向IE兼容promise
 import 'babel-polyfill'
 import 'jquery/dist/jquery.min.js'
 import 'bootstrap/dist/js/bootstrap.min.js'

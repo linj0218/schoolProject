@@ -59,7 +59,7 @@
                                  :to='{path: "/homepage", query: {year: actDateInfo.thisYear, month: actDateInfo.thisMonth, date: actDateInfo.thisDate}}'
                                  v-for='task in li.taskList'
                                  :key='task.id'>
-                      <div><span class="point_icon"></span></div>
+                      <div><span class="point_icon" :class='task.color'></span></div>
                       <div>{{task.time}}</div>
                       <div>{{task.name}}</div>
                       <div><span class="icon_right"></span></div>
@@ -127,6 +127,9 @@
         let endDate = this.actWeekList[6]
         let params = {
           dayFlag: 0,
+          place: '',
+          category_id: 0,
+          group_id: 0,
           startDate: formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd'),
           endDate: formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
         }
@@ -144,7 +147,8 @@
                 taskList.push({
                   id: resData[i2].id,
                   time: resData[i2].day_flag === 1 ? 'All day' : resData[i2].start_time + '-' + resData[i2].end_time,
-                  name: resData[i2].title
+                  name: resData[i2].title,
+                  color: resData[i2].category_remark
                 })
               }
             }
@@ -263,9 +267,9 @@
             & > div{padding: 5px 0;}
             & > div:empty:after{content: 'no event';padding: 10px;display: block;font-size: 18px;color: #333;}
             .point_icon{display: inline-block;width: 12px;height: 12px;border-radius: 50%;}
-            .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
-            .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
-            .drawer_li:nth-child(3n+3) .point_icon{background: #00C1DF;}
+            // .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
+            // .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
+            // .drawer_li:nth-child(3n+3) .point_icon{background: #00C1DF;}
             .drawer_li{line-height: 24px;padding: 7px 10px;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{

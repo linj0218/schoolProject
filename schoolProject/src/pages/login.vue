@@ -7,8 +7,13 @@
         <span>Welcome to LFS Portal</span>
       </div>
       <div class="form_cont">
-        <input class="form-control" type="text" placeholder="User" v-model='userName'>
-        <input class="form-control" type="password" placeholder="Password" v-model='passWord' @keyup.enter='login()'>
+        <input tabindex="1" id='user' class="form-control" type="text" placeholder="User" v-model='userName'>
+        <input tabindex="2" id='pwd' class="form-control" type="password" placeholder="Password" v-model='passWord' @keyup.enter='login()'>
+      </div>
+      <div class="error_info" v-show='errorText !== ""'>
+        <span>
+          <span class="icon"></span> {{errorText}}
+        </span>
       </div>
       <div class="forget_pwd">
         <!-- <a href="javascripe:void(0);">Forget your Password?</a> -->
@@ -29,13 +34,18 @@ export default {
   data () {
     return {
       userName: '',
-      passWord: ''
+      passWord: '',
+      errorType: ['Login timeout', 'Account or password is incorrect'],
+      errorText: ''
     }
   },
-  created () {
+  mounted () {
     let cacheUserName = localStorage.getItem('USERNAME')
     if (cacheUserName) {
       this.userName = cacheUserName
+      document.getElementById('pwd').focus()
+    } else {
+      document.getElementById('user').focus()
     }
   },
   methods: {
@@ -51,7 +61,7 @@ export default {
         data: param
       }).then((res) => {
         if (!res.success) { // 登录失败
-          alert('Login failed')
+          this.errorText = this.errorType[1]
         } else {
           localStorage.setItem('USERNAME', this.userName)
           sessionStorage.setItem('userinfo', JSON.stringify(res.data))
@@ -76,6 +86,10 @@ export default {
       padding: 0 20px;
       .form-control{background: transparent;}
       .form-control:first-child{margin-bottom: 15px;}
+    }
+    .error_info{
+      padding: 5px 20px 0 20px;color: #f00;
+      .icon{display: inline-block;width: 16px;height: 16px;background: url('../images/icon_error.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
     }
     .forget_pwd{padding: 10px 30px;text-align: right;}
     .login_btn{padding: 20px;}

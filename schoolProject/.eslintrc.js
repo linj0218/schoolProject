@@ -24,6 +24,8 @@ module.exports = {
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
     // 分号检查
-    'semi': 0
+    'semi': 0,
+    // 禁用行尾空格
+    'no-trailing-spaces': 0
   }
 }
