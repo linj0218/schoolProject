@@ -10,6 +10,7 @@ axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
 
 // request
 axios.interceptors.request.use((config) => {
+  document.getElementById('loading').className = 'on'
   // console.log('请求参数：', config)
   if (config.method === 'post') {
     let param = JSON.parse(config.data.data)
@@ -28,6 +29,7 @@ axios.interceptors.request.use((config) => {
 })
 // response
 axios.interceptors.response.use((res) => {
+  document.getElementById('loading').className = ''
   // console.log('接口返回：', res)
   if (res.status !== 200) {
     console.log('接口错误：', res.data.code)
