@@ -153,7 +153,7 @@
                 <button type="button" class="btn btn-primary" @click='editEvent()'>
                   <span class="icon icon_btn_edit"></span> Edit
                 </button>
-                <button type="button" class="btn btn-danger" @click='confirm(deleteEvent)'>
+                <button type="button" class="btn btn-danger" @click='deleteEvent()'>
                   <span class="icon icon_btn_del"></span> Delete
                 </button>
               </div>
@@ -172,17 +172,17 @@
                  @closeEventModal='closeEventModal'>
       </new-event>
       
-      <banner :input-value='data.banner.bannerText'
-              :show-banner='data.banner.showBanner'
-              @closeBanner='()=>{this.data.banner.showBanner=false}'>
-      </banner>
-
       <delete-confirm-modal :show-popup='data.confirm.showPopup'
                             :input-value='data.confirm.text'
                             :input-method='data.confirm.inputMethod'
                             @closePopup='() => { this.data.confirm.showPopup = false }'>
       </delete-confirm-modal>
     </div>
+
+    <banner ref='banner'></banner>
+
+    <alert ref='alert'></alert>
+
   </div>
 </template>
 
@@ -194,20 +194,17 @@
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
   import deleteConfirmModal from '@/components/deleteConfirmModal'
+  import alert from '@/components/alert'
   import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate} from '@/plugins/util'
 
   export default {
     components: {
-      headerr, banner, calendar, configuration, newEvent, drapdown, deleteConfirmModal
+      headerr, banner, calendar, configuration, newEvent, drapdown, deleteConfirmModal, alert
     },
     data () {
       return {
         data: {
           initOver: false,
-          banner: {
-            bannerText: '',
-            showBanner: false
-          },
           confirm: {
             showPopup: false,
             text: 'Confirm the Deletion?',
@@ -669,18 +666,20 @@
       // Event详情删除按钮
       deleteEvent () {
         if (!this.weekTaskListActId) return false
-        // if (!confirm('Confirm the deletion')) return false
-        this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
-          data: JSON.stringify({id: this.weekTaskListActId, operation_flag: -1})
-        }).then((res) => {
-          if (res.success) {
-            this.data.banner.bannerText = 'Delete Successed'
-            this.data.banner.showBanner = true
-            return res
-          }
-        }).then(() => {
-          this.getWeekInfoData().then(() => {
-            this.getViews()
+
+        this.$refs.alert.showDialog().then(() => {
+          this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
+            data: JSON.stringify({id: this.weekTaskListActId, operation_flag: -1})
+          }).then((res) => {
+            if (res.success) {
+              this.$refs.alert.show = false
+              this.$refs.banner.show('Delete Successed')
+              return res
+            }
+          }).then(() => {
+            this.getWeekInfoData().then(() => {
+              this.getViews()
+            })
           })
         })
       },

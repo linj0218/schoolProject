@@ -72,10 +72,10 @@
                             :input-add='true'
                             :input-item-text='"New School years"'
                             @inputChange='yearChanged'
-                            @addItem='showConfirm(addSchoolYear)'>
+                            @addItem='addSchoolYear()'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='showConfirm(yearNameChanged, schoolYearData.yearName)'></span>
+                  <span class="icon icon_edit" @click='saveYearName()'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -147,11 +147,11 @@
                             :input-select='placesData.places'
                             :input-add='true'
                             :input-item-text='"New Places"'
-                            @addItem='showConfirm(addPlace)'
+                            @addItem='addPlace()'
                             @inputChange='placeChanged'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='showConfirm(placeNameChanged, placesData.name)'></span>
+                  <span class="icon icon_edit" @click='editPlace()'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -159,15 +159,15 @@
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in placesData.rooms'>
                     {{item.name}}
-                    <span class="action_icon icon_edit" @click='showConfirm(editPlaceRoom, item.name)'></span>
-                    <span class="action_icon icon_delete" @click='delPlaceRoom(index)'></span>
+                    <span class="action_icon icon_edit" @click='editPlaceRoom(item)'></span>
+                    <span class="action_icon icon_delete" @click='delPlaceRoom(item)'></span>
                   </div>
                 </div>
               </div>
               <div class="button_box">
                 <span class="lab"></span>
                 <div class="name_value">
-                  <button type="button" class="btn btn-primary" @click='showConfirm(addPlaceRoom)'>
+                  <button type="button" class="btn btn-primary" @click='addPlaceRoom()'>
                     <span class="icon_btn_add"></span> New room
                   </button>
                 </div>
@@ -178,27 +178,27 @@
               <div class="name_box">
                 <span class="lab">Name:</span>
                 <div class="name_value">
-                  <drapdown :input-value='categoriesData.name'
-                            :input-name='categoriesData.name'
-                            :input-select='categoriesData.nameList'
+                  <drapdown :input-value='categoryData.name'
+                            :input-name='categoryData.name'
+                            :input-select='categoryData.nameList'
                             :input-add='true'
                             :input-item-text='"New Categories"'
-                            @addItem='showConfirm(addCategory)'
-                            @inputChange='categoriesChanged'>
+                            @addItem='addCategory()'
+                            @inputChange='categoryChanged'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='showConfirm(categoriesNameChanged, categoriesData.name)'></span>
+                  <span class="icon icon_edit" @click='editCategory()'></span>
                 </div>
               </div>
               <div class="name_box">
                 <span class="lab">Color:</span>
                 <div class="name_value">
-                  <drapdown :input-value='categoriesData.color'
+                  <drapdown :input-value='categoryData.color'
                             :input-name='""'
                             :input-color-type='"background"'
-                            :input-color='categoriesData.color'
-                            :input-select='categoriesData.colorList'
-                            @inputChange='categoriesColorChanged'>
+                            :input-color='categoryData.color'
+                            :input-select='categoryData.colorList'
+                            @inputChange='editCategoryColor'>
                   </drapdown>
                 </div>
               </div>
@@ -212,26 +212,35 @@
 
           </div>
 
-          <!-- <div v-show='tab==0' class="nav_content_1_btn">
+          <div v-show='tab==0' class="nav_content_1_btn" v-if='false'>
             <button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
-          </div> -->
+          </div>
           <div v-show='tab==1' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button>
+            <!-- <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button> -->
             <button type="button" class="btn btn-danger" @click="submitSchoolYear(-1)">Delete</button>
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==2' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="submitPlaceAndRooms(0)">Save</button>
+            <!-- <button type="button" class="btn btn-primary" @click="submitPlace(0)">Save</button> -->
+            <button type="button" class="btn btn-danger" @click="submitPlace(-1)">Delete</button>
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==3' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="submitCategory(0)">Save</button>
+            <!-- <button type="button" class="btn btn-primary" @click="submitCategory(0)">Save</button> -->
+            <button type="button" class="btn btn-danger" @click="delCategory()">Delete</button>
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
         </div>
       </div>
     </div>
+
+    <alert ref='alert'></alert>
+
+    <prompt ref='prompt'></prompt>
+
+    <banner ref='banner'></banner>
+
   </div>
 </template>
 
@@ -241,6 +250,9 @@ import dateSelect from '@/components/dateSelect'
 import confirmModal from '@/components/confirmModal'
 import addParticipantModal from '@/components/addParticipantModal'
 import weekSelectModal from '@/components/weekSelectModal'
+import alert from '@/components/alert'
+import prompt from '@/components/prompt'
+import banner from '@/components/banner'
 import {forEach, formatDate} from '@/plugins/util'
 export default {
   props: {
@@ -251,7 +263,7 @@ export default {
     }
   },
   components: {
-    drapdown, dateSelect, confirmModal, addParticipantModal, weekSelectModal
+    drapdown, dateSelect, confirmModal, addParticipantModal, weekSelectModal, alert, prompt, banner
   },
   data () {
     return {
@@ -285,10 +297,11 @@ export default {
         rooms: []
       },
       // Categories
-      categoriesData: {
+      categoryData: {
+        value: '',
         name: '',
-        nameList: [],
         color: '',
+        nameList: [],
         colorList: []
       },
       textInput: {
@@ -311,6 +324,7 @@ export default {
     }
   },
   methods: {
+    // 初始化页面数据
     init () {
       let self = this
       let param = '{"event_id": 0}'
@@ -333,8 +347,8 @@ export default {
         forEach(resData.campusList, (i, item) => {
           if (i === '0') {
             self.placesData.name = item.campus_name
+            self.getRoomsById(item.id)
           }
-          self.getRoomsById(item.id)
           let obj = {
             value: item.id,
             name: item.campus_name
@@ -345,6 +359,11 @@ export default {
         let categoryList = []
         let colorList = []
         forEach(resData.categoryList, (i, item) => {
+          if (i === '0') {
+            this.categoryData.value = item.id
+            this.categoryData.name = item.category_no
+            this.categoryData.color = item.category_remark
+          }
           let data = resData.categoryList[i]
           let obj = {
             value: data.id,
@@ -359,8 +378,8 @@ export default {
           categoryList.push(obj)
           colorList.push(color)
         })
-        this.categoriesData.nameList = categoryList
-        this.categoriesData.colorList = colorList
+        this.categoryData.nameList = categoryList
+        this.categoryData.colorList = colorList
         let schoolYearList = []
         forEach(resData.schoolYearList, (i, item) => {
           if (i === '0') {
@@ -385,23 +404,6 @@ export default {
         return res
       })
     },
-    getRoomsById (id) {
-      let param = JSON.stringify({campus_id: id})
-      this.$http.post('/sharedcalendarSettingCtl/event/getPlacesByCampusId', {
-        data: param
-      }).then((res) => {
-        let resData = res.data
-        let objList = []
-        forEach(resData, (i, item) => {
-          let obj = {
-            value: item.id,
-            name: item.place_name
-          }
-          objList.push(obj)
-        })
-        this.placesData.rooms = objList
-      })
-    },
     findUsersByGroupId (id) {
       let param = JSON.stringify({group_id: id})
       this.$http.post('/sharedcalendarSettingCtl/event/getUsersByGroupId', {
@@ -423,6 +425,7 @@ export default {
     closeConfig () {
       this.$emit('configurationToggleFunc')
     },
+    // groups functions
     groupsChanged (item) {
       this.groupsData.value = item.value
       this.groupsData.name = item.name
@@ -431,6 +434,7 @@ export default {
     delMember (index) {
       this.groupsData.membersList.splice(index, 1)
     },
+    // School years functions
     yearChanged (item) {
       this.schoolYearData.yearId = item.value
       this.schoolYearData.yearName = item.name
@@ -441,9 +445,57 @@ export default {
 
       this.getHoliday()
     },
+    startDateChange (calendarList, thisDateInfo, actDateInfo) {
+      this.schoolYearData.startDate = formatDate([actDateInfo.thisYear, actDateInfo.thisMonth, actDateInfo.thisDate].join('-'), 'yyyy-mm-dd')
+      this.submitSchoolYear(0)
+    },
+    endDateChange (calendarList, thisDateInfo, actDateInfo) {
+      this.schoolYearData.endDate = formatDate([actDateInfo.thisYear, actDateInfo.thisMonth, actDateInfo.thisDate].join('-'), 'yyyy-mm-dd')
+      this.submitSchoolYear(0)
+    },
     weekChanged (item) {
       this.schoolYearData.weekName = item.name
       this.schoolYearData.weekColor = item.color
+      this.submitSchoolYear(0)
+    },
+    addSchoolYear () {
+      this.$refs.prompt.showDialog().then((text) => {
+        this.schoolYearData.yearId = 0
+        this.schoolYearData.yearName = text
+
+        this.$refs.prompt.show = false
+
+        this.submitSchoolYear(0)
+      })
+    },
+    saveYearName () {
+      this.$refs.prompt.showDialog(this.schoolYearData.yearName).then((text) => {
+        this.schoolYearData.yearName = text
+        
+        this.submitSchoolYear(0)
+      })
+    },
+    submitSchoolYear (opt) {
+      if (opt === -1) {
+        if (!confirm('Confirm the deletion')) return false
+      }
+      let param = {
+        'id': this.schoolYearData.yearId,
+        'year_label': this.schoolYearData.yearName,
+        'start_date': formatDate(this.schoolYearData.startDate, 'yyyy-mm-dd'),
+        'end_date': formatDate(this.schoolYearData.endDate, 'yyyy-mm-dd'),
+        'week_flag': this.schoolYearData.weekName,
+        'operation_flag': opt
+      }
+      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYear', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        if (res.success) {
+          this.$refs.prompt.show = false
+          // this.$refs.banner.show('Successed')
+          // this.init()
+        }
+      })
     },
     getHoliday () {
       this.$http.post('/sharedcalendarSettingCtl/event/getHoildayByYearId', {
@@ -463,6 +515,11 @@ export default {
         this.schoolYearData.holidays = holidays
       })
     },
+    selectWeekChanged (weekList) {
+      // console.log(weekList)
+      this.addHoliday(weekList)
+      this.showWeekSelectModal = false
+    },
     addHoliday (weekList) {
       if (this.schoolYearData.yearId === '') return false
       let start = weekList[0]
@@ -479,48 +536,202 @@ export default {
       }).then((res) => {
         if (res.success) {
           this.getHoliday()
-          alert('SUCCESS')
         }
       })
     },
     delHoliday (item) {
       if (this.schoolYearData.yearId === '') return false
-      if (!confirm('Confirm the deletion')) return false
-
-      let params = {
-        schoolyear_id: this.schoolYearData.yearId,
-        id: item.value,
-        operation_flag: 1
-      }
-      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYearHoilday', {
-        data: JSON.stringify(params)
-      }).then((res) => {
-        if (res.success) {
-          this.getHoliday()
-          alert('SUCCESS')
+      this.$refs.alert.showDialog().then(() => {
+        let params = {
+          schoolyear_id: this.schoolYearData.yearId,
+          id: item.value,
+          operation_flag: 1
         }
+        this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYearHoilday', {
+          data: JSON.stringify(params)
+        }).then((res) => {
+          if (res.success) {
+            this.$refs.alert.show = false
+            this.getHoliday()
+          }
+        })
       })
     },
+    // places functions
     placeChanged (item) {
       this.placesData.value = item.value
       this.placesData.name = item.name
       this.getRoomsById(item.value)
     },
-    startDateChange (calendarList, thisDateInfo, actDateInfo) {
-      // console.log(calendarList, thisDateInfo, actDateInfo)
-      this.schoolYearData.startDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
+    addPlace () {
+      this.$refs.prompt.showDialog().then((text) => {
+        this.placesData.value = 0
+        this.placesData.name = text
+
+        this.submitPlace(0)
+      })
     },
-    endDateChange (calendarList, thisDateInfo, actDateInfo) {
-      // console.log(calendarList, thisDateInfo, actDateInfo)
-      this.schoolYearData.endDate = actDateInfo.thisYear + '-' + actDateInfo.thisMonth + '-' + actDateInfo.thisDate
+    editPlace () {
+      this.$refs.prompt.showDialog(this.placesData.name).then((text) => {
+        this.placesData.name = text
+
+        this.submitPlace(0)
+      })
     },
-    categoriesChanged (item) {
-      this.categoriesData.value = item.value
-      this.categoriesData.name = item.name
-      this.categoriesData.color = item.color
+    submitPlace (opt) {
+      let param = {
+        'id': this.placesData.value,
+        'place_name': this.placesData.name,
+        'operation_flag': opt
+      }
+      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        if (res.success) {
+          this.$refs.prompt.show = false
+          // this.init()
+        }
+      })
     },
-    categoriesColorChanged (item) {
-      this.categoriesData.color = item.value
+    getRoomsById (id) {
+      let param = JSON.stringify({campus_id: id})
+      this.$http.post('/sharedcalendarSettingCtl/event/getPlacesByCampusId', {
+        data: param
+      }).then((res) => {
+        let resData = res.data
+        let objList = []
+        forEach(resData, (i, item) => {
+          let obj = {
+            value: item.id,
+            name: item.place_name
+          }
+          objList.push(obj)
+        })
+        this.placesData.rooms = objList
+      })
+    },
+    addPlaceRoom () {
+      this.$refs.prompt.showDialog().then((text) => {
+        let param = {
+          'campus_id': this.placesData.value,
+          'place_name': text,
+          'operation_flag': 0,
+          'id': 0
+        }
+        this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+          data: JSON.stringify(param)
+        }).then((res) => {
+          if (res.success) {
+            this.$refs.prompt.show = false
+
+            this.getRoomsById(this.placesData.value)
+            // this.init()
+          }
+        })
+      })
+    },
+    editPlaceRoom (item) {
+      this.$refs.prompt.showDialog(item.name).then((text) => {
+        let param = {
+          'campus_id': this.placesData.value,
+          'place_name': text,
+          'operation_flag': 0,
+          'id': item.value
+        }
+        this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+          data: JSON.stringify(param)
+        }).then((res) => {
+          if (res.success) {
+            this.$refs.prompt.show = false
+            // this.init()
+            this.getRoomsById(this.placesData.value)
+          }
+        })
+      })
+    },
+    delPlaceRoom (item) {
+      this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
+        let param = {
+          'campus_id': this.placesData.value,
+          'place_name': '',
+          'operation_flag': 1,
+          'id': item.value
+        }
+
+        this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+          data: JSON.stringify(param)
+        }).then((res) => {
+          if (res.success) {
+            this.$refs.alert.show = false
+            // this.init()
+            this.getRoomsById(this.placesData.value)
+          }
+        })
+      })
+    },
+    // categories functions
+    categoryChanged (item) {
+      this.categoryData.value = item.value
+      this.categoryData.name = item.name
+      this.categoryData.color = item.color
+    },
+    addCategory () {
+      this.$refs.prompt.showDialog().then((text) => {
+        this.categoryData.value = 0
+        this.categoryData.name = text
+
+        this.submitCategory()
+      })
+    },
+    editCategory () {
+      this.$refs.prompt.showDialog(this.categoryData.name).then((text) => {
+        this.categoryData.name = text
+
+        this.submitCategory()
+      })
+    },
+    editCategoryColor (item) {
+      this.categoryData.color = item.value
+
+      this.submitCategory()
+    },
+    submitCategory () {
+      let param = {
+        'id': this.categoryData.value,
+        'category_no': this.categoryData.name,
+        'category_remark': this.categoryData.color,
+        'operation_flag': 0
+      }
+      this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        if (res.success) {
+          this.$refs.prompt.show = false
+
+          if (this.categoryData.value === 0) {
+            this.init()
+          }
+        }
+      })
+    },
+    delCategory () {
+      this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
+        let param = {
+          'id': this.categoryData.value,
+          'category_no': '',
+          'category_remark': '',
+          'operation_flag': -1
+        }
+        this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
+          data: JSON.stringify(param)
+        }).then((res) => {
+          if (res.success) {
+            this.$refs.alert.show = false
+
+            this.init()
+          }
+        })
+      })
     },
     // 编辑文本 --------------------------------------------------------------------
     showConfirm (method, text) {
@@ -535,73 +746,9 @@ export default {
     groupsNameChanged (str) {
       this.groupsData.name = str
     },
-    yearNameChanged (str) {
-      this.schoolYearData.yearName = str
-    },
-    placeNameChanged (str) {
-      this.placesData.name = str
-    },
-    categoriesNameChanged (str) {
-      this.categoriesData.name = str
-    },
     addGroup (str) {
       this.groupsData.name = str
       // console.log(str)
-    },
-    addSchoolYear (str) {
-      this.schoolYearData.yearId = 0
-      this.schoolYearData.yearName = str
-    },
-    addPlace (str) {
-      this.placesData.name = str
-    },
-    editPlaceRoom (str, oldStr) {
-      // console.log(str, oldStr)
-      for (let i = 0, len = this.placesData.rooms.length; i < len; i++) {
-        let item = this.placesData.rooms[i]
-        if (oldStr === item.name) {
-          let param = JSON.stringify({'campus_id': this.placesData.value, 'place_name': str, 'operation_flag': 0, id: item.value})
-          this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-            data: param
-          }).then((res) => {
-            if (res.success) {
-              alert('SUCCESS!')
-              this.init()
-            }
-          })
-          return true
-        }
-      }
-      // this.placesData.rooms = str
-    },
-    addPlaceRoom (str) {
-      let param = JSON.stringify({'campus_id': this.placesData.value, 'place_name': str, 'operation_flag': 0, id: 0})
-      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-        data: param
-      }).then((res) => {
-        if (res.success) {
-          alert('SUCCESS!')
-          this.init()
-        }
-      })
-    },
-    delPlaceRoom (index) {
-      if (!confirm('Confirm the deletion')) return false
-
-      let param = JSON.stringify({'campus_id': this.placesData.value, 'place_name': '', 'operation_flag': 1, id: this.placesData.rooms[index].value})
-      this.placesData.rooms.splice(index, 1)
-
-      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-        data: param
-      }).then((res) => {
-        if (res.success) {
-          alert('SUCCESS!')
-          this.init()
-        }
-      })
-    },
-    addCategory (str) {
-      this.categoriesData.name = str
     },
     submitGroupsAndMember (opt) {
       let param = JSON.stringify({'id': this.groupsData.value, 'group_name': this.groupsData.name, 'operation_flag': opt})
@@ -613,47 +760,6 @@ export default {
           this.init()
         }
       })
-    },
-    submitSchoolYear (opt) {
-      if (opt === -1) {
-        if (!confirm('Confirm the deletion')) return false
-      }
-      let param = JSON.stringify({'id': this.schoolYearData.yearId, 'year_label': this.schoolYearData.yearName, 'start_date': this.schoolYearData.startDate, 'end_date': this.schoolYearData.endDate, 'week_flag': this.schoolYearData.weekName, 'operation_flag': opt})
-      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYear', {
-        data: param
-      }).then((res) => {
-        if (res.success) {
-          alert('SUCCESS!')
-          this.init()
-        }
-      })
-    },
-    submitPlaceAndRooms (opt) {
-      let param = JSON.stringify({'id': this.placesData.value, 'place_name': this.placesData.name, 'operation_flag': opt})
-      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-        data: param
-      }).then((res) => {
-        if (res.success) {
-          alert('SUCCESS!')
-          this.init()
-        }
-      })
-    },
-    submitCategory (opt) {
-      let param = JSON.stringify({'id': this.categoriesData.value, 'category_no': this.categoriesData.name, 'category_remark': this.categoriesData.color, 'operation_flag': opt})
-      this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
-        data: param
-      }).then((res) => {
-        if (res.success) {
-          alert('SUCCESS!')
-          this.init()
-        }
-      })
-    },
-    selectWeekChanged (weekList) {
-      // console.log(weekList)
-      this.addHoliday(weekList)
-      this.showWeekSelectModal = false
     }
   }
 }

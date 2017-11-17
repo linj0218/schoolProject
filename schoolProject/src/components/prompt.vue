@@ -9,7 +9,7 @@
 
       <div class="popup_body">
         <div>
-          <input type="text" class="form-control" v-model='text'>
+          <input type="text" class="form-control" v-model='text' id='prompt_input'>
         </div>
       </div>
 
@@ -25,23 +25,14 @@
   /**
    * 组件使用：
    * 
-   * <prompt ref='dialog' :input-value='"录入内容"'></prompt>
+   * <prompt ref='dialog'></prompt>
    * 
-   * this.$refs.dialog.showDialog().then((res) => {
+   * this.$refs.dialog.showDialog('some msg').then((res) => {
    *   // TODO callback
    *   this.$refs.dialog.show = false
    * })
    */
   export default {
-    props: {
-      inputValue: {
-        type: String,
-        required: false,
-        default: ''
-      }
-    },
-    components: {
-    },
     data () {
       return {
         text: '',
@@ -51,11 +42,18 @@
         promise: null
       }
     },
-    created () {
+    watch: {
+      show () {
+        if (this.show) {
+          setTimeout(() => {
+            document.getElementById('prompt_input').focus()
+          })
+        }
+      }
     },
     methods: {
-      showDialog () {
-        this.text = this.inputValue
+      showDialog (text) {
+        this.text = text
         this.show = true
         this.promise = new Promise((resolve, reject) => {
           this.resolve = resolve

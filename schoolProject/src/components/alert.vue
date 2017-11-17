@@ -8,7 +8,7 @@
       </div>
 
       <div class="popup_body">
-        {{inputValue}}
+        {{text}}
       </div>
 
       <div class="popup_footer">
@@ -23,35 +23,28 @@
   /**
    * 组件使用：
    * 
-   * <alert ref='dialog' :input-value='"asdf"'></alert>
+   * <alert ref='dialog'></alert>
    * 
-   * this.$refs.dialog.showDialog().then(() => {
+   * this.$refs.dialog.showDialog('some msg').then(() => {
    *   // TODO callback
    *   this.$refs.dialog.show = false
    * })
    */
   export default {
-    props: {
-      inputValue: {
-        type: String,
-        required: false,
-        default: ''
-      }
-    },
-    components: {
-    },
     data () {
       return {
         show: false,
         resolve: null,
         reject: null,
-        promise: null
+        promise: null,
+        text: ''
       }
     },
     created () {
     },
     methods: {
-      showDialog () {
+      showDialog (text) {
+        this.text = text || 'Confirm the deletion?'
         this.show = true
         this.promise = new Promise((resolve, reject) => {
           this.resolve = resolve

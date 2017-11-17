@@ -1,33 +1,16 @@
 <template>
-  <div class="banner" :class='[{"on": showBanner}, {"isFixed": isFixed}]' v-cloak>
-    {{inputValue}}
+  <div class="banner" :class='[{"on": open}, {"isFixed": isFixed}]' v-cloak>
+    {{text}}
   </div>
 </template>
 
 <script>
   export default{
-    props: {
-      inputValue: {
-        type: [Boolean, String],
-        required: true
-      },
-      showBanner: {
-        type: Boolean,
-        required: true
-      }
-    },
     data () {
       return {
-        isFixed: false
-      }
-    },
-    watch: {
-      showBanner () {
-        if (this.showBanner) {
-          setTimeout(() => {
-            this.$emit('closeBanner')
-          }, 2000)
-        }
+        isFixed: false,
+        open: false,
+        text: ''
       }
     },
     mounted () {
@@ -35,6 +18,15 @@
         if (document.getElementById('body').scrollTop > 100) this.isFixed = true
         else this.isFixed = false
       });
+    },
+    methods: {
+      show (text) {
+        this.text = text || 'Successed'
+        this.open = true
+        setTimeout(() => {
+          this.open = false
+        }, 2000)
+      }
     }
   }
 </script>
