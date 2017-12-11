@@ -1,22 +1,3 @@
-1.homepage周视图增加点击切换日功能
-2.homepage Places快速筛选按钮样式调整
-3.homepage本周任务列表移除鼠标移动到具体字符上的事件（目前显示为光标）
-4.homepage本周任务列表蓝底为选中样式，非鼠标移入样式；另，滚动条样式需调整
-5.homepage本周任务详情的Participants和Viewed by移除鼠标移入事件
-8.app permission改名Configuration
-9.configuration》groups增加编辑，新建功能（需求变更）
-10.configuration》places，categories增加新建功能
-11.日期下拉控件下拉不能收起
-12.configuration》school years，catogories下拉加入背景颜色
-13.homepage筛选条件下拉菜单加上颜色圆点
-6.new events中viewed by多选样式调整
--->
-7.new events，configuration增加收起动画
-
-1.首页-单日内event 如果当日没数据则显示“no event”
-2.Edit event内的原Event信息没有展示完整
-3.New event中start和end 时间显示错误
-4.End 的日期随start的日期改变，且加入限制：不可选择Start之前的日期
-5.Add participants中右侧的删除事件由整条改为仅删除图标
-6.Configuration 中所有的delete全部改为Cancel，delete功能移动到name右侧
-7.删除事件由整条改为仅删除图标
+1.APP，用户图片上传
+2.Event详情附件下载
+3.ADgroups、user接口联调
