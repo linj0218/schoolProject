@@ -26,7 +26,7 @@
                             @addItem='addApplication'
                             @inputChange='applicationChanged'>
                   </drapdown>
-                  
+
                   <span class="icon icon_edit" @click='editApplication(data.appName)'></span>
                 </div>
               </div>

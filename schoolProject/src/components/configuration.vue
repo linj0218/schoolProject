@@ -436,7 +436,7 @@ export default {
     editYearName () {
       this.$refs.prompt.showDialog(this.schoolYearData.yearName).then((text) => {
         this.schoolYearData.yearName = text
-        
+
         this.submitSchoolYear(0)
       })
     },

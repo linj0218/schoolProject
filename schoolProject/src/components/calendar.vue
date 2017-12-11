@@ -31,7 +31,7 @@
                @click='changeActWeek(index, selectModel)'>
             <div v-for='day in li'
                 :class="[day.monthInfo,
-                        {'this_day': thisDateInfo.thisMonth==actDateInfo.thisMonth&&day.day==thisDateInfo.thisDate},
+                        {'this_day': thisDateInfo.thisMonth==day.monthValue&&thisDateInfo.thisDate==day.day},
                         {'act': day.monthInfo=='this_month'&&day.day==actDateInfo.thisDate}]"
                 @click='changeActDate(day, selectModel)'>
               <div>{{day.day}}</div>
