@@ -9,7 +9,8 @@
 
       <div class="popup_body">
         <div>
-          <input type="text" class="form-control" v-model='text' id='prompt_input'>
+          <input type="text" class="form-control" v-model='text' id='prompt_input'
+                 @keyup.enter='confirm()'>
         </div>
       </div>
 
@@ -62,6 +63,7 @@
         return this.promise
       },
       confirm () {
+        this.show = false;
         this.resolve(this.text)
       },
       cancel () {

@@ -1,5 +1,5 @@
 <template>
-  <div class="configuration" :class='{"act": showConfig}'>
+  <div class="configuration" :class='{"act": show}'>
     <div class="config_bg" @click='closeConfig()'></div>
     <div class="config_body">
       <div class="title">
@@ -7,7 +7,7 @@
       </div>
       <div class="content">
         <div class="nav_tab flex">
-          <!-- <div><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div> -->
+          <div><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div>
           <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>School years</div></div>
           <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>Places</div></div>
           <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>Categories</div></div>
@@ -15,50 +15,36 @@
         <div class="nav_body">
           <div class="body">
             <!-- Groups -->
-            <div class="nav_content_1" v-show='tab==0'>
-              <div class="name_box">
-                <span class="lab">Name:</span>
-                <div class="name_value">
-
-                  <drapdown :input-value='groupsData.name'
-                            :input-name='groupsData.name'
-                            :input-select='groupsData.names'
-                            :input-add='false'
-                            :input-item-text='"New Groups"'
-                            @addItem='showConfirm(addGroup)'
-                            @inputChange='groupsChanged'>
-                  </drapdown>
-                  
-                  <!-- <span class="icon icon_edit" @click='showConfirm(groupsNameChanged, groupsData.name)'></span> -->
-                </div>
-              </div>
-              <div class="member_box">
-                <span class="lab">Members:</span>
-                <div class="member_value">
-                  <div class="li" v-for='(item, index) in groupsData.membersList'>
-                    <!-- <span class="icon" :class='item.type'></span> -->
-                    {{item.name}}
-                    <!-- <span class="action_icon icon_delete" @click='delMember(index)'></span> -->
-                  </div>
-                </div>
-              </div>
-              <div class="button_box">
-                <span class="lab"></span>
-                <div class="name_value">
-                  <!-- <button type="button" class="btn btn-primary" @click='()=>{this.groupsData.showAddParticipantPopup=true}'>
-                    <span class="icon_btn_add"></span> Members/Groups
-                  </button> -->
-
-                  <!-- <add-participant-modal :show-popup='groupsData.showAddParticipantPopup'
-                  	                     :data-list='[]'
-                                         @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
-                  </add-participant-modal> -->
-                  <!-- <add-participant-modal :showPopup='groupsData.showAddParticipantPopup'
-                                         @closePopup='()=>{this.groupsData.showAddParticipantPopup=false}'>
-                  </add-participant-modal> -->
-
-                </div>
-              </div>
+            <div class="nav_content_1" v-show='tab==0' style="padding: 0;text-align: left;">
+              <el-table ref="groups"
+                        :data="groupsData.groupList"
+                        tooltip-effect="dark"
+                        style="width: 100%"
+                        @selection-change="">
+                </el-table-column>
+                <el-table-column prop="group_name"
+                                 label="Ad group"
+                                 show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="group_name"
+                                 label="Alias"
+                                 show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column label=""
+                                 width="60">
+                  <template slot-scope="scope">
+                    <span class="icon icon_edit" @click='editGroupAlias(scope.$index, scope.row)'></span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Active"
+                                 width="80">
+                  <template slot-scope="scope">
+                    <div class="checkbox"
+                         :class='{"checked": scope.row.operation_flag==0}'
+                         @click='groupStatusChanged(scope.$index, scope.row)'></div>
+                  </template>
+                </el-table-column>
+              </el-table>
             </div>
             <!-- School years -->
             <div class="nav_content_1" v-show='tab==1'>
@@ -75,7 +61,8 @@
                             @addItem='addSchoolYear()'>
                   </drapdown>
 
-                  <span class="icon icon_edit" @click='saveYearName()'></span>
+                  <span class="icon icon_edit" @click='editYearName()'></span>
+                  <span class="icon icon_delete" @click='submitSchoolYear(-1)'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -152,6 +139,7 @@
                   </drapdown>
 
                   <span class="icon icon_edit" @click='editPlace()'></span>
+                  <span class="icon icon_delete" @click='submitPlace(-1)'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -188,6 +176,7 @@
                   </drapdown>
 
                   <span class="icon icon_edit" @click='editCategory()'></span>
+                  <span class="icon icon_delete" @click='delCategory()'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -203,32 +192,25 @@
                 </div>
               </div>
             </div>
-
-            <confirm-modal :show-popup='textInput.showInputPopup'
-                           :input-value='textInput.inputValue'
-                           :input-method='textInput.inputMethod'
-                           @closePopup='closeTextInput'>
-            </confirm-modal>
-
           </div>
 
-          <div v-show='tab==0' class="nav_content_1_btn" v-if='false'>
-            <button type="button" class="btn btn-primary" @click="submitGroupsAndMember(0)">Save</button>
+          <div v-show='tab==0' class="nav_content_1_btn">
+            <!-- <button type="button" class="btn btn-primary" @click="">Save</button> -->
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==1' class="nav_content_1_btn">
             <!-- <button type="button" class="btn btn-primary" @click="submitSchoolYear(0)">Save</button> -->
-            <button type="button" class="btn btn-danger" @click="submitSchoolYear(-1)">Delete</button>
+            <!-- <button type="button" class="btn btn-danger" @click="submitSchoolYear(-1)">Delete</button> -->
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==2' class="nav_content_1_btn">
             <!-- <button type="button" class="btn btn-primary" @click="submitPlace(0)">Save</button> -->
-            <button type="button" class="btn btn-danger" @click="submitPlace(-1)">Delete</button>
+            <!-- <button type="button" class="btn btn-danger" @click="submitPlace(-1)">Delete</button> -->
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
           <div v-show='tab==3' class="nav_content_1_btn">
             <!-- <button type="button" class="btn btn-primary" @click="submitCategory(0)">Save</button> -->
-            <button type="button" class="btn btn-danger" @click="delCategory()">Delete</button>
+            <!-- <button type="button" class="btn btn-danger" @click="delCategory()">Delete</button> -->
             <button type="button" class="btn cancel" @click="closeConfig()">Cancel</button>
           </div>
         </div>
@@ -256,24 +238,19 @@ import banner from '@/components/banner'
 import {forEach, formatDate} from '@/plugins/util'
 export default {
   props: {
-    showConfig: {
-      type: Boolean,
-      required: true,
-      default: false
-    }
   },
   components: {
     drapdown, dateSelect, confirmModal, addParticipantModal, weekSelectModal, alert, prompt, banner
   },
   data () {
     return {
-      tab: 1,
+      tab: 0,
+      show: false,
       // Groups data
       groupsData: {
-        name: '',
+        groupList: [],
         names: [],
-        membersList: [],
-        showAddParticipantPopup: false
+        membersList: []
       },
       // School years data
       schoolYearData: {
@@ -304,19 +281,14 @@ export default {
         nameList: [],
         colorList: []
       },
-      textInput: {
-        showInputPopup: false,
-        inputValue: '',
-        inputMethod: ''
-      },
       showWeekSelectModal: false
     }
   },
   mounted () {
   },
   watch: {
-    showConfig () {
-      if (this.showConfig) {
+    show () {
+      if (this.show) {
         this.init().then(() => {
           this.getHoliday()
         })
@@ -333,16 +305,8 @@ export default {
       }).then((res) => {
         let resData = res.data
         self.placesList = []
-        let objList = []
-        forEach(resData.groupsList, (i, item) => {
-          let data = resData.groupsList[i]
-          let obj = {
-            value: data.id,
-            name: data.group_name
-          }
-          objList.push(obj)
-        })
-        this.groupsData.names = objList
+
+        this.groupsData.groupList = resData.groupsList
         let placesList = []
         forEach(resData.campusList, (i, item) => {
           if (i === '0') {
@@ -423,16 +387,17 @@ export default {
       })
     },
     closeConfig () {
-      this.$emit('configurationToggleFunc')
+      this.show = false;
     },
     // groups functions
-    groupsChanged (item) {
-      this.groupsData.value = item.value
-      this.groupsData.name = item.name
-      this.findUsersByGroupId(item.value)
+    editGroupAlias (index, row) {
+      this.$refs.prompt.showDialog(row.group_name).then((text) => {
+        row.group_name = text;
+        this.$refs.prompt.show = false
+      })
     },
-    delMember (index) {
-      this.groupsData.membersList.splice(index, 1)
+    groupStatusChanged (index, row) {
+      row.operation_flag = row.operation_flag === 1 ? 0 : 1;
     },
     // School years functions
     yearChanged (item) {
@@ -465,10 +430,10 @@ export default {
 
         this.$refs.prompt.show = false
 
-        this.submitSchoolYear(0)
+        this.submitSchoolYear(1)
       })
     },
-    saveYearName () {
+    editYearName () {
       this.$refs.prompt.showDialog(this.schoolYearData.yearName).then((text) => {
         this.schoolYearData.yearName = text
         
@@ -476,26 +441,37 @@ export default {
       })
     },
     submitSchoolYear (opt) {
-      if (opt === -1) {
-        if (!confirm('Confirm the deletion')) return false
-      }
-      let param = {
-        'id': this.schoolYearData.yearId,
-        'year_label': this.schoolYearData.yearName,
-        'start_date': formatDate(this.schoolYearData.startDate, 'yyyy-mm-dd'),
-        'end_date': formatDate(this.schoolYearData.endDate, 'yyyy-mm-dd'),
-        'week_flag': this.schoolYearData.weekName,
-        'operation_flag': opt
-      }
-      this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYear', {
-        data: JSON.stringify(param)
-      }).then((res) => {
-        if (res.success) {
-          this.$refs.prompt.show = false
-          // this.$refs.banner.show('Successed')
-          // this.init()
+      // opt: -1 删除 0 修改 1 新增
+      let _submit = () => {
+        let param = {
+          'id': this.schoolYearData.yearId,
+          'year_label': this.schoolYearData.yearName,
+          'start_date': formatDate(this.schoolYearData.startDate, 'yyyy-mm-dd'),
+          'end_date': formatDate(this.schoolYearData.endDate, 'yyyy-mm-dd'),
+          'week_flag': this.schoolYearData.weekName,
+          'operation_flag': opt === 1 ? 0 : opt
         }
-      })
+        return this.$http.post('/sharedcalendarSettingCtl/event/editSchoolYear', {
+          data: JSON.stringify(param)
+        }).then((res) => {
+          if (res.success) {
+            return res;
+          }
+        })
+      }
+      if (opt === -1) {
+        this.$refs.alert.showDialog().then(() => {
+          _submit().then(() => {
+            this.$refs.alert.show = false;
+            this.init();
+          })
+        })
+      } else {
+        _submit().then(() => {
+          this.$refs.prompt.show = false;
+          if (opt === 1) this.init();
+        })
+      }
     },
     getHoliday () {
       this.$http.post('/sharedcalendarSettingCtl/event/getHoildayByYearId', {
@@ -568,7 +544,7 @@ export default {
         this.placesData.value = 0
         this.placesData.name = text
 
-        this.submitPlace(0)
+        this.submitPlace(1)
       })
     },
     editPlace () {
@@ -579,19 +555,36 @@ export default {
       })
     },
     submitPlace (opt) {
-      let param = {
-        'id': this.placesData.value,
-        'place_name': this.placesData.name,
-        'operation_flag': opt
-      }
-      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-        data: JSON.stringify(param)
-      }).then((res) => {
-        if (res.success) {
-          this.$refs.prompt.show = false
-          // this.init()
+      // opt: -1 删除 0 修改 1 新增
+      let _submit = () => {
+        let param = {
+          'id': this.placesData.value,
+          'place_name': this.placesData.name,
+          'operation_flag': opt === 1 ? 0 : opt
         }
-      })
+        return this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+          data: JSON.stringify(param)
+        }).then((res) => {
+          if (res.success) {
+            return res;
+            // this.$refs.prompt.show = false
+            // this.init()
+          }
+        })
+      }
+      if (opt === -1) {
+        this.$refs.alert.showDialog().then(() => {
+          _submit().then(() => {
+            this.$refs.alert.show = false;
+            this.init();
+          })
+        })
+      } else {
+        _submit().then(() => {
+          this.$refs.prompt.show = false;
+          if (opt === 1) this.init();
+        })
+      }
     },
     getRoomsById (id) {
       let param = JSON.stringify({campus_id: id})
@@ -653,8 +646,8 @@ export default {
       this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
         let param = {
           'campus_id': this.placesData.value,
-          'place_name': '',
-          'operation_flag': 1,
+          'place_name': item.name,
+          'operation_flag': -1,
           'id': item.value
         }
 
@@ -718,8 +711,8 @@ export default {
       this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
         let param = {
           'id': this.categoryData.value,
-          'category_no': '',
-          'category_remark': '',
+          'category_no': this.categoryData.name,
+          'category_remark': this.categoryData.color,
           'operation_flag': -1
         }
         this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
@@ -731,34 +724,6 @@ export default {
             this.init()
           }
         })
-      })
-    },
-    // 编辑文本 --------------------------------------------------------------------
-    showConfirm (method, text) {
-      this.textInput.inputValue = text || ''
-      this.textInput.inputMethod = method || ''
-
-      this.textInput.showInputPopup = true
-    },
-    closeTextInput () {
-      this.textInput.showInputPopup = false
-    },
-    groupsNameChanged (str) {
-      this.groupsData.name = str
-    },
-    addGroup (str) {
-      this.groupsData.name = str
-      // console.log(str)
-    },
-    submitGroupsAndMember (opt) {
-      let param = JSON.stringify({'id': this.groupsData.value, 'group_name': this.groupsData.name, 'operation_flag': opt})
-      this.$http.post('/sharedcalendarSettingCtl/event/editGroups', {
-        data: param
-      }).then((res) => {
-        if (res.success) {
-          alert('SUCCESS!')
-          this.init()
-        }
       })
     }
   }
@@ -792,8 +757,9 @@ export default {
             .lab{font-size: 18px;color: #999;vertical-align: top;display: inline-block;width: 120px;text-align: right;margin-right: 10px;line-height: 34px;}
             .lab.long_text{width: 185px;}
             .name_value{display: inline-block;width: 350px;position: relative;}
-            .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 45px;top: 50%;transform: translateY(-50%);cursor: pointer;}
-            .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
+            .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);cursor: pointer;}
+            .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;right: 65px;}
+            .name_value > .icon.icon_delete{background: url('../images/icon_delete.png') 0 0 / 100% 100% no-repeat;}
             .member_box{margin-top: 14px;}
             .member_value{
               display: inline-block;width: 350px;height: 293px;background: #fff;border: 1px solid #ddd;border-radius: 2px;text-align: left;overflow-y: auto;overflow-x: hidden;
@@ -812,7 +778,11 @@ export default {
                 .action_icon{display: block;}
               }
             }
+            table .icon{position: absolute;width: 22px;height: 22px;left: 0;top: 50%;transform: translateY(-50%);cursor: pointer;}
+            table .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
             .button_box .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
+            table .checkbox{width: 20px;height: 20px;background: url('../images/icon_checkbox_unchecked.png') 50% 50%/auto auto no-repeat;cursor: pointer;}
+            table .checkbox.checked{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
           }
           .nav_content_1_btn{
             text-align: center;

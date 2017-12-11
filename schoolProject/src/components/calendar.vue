@@ -1,21 +1,31 @@
 <template>
   <div class="month_cal">
+    <!-- 日历导航 -->
     <div class="month_nav">
-      <button @click='changeActMonth("last_month")' @focus='()=>{this.$emit("buttonFocus")}' @blur='()=>{this.$emit("buttonBlur")}' ></button>
+      <button @click='changeActMonth("last_month")'
+              @focus='()=>{this.$emit("buttonFocus")}'
+              @blur='()=>{this.$emit("buttonBlur")}' >
+      </button>
       {{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}
-      <button @click='changeActMonth("next_month")' @focus='()=>{this.$emit("buttonFocus")}' @blur='()=>{this.$emit("buttonBlur")}' ></button>
+      <button @click='changeActMonth("next_month")'
+              @focus='()=>{this.$emit("buttonFocus")}'
+              @blur='()=>{this.$emit("buttonBlur")}' >
+      </button>
     </div>
     <div class="month_body">
       <div class="month_table clearfix">
+        <!-- A、B、H 周 -->
         <div class="table_left" v-if='showABWeek'>
           <div></div>
-          <div v-for='(item, index) in calendarList'><div>{{index%2==0?"A":"B"}}</div></div>
+          <div v-for='(row, index) in calendarList'><div>{{getABHWeek(row, index)}}</div></div>
         </div>
         <div class="table_right">
+          <!-- 星期 -->
           <div class="li li_head">
             <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
             <div v-if='selectModel==="week"'></div>
           </div>
+          <!-- 日期 -->
           <div class="li li_cont" v-for='(li, index) in calendarList'
                :class='[{"week": selectModel==="week"}, {"act": actWeek===index}]'
                @click='changeActWeek(index, selectModel)'>
@@ -31,6 +41,7 @@
         </div>
       </div>
     </div>
+    <!-- 活动周信息 -->
     <div class="month_info" v-if='showMonthInfo'>
         Week: {{getYearWeek()}}
         <span :class='getMonthWeek()'></span>
@@ -78,6 +89,21 @@
     created () {
       this.actDateInfo = this.inputActDateInfo
       this.createCalendar()
+    },
+    watch: {
+      // 监听活动日期改变，当活动日期与月视图不匹配，重绘日历
+      inputActDateInfo: {
+        handler (val) {
+          for (let i = 0; i < this.calendarList[1].length; i++) {
+            let item = this.calendarList[1][i]
+            if (item.monthInfo === 'this_month' && item.monthValue !== val.thisMonth) {
+              this.createCalendar()
+              break
+            }
+          }
+        },
+        deep: true
+      }
     },
     methods: {
       // 构建日历
@@ -204,11 +230,18 @@
 
         this.syncData()
       },
+      // 活动日期在今年为单周或双周
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
       },
+      // 活动日期在今年为第几周
       getYearWeek () {
         return getYearWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate)
+      },
+      getABHWeek (row, index) {
+        // console.log(getSessionStorage('holidays'))
+        // console.log(this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day}).format('YYYY-MM-DD'))
+        return index % 2 === 0 ? 'A' : 'B';
       },
       // 获取当前日期所属的周数据
       getActWeek () {
@@ -217,7 +250,7 @@
           let row = this.calendarList[i]
           for (let i2 = 0, len2 = row.length; i2 < len2; i2++) {
             let item = row[i2]
-            if (this.actDateInfo.thisYear === item.yearValue && this.actDateInfo.monthValue === item.thisMonth && this.actDateInfo.thisDate === item.day) {
+            if (this.actDateInfo.thisYear === item.yearValue && this.actDateInfo.thisMonth === item.monthValue && this.actDateInfo.thisDate === item.day) {
               actWeek = row
               return actWeek
             }
@@ -225,6 +258,7 @@
         }
         return actWeek
       },
+      // 日历构建完毕
       afterInit () {
         this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek())
       },
@@ -235,7 +269,7 @@
     },
     filters: {
       monthName (str) {
-        return monthMap[str].substr(0, 3)
+        return monthMap[Number(str)].substr(0, 3)
       }
     }
   }

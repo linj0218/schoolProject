@@ -1,11 +1,16 @@
 <template>
   <div id="body" v-cloak>
-    <headerr @configurationToggleFunc='configurationToggleFunc'></headerr>
+
+    <!-- 头部 -->
+    <headerr @configToggle='configToggle'
+             @profileToggle='profileToggle'>
+    </headerr>
+
     <div class="page_body">
       <div class="page_body_box clearfix">
         <div class="part_1">
           <div class="title">Calendar</div>
-          
+
           <!-- 日历组件 -->
           <calendar :inputActDateInfo='actDateInfo'
                     :showMonthInfo='false'
@@ -13,7 +18,7 @@
                     @syncDataFunc='syncDataFunc'>
           </calendar>
 
-          <div class="title bg_color">Places</div>
+          <div class="title bg_color">Campus</div>
           <div class="places">
             <button type="button" class="btn btn-block"
                     v-for='place in placesList'
@@ -80,8 +85,12 @@
                 <div class="li" v-show='showli(li)'>
                   <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
                     <div :title='td.title' v-show='!(td.spanNum==1 && td.time!="All day")'>
-                      <div :class='td.color'>
-                        <div class="title_line" v-text='td.title'></div>
+                      <div :class='[td.color, {"no_table_cell": td.spanNum>1&&td.time!="All day"}]'>
+                        <div class="title_line">
+                          <div class="time_line" v-show='td.spanNum>1&&td.time!="All day"'>{{td.startTime}}</div>
+                          <div class="time_line right" v-show='td.spanNum>1&&td.time!="All day"'>{{td.endTime}}</div>
+                          {{td.title}}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -92,14 +101,16 @@
         </div>
         <div class="part_3">
           <div class="task_title">
+            <div class="act_date_info">{{data.actDateInfoLabel}}</div>
             <template v-for='li in weekTaskList'>
               <div class="li container-fluid"
                    v-for='td in li'
                    v-if='showTask(td)'
                    :class='{"act": td.id==weekTaskListActId}'
                    @click='weekTaskListActIndexChanged(td)'>
-                <div class="col-lg-12"><span :class='td.color'></span>{{td.time}}</div>
-                <div class="col-lg-12">{{td.title}}</div>
+                <div class="label_line"></span>{{td.time}}</div>
+                <div class="label_line"><span :class='td.color'></span>{{td.place}} - {{td.room}}</div>
+                <div class="label_line">{{td.title}}</div>
               </div>
             </template>
           </div>
@@ -131,22 +142,13 @@
                   <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
                 </div>
                 <div class="item">
-                  <span>Creater:</span><div>{{taskDetailInfo.creater ? taskDetailInfo.creater : '-'}} {{taskDetailInfo.create_time ? taskDetailInfo.create_time : ''}}</div>
-                </div>
-                <div class="item">
                   <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
                 </div>
                 <div class="item">
-                  <span>Place:</span><div>{{taskDetailInfo.place ? taskDetailInfo.place : '-'}} {{taskDetailInfo.room}}</div>
-                </div>
-                <div class="item">
-                  <span>Start:</span><div>{{taskDetailInfo.start ? taskDetailInfo.start : '-'}}</div>
-                </div>
-                <div class="item">
-                  <span>End:</span><div>{{taskDetailInfo.end ? taskDetailInfo.end : '-'}}</div>
-                </div>
-                <div class="item">
                   <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
+                </div>
+                <div class="item">
+                  <span>Attachment:</span><div><a target="_blank" href="http://www.baidu.com">test<i class="icon_attachment"></i></a></div>
                 </div>
               </div>
               <div class="edit_btn">
@@ -156,27 +158,29 @@
                 <button type="button" class="btn btn-danger" @click='deleteEvent()'>
                   <span class="icon icon_btn_del"></span> Delete
                 </button>
+                <div class="creater_info">
+                  <div class="name">Creater</div>
+                  <div>{{taskDetailInfo.creater}}</div>
+                  <div>{{taskDetailInfo.create_time}}</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <configuration :showConfig='showConfig'
-                     @configurationToggleFunc='configurationToggleFunc'>
-      </configuration>
+      <!-- 个人设置 -->
+      <profile ref='profile' @openBanner='openBanner'></profile>
+
+      <!-- 系统设置 -->
+      <config ref='config'></config>
 
       <new-event :show-config='showEvent'
                  :event-type='eventType'
                  :event-id='weekTaskListActId'
                  @closeEventModal='closeEventModal'>
       </new-event>
-      
-      <delete-confirm-modal :show-popup='data.confirm.showPopup'
-                            :input-value='data.confirm.text'
-                            :input-method='data.confirm.inputMethod'
-                            @closePopup='() => { this.data.confirm.showPopup = false }'>
-      </delete-confirm-modal>
+
     </div>
 
     <banner ref='banner'></banner>
@@ -189,27 +193,24 @@
 <script>
   import headerr from '@/components/header'
   import banner from '@/components/banner'
-  import configuration from '@/components/configuration'
+  import profile from '@/components/profile'
+  import config from '@/components/configuration'
   import calendar from '@/components/calendar'
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
-  import deleteConfirmModal from '@/components/deleteConfirmModal'
   import alert from '@/components/alert'
   import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate} from '@/plugins/util'
+  import {mapState, mapMutations} from 'vuex'
 
   export default {
     components: {
-      headerr, banner, calendar, configuration, newEvent, drapdown, deleteConfirmModal, alert
+      headerr, banner, calendar, profile, config, newEvent, drapdown, alert
     },
     data () {
       return {
         data: {
           initOver: false,
-          confirm: {
-            showPopup: false,
-            text: 'Confirm the Deletion?',
-            inputMethod: ''
-          }
+          actDateInfoLabel: ''
         },
         // part_1 ------------------------------------------------------------
         // Calendar
@@ -234,8 +235,7 @@
         seeCategoryName: 'All',
         seeCategoryColor: '',
         seeCategorys: [],
-        weekTableHead: [
-        ],
+        weekTableHead: [],
         weekTaskListActId: null,
         weekTaskList: [],
         // part_3 ------------------------------------------------------------
@@ -255,8 +255,6 @@
         eventsUserGroupList: [],
         eventsUserList: [],
         eventsGroupList: [],
-        // 配置弹窗
-        showConfig: false,
         // 新建事件弹窗
         showEvent: false,
         eventType: null
@@ -269,7 +267,11 @@
         this.actDateInfo.thisDate = Number(this.$route.query.date)
       }
     },
+    computed: {
+      ...mapState(['test'])
+    },
     mounted () {
+      // console.log(this)
       if (JSON.stringify(this.$route.query) !== '{}') {
         this.createWeekInfo()
       }
@@ -281,7 +283,13 @@
         })
       })
     },
+    watch: {
+      test () {
+        console.log(this.test)
+      }
+    },
     methods: {
+      ...mapMutations(['SET_TEST']),
       initPageData () {
         let self = this
         return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
@@ -323,6 +331,14 @@
           })
           self.seeCategorys = seeCategorys
 
+          // 重构Holiday数据
+          // let holidays = [];
+          // forEach(resData.schoolYearList, (i, item) => {
+          //   if (!item.hoildayList) return;
+          //   holidays = holidays.concat(item.hoildayList)
+          // })
+          // setSessionStorage('holidays', holidays);
+
           return res
         })
       },
@@ -335,16 +351,16 @@
       },
       // 周视图切换上下周
       switchWeek (targetStr) {
-        let actDateTime = new Date(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate).getTime()
         let targetDate = null
+        let actDateTime = this.$moment([this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-'))
         if (targetStr === 'prev') {
-          targetDate = new Date(actDateTime - 7 * 24 * 3600 * 1000)
+          targetDate = actDateTime.add(-7, 'days')
         } else {
-          targetDate = new Date(actDateTime + 7 * 24 * 3600 * 1000)
+          targetDate = actDateTime.add(7, 'days')
         }
-        this.actDateInfo.thisYear = targetDate.getFullYear()
-        this.actDateInfo.thisMonth = targetDate.getMonth()
-        this.actDateInfo.thisDate = targetDate.getDate()
+        this.actDateInfo.thisYear = Number(targetDate.format('YYYY'))
+        this.actDateInfo.thisMonth = Number(targetDate.format('MM'))
+        this.actDateInfo.thisDate = Number(targetDate.format('DD'))
         this.createWeekInfo()
       },
       // 创建日历下周任务视图
@@ -446,9 +462,27 @@
                   if (field.days > 1) {
                     i = i + field.days - 1
                   }
+                  /*
+                  1.单天的event
+                  a.All day
+                  文本显示为：All day
+                  b.非All day
+                  文本显示为：2:00 am – 4:00 pm
+
+                  2.跨天的evetn
+                  a.All day
+                  文本显示为：All day (28/11 – 29/11)
+                  b.非All day
+                  文本显示为：28/11 2:00 am – 29/11 4:00 pm
+
+                  显示顺序从上至下为：跨天allday，跨天非allday, 单天allday，单天非allday
+                  */
                   let time = ''
                   if (field.day_flag === 1) {
                     time = 'All day'
+                    if (field.days > 1) {
+                      time += ' (' + (formatDate(field.start_date, 'dd/mm') + ' - ' + formatDate(field.end_date, 'dd/mm')) + ')'
+                    }
                   } else if (field.days > 1) {
                     time = formatDate(field.start_date, 'dd/mm') + ' ' + field.start_time + ' - ' + formatDate(field.end_date, 'dd/mm') + ' ' + field.end_time
                   } else {
@@ -462,6 +496,8 @@
                     title: field.title,
                     place: field.campus_name,
                     room: field.place_name,
+                    startTime: field.start_time,
+                    endTime: field.end_time,
                     thisYear: item.thisYear,
                     thisMonth: item.thisMonth,
                     thisDate: item.thisDate
@@ -512,6 +548,8 @@
                   title: '',
                   place: '',
                   room: '',
+                  startTime: '',
+                  endTime: '',
                   thisYear: item.thisYear,
                   thisMonth: item.thisMonth,
                   thisDate: item.thisDate}
@@ -529,11 +567,18 @@
               }
             }
           }
-
           formatWeekInfo()
+          this.formatActDateInfoLabel()
+          // console.log(self.weekTaskList)
 
           return res
         })
+      },
+      // Event列表时间
+      formatActDateInfoLabel () {
+        let actDate = [this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-')
+        let week = new Date(actDate).getDay()
+        this.data.actDateInfoLabel = formatDate(actDate, 'yyyy-mm-dd') + ', ' + weekMap[week].substr(0, 3)
       },
       // 周视图隐藏空行
       showli (li) {
@@ -580,9 +625,12 @@
         this.actWeekList = arguments[3] || {}
         this.createWeekInfo()
       },
+      profileToggle () {
+        this.$refs.profile.show = !this.$refs.profile.show;
+      },
       // 配置弹窗切换事件
-      configurationToggleFunc () {
-        this.showConfig = !this.showConfig
+      configToggle () {
+        this.$refs.config.show = !this.$refs.config.show
       },
       // Event弹窗关闭
       closeEventModal () {
@@ -683,12 +731,8 @@
           })
         })
       },
-      // 打开confirm组件
-      confirm (method, text) {
-        if (text) this.data.confirm.text = text
-        this.data.confirm.inputMethod = method || ''
-
-        this.data.confirm.showPopup = true
+      openBanner (res) {
+        this.$refs.banner.show(res.msg)
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
@@ -707,7 +751,7 @@
     padding: 30px 180px;position: relative;
     .icon_btn_add{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
     .part_1{
-      background: #fff;float: left;width: 420px;height: 918px;margin-right: 20px;box-shadow: 0 0 1px #ddd;
+      background: #fff;float: left;width: 380px;height: 918px;margin-right: 20px;box-shadow: 0 0 1px #ddd;
       .title{line-height: 56px;font-size: 28px;background: #4A90E2;color: #fff;text-align: center;position: relative;}
       .title:after{content: '';position: absolute;bottom: -11px;height: 11px;width: 100%;left: 0;background: url('../images/icon_other1.png') 24px 0 / auto 100% no-repeat;}
       .title.bg_color{background: #5ACE6D;margin-top: 95px;}
@@ -781,7 +825,7 @@
             .task_4 > div,
             .task_5 > div,
             .task_6 > div,
-            .task_7 > div{padding: 4px 8px;height: 100%;display: table;width: 100%;position: relative;}
+            .task_7 > div{padding: 4px 8px;height: 60px;display: table;width: 100%;position: relative;}
             .task_1 > div > div,
             .task_2 > div > div,
             .task_3 > div > div,
@@ -789,9 +833,11 @@
             .task_5 > div > div,
             .task_6 > div > div,
             .task_7 > div > div{
-              height: 100%;border-radius: 3px;font-size: 18px;color: #fff;display: table-cell;vertical-align: middle;line-height: 18px;padding: 0 10px;
-              .time_line,
-              .title_line{overflow: hidden;text-overflow: ellipsis;height: 18px;}
+              height: 52px;border-radius: 3px;font-size: 16px;color: #fff;display: table-cell;vertical-align: middle;line-height: 17.4px;
+              &.no_table_cell{display: block;}
+              .title_line{overflow: hidden;padding: 0 5px;max-height: 52px;}
+              .time_line{font-size: 12px;display: inline-block;width: 49%;text-align: left;}
+              .time_line.right{text-align: right;}
             }
             .task_0{flex: 1;}
           }
@@ -804,9 +850,10 @@
         float: left;width: 323px;height: 100%;overflow-y: auto;
         &::-webkit-scrollbar {width: 0;height: 0;}
         &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
+        .act_date_info{text-align: center;padding: 10px 0;font-size: 16px;}
         .li{
-          height: 78px;line-height: 29px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #003;font-size: 16px;
-          .col-lg-12{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+          line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 10px;color: #333;font-size: 14px;
+          .label_line{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;padding-left: 20px;position: relative;}
           span{width: 12px;height: 12px;border-radius: 50%;position: absolute;left: 0;top: 50%;transform: translateY(-50%);}
         }
         .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
@@ -818,10 +865,11 @@
         .tast_detail_left{
           overflow: hidden;padding: 20px 0;height: 100%;
           .item{
-            line-height: 24px;padding: 10px 0;
+            line-height: 24px;padding: 5px 0;
             span{float: left;width: 140px;text-align: right;color: #999;font-size: 14px;margin-right: 10px;}
             div{overflow: hidden;font-size: 14px;color: #333;}
-            i{display: inline-block;width: 20px;height: 20px;border-radius: 50%;vertical-align: middle;}
+            i{display: inline-block;width: 20px;height: 20px;border-radius: 50%;vertical-align: middle;margin-left: 10px;}
+            .icon_attachment{display: inline-block; width: 28px;height: 28px;background: url('../images/icon_attachment.png') 0 0 / 100% 100% no-repeat;}
           }
         }
         .tast_detail_right{
@@ -841,6 +889,8 @@
           .icon{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;margin-right: 5px;}
           .icon_btn_edit{background: url('../images/icon_btn_edit.png') 50% 50% / auto auto no-repeat;}
           .icon_btn_del{background: url('../images/icon_btn_del.png') 50% 50% / auto auto no-repeat;}
+          .creater_info{position: absolute;right: 10px;top: 50%;transform: translateY(-50%);color: #aaa;}
+          .creater_info .name{color: #333;}
         }
       }
     }

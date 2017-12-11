@@ -2,7 +2,9 @@
   <div id="body" v-cloak>
 
     <!-- 头部 -->
-    <headerr :showConfiguration='false' @configurationToggleFunc='configurationToggleFunc'></headerr>
+    <headerr @appSettingToggle='appSettingToggle'
+             @profileToggle='profileToggle'>
+    </headerr>
 
     <div class="page_body">
       <div class="page_body_box clearfix">
@@ -10,7 +12,7 @@
           <div class="apps container-fluid">
             <!-- <div class="app col-lg-4" v-for='app in applicationList'> -->
             <template v-for='app in applicationList'>
-              <a class="app col-lg-4" target="_blank" :href='app.baseaddress'>
+              <a class="app col-xs-4 col-sm-4 col-md-4 col-lg-4" target="_blank" :href='app.baseaddress'>
                 <div class="icon">
                   <img :src='"../images/app_" + app.id + ".png"'>
                   <img class="icon_on" :src='"../images/app_" + app.id + "_on.png"'>
@@ -22,10 +24,6 @@
         </div>
         <div class="part_3">
           <div class="deps">
-            <div class="title">
-              Department
-              <div class="nav_btns"><a href="javascript:void(0);">&lt;</a>&nbsp;&nbsp;<a href="javascript:void(0);">&gt;</a></div>
-            </div>
             <div class="media" v-for='dep in departmentList'>
               <div class="media-left media-middle">
                 <a href="javascript:void(0);">
@@ -36,6 +34,9 @@
                 <h4 class="media-heading">{{dep.title}}</h4>
                 {{dep.description}}
               </div>
+            </div>
+            <div class="title">
+              <div class="nav_btns"><a href="javascript:void(0);">&lt;</a>&nbsp;&nbsp;<a href="javascript:void(0);">&gt;</a></div>
             </div>
           </div>
         </div>
@@ -74,9 +75,14 @@
         </div>
       </div>
 
-      <configuration :showConfig='showConfig'
-                     @configurationToggleFunc='configurationToggleFunc'>
-      </configuration>
+      <!-- 提示 -->
+      <banner ref='banner'></banner>
+      
+      <!-- 个人设置 -->
+      <profile ref='profile' @openBanner='openBanner'></profile>
+
+      <!-- APP设置 -->
+      <app-setting ref='appSetting' @openBanner='openBanner'></app-setting>
 
     </div>
   </div>
@@ -84,12 +90,14 @@
 
 <script>
   import headerr from '@/components/header'
+  import banner from '@/components/banner'
   import calendar from '@/components/calendar'
-  import configuration from '@/components/configuration'
+  import profile from '@/components/profile'
+  import appSetting from '@/components/appSetting'
   import {weekMap, monthMap, forEach, formatDate} from '@/plugins/util'
   export default {
     components: {
-      headerr, calendar, configuration
+      headerr, banner, calendar, profile, appSetting
     },
     data () {
       return {
@@ -114,7 +122,7 @@
           {imgUrl: '', title: 'Doctor', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'}
         ],
         // 配置弹窗
-        showConfig: false
+        showDialog: false
       }
     },
     mounted () {
@@ -199,9 +207,15 @@
         this.createWeekInfo()
         this.init()
       },
+      profileToggle () {
+        this.$refs.profile.show = !this.$refs.profile.show;
+      },
       // 配置弹窗切换事件
-      configurationToggleFunc () {
-        this.showConfig = !this.showConfig
+      appSettingToggle () {
+        this.$refs.appSetting.show = !this.$refs.appSetting.show;
+      },
+      openBanner (res) {
+        this.$refs.banner.show(res.msg)
       },
       // 初始化appList列表
       initAppList () {
@@ -287,7 +301,7 @@
       .deps{
         padding: 0 30px 60px 30px;
         .title{
-          font-size: 40px;color: #4A90E2;text-align: center;height: 85px;line-height: 85px;border-bottom: 1px solid #f5f5f5;position: relative;
+          text-align: center;height: 60px;border-top: 1px solid #f5f5f5;position: relative;margin-top: 15px;
           .nav_btns{
             position: absolute;right: 0;bottom: 10px;line-height: 30px;font-size: 18px;
             a{display: inline-block;width: 30px;height: 30px;color: #666;box-shadow: 0 0 1px #999;background: #f5f5f5;}
@@ -297,6 +311,7 @@
           padding-left: 10px;
           img{width: 220px;height: 120px;background: #ddd;}
         }
+        .media:first-child{margin-top: 15px;}
       }
     }
   }

@@ -1,61 +1,92 @@
 <template>
   <div class="header">
-      <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
-      <div class="title">LFS Applications Portal</div>
-      <div class="userInfo">
-        Welcome {{permission}}, <span>{{userName}}</span>
-        <div class="icon head_portrait">
-          {{shortName}}
-          <ul class="drop_down">
-            <div class="icon_other1"></div>
-            <li><span class="icon1"></span>Profile</li>
-            <li @click='handleEvent()' v-if='showConfiguration'><span class="icon2"></span>Configuration</li>
-            <li><span class="icon3"></span>Log out</li>
-          </ul>
-        </div>
-        <div class="icon language" :class="language">
-          <ul class="drop_down">
-            <div class="icon_other2"></div>
-            <li class="english" :class="language=='english'?'act':''" @click="changeLanguage('english')"><i></i></span>English</li>
-            <li class="french" :class="language=='french'?'act':''" @click="changeLanguage('french')"><i></i>French</li>
-            <li class="china" :class="language=='china'?'act':''" @click="changeLanguage('china')"><i></i>简体中文</li>
-          </ul>
-        </div>
+    <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
+    <div class="title">LFS Applications Portal</div>
+    <div class="userInfo">
+      Welcome {{permission}}, <span>{{userName}}</span>
+      <div class="icon head_portrait">
+        {{shortName}}
+        <ul class="drop_down">
+          <div class="icon_other1"></div>
+          <li @click='profileToggle()'><span class="icon1"></span>Profile</li>
+          <li @click='appSettingToggle()' v-if='showAppSetting'><span class="icon2"></span>App permission</li>
+          <li @click='configToggle()' v-if='showConfig'><span class="icon2"></span>Configuration</li>
+          <li @click='logout()'><span class="icon3"></span>Log out</li>
+        </ul>
+      </div>
+      <div class="icon language" :class="language">
+        <ul class="drop_down">
+          <div class="icon_other2"></div>
+          <li class="english" :class="language=='english'?'act':''" @click="changeLanguage('english')"><i></i></span>English</li>
+          <li class="french" :class="language=='french'?'act':''" @click="changeLanguage('french')"><i></i>French</li>
+          <li class="china" :class="language=='china'?'act':''" @click="changeLanguage('china')"><i></i>简体中文</li>
+        </ul>
       </div>
     </div>
+
+    <alert ref='alert'></alert>
+
+  </div>
 </template>
 
 <script>
+  import alert from '@/components/alert'
+  import {getShortName} from '@/plugins/util'
   export default {
+    components: {
+      alert
+    },
     props: {
-      showConfiguration: {
-        type: Boolean,
-        required: false,
-        default: true
-      }
     },
     data () {
       return {
         language: 'english',
         userName: '',
         permission: '',
-        shortName: ''
+        shortName: '',
+        showConfig: false,
+        showAppSetting: false
       }
     },
     mounted () {
-      let userInfo = JSON.parse(sessionStorage.getItem('userinfo'))
-      this.userName = userInfo.nom
-      this.permission = userInfo.permission_title
-      let name = userInfo.nom.split(' ')
-      let shortName = [name[0].substr(0, 1).toUpperCase(), name[1].substr(0, 1).toUpperCase()].join('')
-      this.shortName = shortName
+      this.initUserInfo()
+      this.initMenu()
     },
     methods: {
+      // 初始化用户信息
+      initUserInfo () {
+        let userInfo = JSON.parse(sessionStorage.getItem('userinfo'))
+        this.userName = userInfo.nom
+        this.permission = userInfo.permission_title
+        this.shortName = getShortName(userInfo.nom)
+      },
+      // 初始化头部菜单
+      initMenu () {
+        let pageName = this.$route.name
+        if (pageName === 'homepage') {
+          this.showConfig = true
+        } else if (pageName === 'index') {
+          this.showAppSetting = true
+        }
+      },
       changeLanguage (lang) {
         this.language = lang
       },
-      handleEvent () {
-        this.$emit('configurationToggleFunc')
+      profileToggle () {
+        this.$emit('profileToggle')
+      },
+      appSettingToggle () {
+        this.$emit('appSettingToggle')
+      },
+      configToggle () {
+        this.$emit('configToggle')
+      },
+      // 登出
+      logout () {
+        this.$refs.alert.showDialog('Confirm Log out?').then(() => {
+          sessionStorage.removeItem('userinfo')
+          this.$router.push({ path: '/login' })
+        })
       }
     }
   }
@@ -78,7 +109,8 @@
         .icon_other1{height: 22px;background: url('../images/icon_other3.png') 45% 100% / auto auto no-repeat;}
         .icon_other2{height: 28px;background: url('../images/icon_other3.png') 100% 100% / auto auto no-repeat;}
       }
-      .icon .drop_down li{line-height: 48px;text-align: left;background: #fff;color: #333;}
+      .icon .drop_down li{line-height: 48px;text-align: left;background: #fff;color: #333;border-left: 1px solid #eee;border-right: 1px solid #eee;}
+      .icon .drop_down li:last-child{border-bottom: 1px solid #eee;}
       .icon .drop_down li:hover{background: #4E81BD;color: #fff;}
       .icon .drop_down li:hover .icon1{background: url('../images/icon_1_1.png') 50% 50% / auto auto no-repeat;}
       .icon .drop_down li:hover .icon2{background: url('../images/icon_2_2.png') 50% 50% / auto auto no-repeat;}

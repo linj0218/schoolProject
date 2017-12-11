@@ -53,6 +53,7 @@
         return this.promise
       },
       confirm () {
+        this.show = false;
         this.resolve()
       },
       cancel () {
