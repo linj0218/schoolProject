@@ -51,22 +51,30 @@ export default {
   },
   methods: {
     login () {
-      if (this.userName === '' || this.passWord === '') {
-        return false;
-      }
+      if (this.userName === '' || this.passWord === '') return false;
+
       let self = this
-      // TODO 填入正确地址，参数
-      let param = '{"userName": "' + this.userName + '","passWord": "' + this.passWord + '"}'
-      // let obj = JSON.parse(param);
+      let params = {
+        userName: this.userName,
+        passWord: this.passWord
+      }
       this.$http.post('/loginCtl/user/login', {
-        data: param
+        data: JSON.stringify(params)
       }).then((res) => {
-        if (!res.success) { // 登录失败
-          this.errorText = this.errorType[1]
-        } else {
+        if (res.success) {
+          let resData = res.data;
+          if (resData.permission_title === 'Admin') {
+            resData.role = 0;
+          } else if (resData.permission_title === 'Super User') {
+            resData.role = 1;
+          } else if (resData.permission_title === 'User') {
+            resData.role = 2;
+          }
           localStorage.setItem('USERNAME', this.userName)
-          setSStorage('userinfo', res.data)
+          setSStorage('userinfo', resData)
           self.$router.push({ path: '/' })
+        } else {
+          this.errorText = this.errorType[1]
         }
       })
     }

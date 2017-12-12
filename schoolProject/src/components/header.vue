@@ -42,6 +42,7 @@
       return {
         language: 'english',
         userName: '',
+        userRole: 0, // 用户角色
         permission: '',
         shortName: '',
         showConfig: false,
@@ -58,12 +59,13 @@
         let userInfo = getSStorage('userinfo');
         this.userName = userInfo.nom
         this.permission = userInfo.permission_title
+        this.userRole = userInfo.role
         this.shortName = getShortName(userInfo.nom)
       },
       // 初始化头部菜单
       initMenu () {
         let pageName = this.$route.name
-        if (pageName === 'homepage') {
+        if (pageName === 'homepage' && this.userRole === 0) {
           this.showConfig = true
         } else if (pageName === 'index') {
           this.showAppSetting = true

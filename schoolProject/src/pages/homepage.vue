@@ -52,8 +52,8 @@
                 </drapdown>
 
               </div>
-              <span>See the category as:</span>
-              <div class="select">
+              <span v-if='data.role==0 || data.role==1'>See the category as:</span>
+              <div class="select" v-if='data.role==0 || data.role==1'>
 
                 <!-- 下拉组件 -->
                 <drapdown :input-value='seeCategoryId'
@@ -63,7 +63,7 @@
                 </drapdown>
 
               </div>
-              <button type="button" class="btn btn-primary" @click='()=>{this.eventType="new";this.showEvent=true}'>
+              <button type="button" class="btn btn-primary" @click='()=>{this.eventType="new";this.showEvent=true}' v-if='data.role==0 || data.role==1'>
                 <span class="icon_btn_add"></span> New Event
               </button>
             </div>
@@ -199,7 +199,7 @@
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
   import alert from '@/components/alert'
-  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate} from '@/plugins/util'
+  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate, getSStorage} from '@/plugins/util'
   import {mapState, mapMutations} from 'vuex'
 
   export default {
@@ -210,7 +210,8 @@
       return {
         data: {
           initOver: false,
-          actDateInfoLabel: ''
+          actDateInfoLabel: '',
+          role: 0
         },
         // part_1 ------------------------------------------------------------
         // Calendar
@@ -266,6 +267,7 @@
         this.actDateInfo.thisMonth = Number(this.$route.query.month)
         this.actDateInfo.thisDate = Number(this.$route.query.date)
       }
+      this.data.role = getSStorage('userinfo').role;
     },
     computed: {
       ...mapState(['test'])
