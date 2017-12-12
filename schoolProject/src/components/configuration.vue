@@ -393,7 +393,6 @@ export default {
     editGroupAlias (index, row) {
       this.$refs.prompt.showDialog(row.group_name).then((text) => {
         row.group_name = text;
-        this.$refs.prompt.show = false
       })
     },
     groupStatusChanged (index, row) {
@@ -428,8 +427,6 @@ export default {
         this.schoolYearData.yearId = 0
         this.schoolYearData.yearName = text
 
-        this.$refs.prompt.show = false
-
         this.submitSchoolYear(1)
       })
     },
@@ -455,6 +452,11 @@ export default {
           data: JSON.stringify(param)
         }).then((res) => {
           if (res.success) {
+            let banner = {
+              status: 'SUCCESS',
+              msg: 'Success!'
+            }
+            this.$emit('openBanner', banner);
             return res;
           }
         })
@@ -462,13 +464,11 @@ export default {
       if (opt === -1) {
         this.$refs.alert.showDialog().then(() => {
           _submit().then(() => {
-            this.$refs.alert.show = false;
             this.init();
           })
         })
       } else {
         _submit().then(() => {
-          this.$refs.prompt.show = false;
           if (opt === 1) this.init();
         })
       }
@@ -527,7 +527,6 @@ export default {
           data: JSON.stringify(params)
         }).then((res) => {
           if (res.success) {
-            this.$refs.alert.show = false
             this.getHoliday()
           }
         })
@@ -566,22 +565,30 @@ export default {
           data: JSON.stringify(param)
         }).then((res) => {
           if (res.success) {
+            let banner = {
+              status: 'SUCCESS',
+              msg: 'Success!'
+            }
+            this.$emit('openBanner', banner);
             return res;
-            // this.$refs.prompt.show = false
-            // this.init()
+          } else {
+            let banner = {
+              status: 'FAIL',
+              msg: res.msg
+            }
+            this.$emit('openBanner', banner);
+            return false;
           }
         })
       }
       if (opt === -1) {
         this.$refs.alert.showDialog().then(() => {
           _submit().then(() => {
-            this.$refs.alert.show = false;
             this.init();
           })
         })
       } else {
         _submit().then(() => {
-          this.$refs.prompt.show = false;
           if (opt === 1) this.init();
         })
       }
@@ -615,8 +622,6 @@ export default {
           data: JSON.stringify(param)
         }).then((res) => {
           if (res.success) {
-            this.$refs.prompt.show = false
-
             this.getRoomsById(this.placesData.value)
             // this.init()
           }
@@ -635,7 +640,6 @@ export default {
           data: JSON.stringify(param)
         }).then((res) => {
           if (res.success) {
-            this.$refs.prompt.show = false
             // this.init()
             this.getRoomsById(this.placesData.value)
           }
@@ -655,7 +659,6 @@ export default {
           data: JSON.stringify(param)
         }).then((res) => {
           if (res.success) {
-            this.$refs.alert.show = false
             // this.init()
             this.getRoomsById(this.placesData.value)
           }
@@ -673,57 +676,52 @@ export default {
         this.categoryData.value = 0
         this.categoryData.name = text
 
-        this.submitCategory()
+        this.submitCategory(0)
       })
     },
     editCategory () {
       this.$refs.prompt.showDialog(this.categoryData.name).then((text) => {
         this.categoryData.name = text
 
-        this.submitCategory()
+        this.submitCategory(0)
       })
     },
     editCategoryColor (item) {
       this.categoryData.color = item.value
 
-      this.submitCategory()
+      this.submitCategory(0)
     },
-    submitCategory () {
+    delCategory () {
+      this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
+        this.submitCategory(-1)
+      })
+    },
+    submitCategory (opt) {
       let param = {
         'id': this.categoryData.value,
         'category_no': this.categoryData.name,
         'category_remark': this.categoryData.color,
-        'operation_flag': 0
+        'operation_flag': opt
       }
       this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
         data: JSON.stringify(param)
       }).then((res) => {
         if (res.success) {
-          this.$refs.prompt.show = false
-
-          if (this.categoryData.value === 0) {
+          let banner = {
+            status: 'SUCCESS',
+            msg: 'Success!'
+          }
+          this.$emit('openBanner', banner);
+          if (this.categoryData.value === 0 || opt === -1) {
             this.init()
           }
-        }
-      })
-    },
-    delCategory () {
-      this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
-        let param = {
-          'id': this.categoryData.value,
-          'category_no': this.categoryData.name,
-          'category_remark': this.categoryData.color,
-          'operation_flag': -1
-        }
-        this.$http.post('/sharedcalendarSettingCtl/event/editCategory', {
-          data: JSON.stringify(param)
-        }).then((res) => {
-          if (res.success) {
-            this.$refs.alert.show = false
-
-            this.init()
+        } else {
+          let banner = {
+            status: 'FAIL',
+            msg: res.msg
           }
-        })
+          this.$emit('openBanner', banner);
+        }
       })
     }
   }

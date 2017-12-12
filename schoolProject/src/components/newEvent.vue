@@ -484,31 +484,25 @@ export default {
       return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
         data: JSON.stringify(reqData)
       }).then((res) => {
-        return res
+        if (res.success) {
+          let result = {
+            status: 'ok',
+            msg: 'Save Successed'
+          }
+          this.$emit('openBanner', result)
+          return res
+        }
       })
     },
     // 保存并关闭
     saveAndClose () {
       this.save().then((res) => {
-        let result = {
-          status: 'ok',
-          data: {
-            msg: 'Save Successed'
-          }
-        }
-        this.closeConfig(result)
+        this.closeConfig()
       })
     },
     // 保存并继续
     saveAndContinue () {
       this.save().then((res) => {
-        let result = {
-          status: 'ok',
-          data: {
-            msg: 'Save Successed'
-          }
-        }
-        this.closeConfig(result, 'false')
         this.data = JSON.parse(JSON.stringify(this.copyData))
         this.findEvent().then(() => {
           this.getUsers()
@@ -612,9 +606,7 @@ export default {
     },
     // 关闭弹窗
     closeConfig () {
-      if (arguments[1]) this.$emit('closeEventModal', arguments[0], arguments[1])
-      else if (arguments[0]) this.$emit('closeEventModal', arguments[0])
-      else this.$emit('closeEventModal')
+      this.$emit('closeEventModal')
     }
   }
 }

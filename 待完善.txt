@@ -1,12 +1,13 @@
 --》已完成《--
 1.显示2个今日
+5.config delete位置调整，提示确认及删除成功通知（缺成功通知）
 9.周视图Event排序
 11.loading只在Event保存、删除时出现
+
 --》未处理《--
 2.侧弹窗重叠bug
 3.config place接口失效（需要王哥查一下）
 4.日历H标识
-5.config delete位置调整，提示确认及删除成功通知（缺成功通知）
 6.config groups接口联调（缺接口）
 7.权限：admin全权限，super user没有config，user没有config、new Event、see category as功能
 8.周视图点击跳转事件

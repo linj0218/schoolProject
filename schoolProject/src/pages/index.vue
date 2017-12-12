@@ -43,13 +43,13 @@
         <div class="part_2">
           <div class="calendar">
             <router-link :to='{path: "/homepage"}' tag='div' class="title">Calendar</router-link>
-            
+
             <!-- 日历组件 -->
             <calendar :inputActDateInfo='actDateInfo'
                       @afterInit='syncDataFunc'
                       @syncDataFunc='syncDataFunc'>
             </calendar>
-            
+
             <div class="week_cal">
               <div v-for='(li, index) in weekList'>
                 <div class="drawer_title" @click='changeDrawerActIndex(index, li)' :class='drawerActIndex==index?"act":""'>{{li.week}}, {{li.date}} {{li.month}}</div>
@@ -77,7 +77,7 @@
 
       <!-- 提示 -->
       <banner ref='banner'></banner>
-      
+
       <!-- 个人设置 -->
       <profile ref='profile' @openBanner='openBanner'></profile>
 

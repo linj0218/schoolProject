@@ -92,14 +92,15 @@
     },
     created () {
       this.actDateInfo = this.inputActDateInfo
-      if (!this.initHoliday) {
-        this.SET_INITHOLIDAY(!this.initHoliday);
-        this.getHoliday().then(() => {
-          this.createCalendar()
-        })
-      } else {
-        this.createCalendar()
-      }
+      // if (!this.initHoliday) {
+      //   this.SET_INITHOLIDAY(!this.initHoliday);
+      //   this.getHoliday().then(() => {
+      //     this.createCalendar()
+      //   })
+      // } else {
+      //   this.createCalendar()
+      // }
+      this.createCalendar()
     },
     watch: {
       // 监听活动日期改变，当活动日期与月视图不匹配，重绘日历

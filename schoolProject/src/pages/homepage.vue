@@ -173,20 +173,20 @@
       <profile ref='profile' @openBanner='openBanner'></profile>
 
       <!-- 系统设置 -->
-      <config ref='config'></config>
+      <config ref='config' @openBanner='openBanner'></config>
 
       <new-event :show-config='showEvent'
                  :event-type='eventType'
                  :event-id='weekTaskListActId'
-                 @closeEventModal='closeEventModal'>
+                 @closeEventModal='closeEventModal'
+                 @openBanner='openBanner'>
       </new-event>
 
+      <banner ref='banner'></banner>
+
+      <alert ref='alert'></alert>
+
     </div>
-
-    <banner ref='banner'></banner>
-
-    <alert ref='alert'></alert>
-
   </div>
 </template>
 
@@ -632,22 +632,12 @@
       configToggle () {
         this.$refs.config.show = !this.$refs.config.show
       },
-      // Event弹窗关闭
+      // Event弹窗关闭刷新数据
       closeEventModal () {
-        let bannerInfo = arguments[0]
-        if (bannerInfo && bannerInfo.status === 'ok') {
-          this.data.banner = {
-            bannerText: bannerInfo.data.msg,
-            showBanner: true
-          }
-          this.getWeekInfoData().then(() => {
-            this.getViews()
-          })
-        }
-        let closeFlg = arguments[1]
-        if (closeFlg === undefined) {
-          this.showEvent = !this.showEvent
-        }
+        this.getWeekInfoData().then(() => {
+          this.getViews()
+        })
+        this.showEvent = !this.showEvent
       },
       categoryChanged (item) {
         this.categoryId = item.value
@@ -720,8 +710,11 @@
             data: JSON.stringify({id: this.weekTaskListActId, operation_flag: -1})
           }).then((res) => {
             if (res.success) {
-              this.$refs.alert.show = false
-              this.$refs.banner.show('Delete Successed')
+              let banner = {
+                status: 'SUCCESS',
+                msg: 'Delete Successed'
+              }
+              this.openBanner(banner)
               return res
             }
           }).then(() => {
