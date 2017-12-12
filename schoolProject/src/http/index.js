@@ -10,7 +10,10 @@ axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
 
 // request
 axios.interceptors.request.use((config) => {
-  document.getElementById('loading').className = 'on'
+  // 只Event的保存、删除开启loading
+  if (config.url.indexOf('editEvent') > -1) {
+    document.getElementById('loading').className = 'on'
+  }
   // console.log('request: ', config)
   if (config.method === 'post') {
     let param = JSON.parse(config.data.data)

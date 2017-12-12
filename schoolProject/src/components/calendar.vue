@@ -50,7 +50,8 @@
 </template>
 
 <script>
-  import {monthMap, getMonthWeek, getYearWeek} from '@/plugins/util'
+  import {monthMap, getMonthWeek, getYearWeek, forEach} from '@/plugins/util'
+  import {mapState, mapMutations} from 'vuex'
   export default {
     props: {
       showMonthInfo: {
@@ -86,9 +87,19 @@
         actWeek: -1 // 选中周
       }
     },
+    computed: {
+      ...mapState(['holidays', 'initHoliday'])
+    },
     created () {
       this.actDateInfo = this.inputActDateInfo
-      this.createCalendar()
+      if (!this.initHoliday) {
+        this.SET_INITHOLIDAY(!this.initHoliday);
+        this.getHoliday().then(() => {
+          this.createCalendar()
+        })
+      } else {
+        this.createCalendar()
+      }
     },
     watch: {
       // 监听活动日期改变，当活动日期与月视图不匹配，重绘日历
@@ -103,9 +114,26 @@
           }
         },
         deep: true
+      },
+      holidays () {
+        console.log(this.holidays)
       }
     },
     methods: {
+      ...mapMutations(['SET_HOLIDAY', 'SET_INITHOLIDAY']),
+      getHoliday () {
+        let params = {event_id: 0};
+        return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
+          data: JSON.stringify(params)
+        }).then((res) => {
+          let holidayList = [];
+          forEach(res.data.schoolYearList, (i, item) => {
+            if (item.hoildayList) holidayList = holidayList.concat(item.hoildayList)
+          })
+          this.SET_HOLIDAY(holidayList)
+          return res;
+        })
+      },
       // 构建日历
       createCalendar () {
         let thisYear = this.actDateInfo.thisYear

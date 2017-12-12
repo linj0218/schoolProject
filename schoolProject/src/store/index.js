@@ -11,7 +11,9 @@ const state = {
   profileStatus: 0, // Profile状态 0 关闭 1 开启
   appSettingStatus: 0, // App Setting状态 0 关闭 1 开启
   configStatus: 0, // Config状态 0 关闭 1 开启
-  eventStatus: 0 // Event状态 0 关闭 1 开启
+  eventStatus: 0, // Event状态 0 关闭 1 开启
+  holidays: null, // holiday集合
+  initHoliday: false // 是否初始化
 }
 
 const store = new Vuex.Store({

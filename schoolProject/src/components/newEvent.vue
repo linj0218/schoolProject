@@ -6,7 +6,7 @@
         <span class="icon_back" @click='closeConfig()'></span>{{eventType=="new"?"News":"Edit"}} event
       </div>
       <div class="content">
-        
+
         <!-- 选择成员弹窗 -->
         <add-participant-modal :show-popup='data.showAddParticipantPopup'
                                :data-list='data.allParticipants'
@@ -487,6 +487,7 @@ export default {
         return res
       })
     },
+    // 保存并关闭
     saveAndClose () {
       this.save().then((res) => {
         let result = {
@@ -498,6 +499,7 @@ export default {
         this.closeConfig(result)
       })
     },
+    // 保存并继续
     saveAndContinue () {
       this.save().then((res) => {
         let result = {
