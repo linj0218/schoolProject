@@ -55,7 +55,7 @@
 <script>
 import prompt from '@/components/prompt'
 import alert from '@/components/alert'
-import {getShortName} from '@/plugins/util'
+import {getShortName, getSStorage} from '@/plugins/util'
 export default {
   props: {
   },
@@ -88,7 +88,7 @@ export default {
   methods: {
     // 初始化
     initData () {
-      let user = JSON.parse(sessionStorage.userinfo);
+      let user = getSStorage('userinfo')
       this.data = {
         name: user.nom,
         shortName: '-',

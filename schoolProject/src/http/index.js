@@ -1,5 +1,6 @@
 import axios from 'axios'
 import qs from 'qs'
+import {getSStorage} from '@/plugins/util'
 
 // default
 axios.defaults.timeout = 5000
@@ -18,7 +19,7 @@ axios.interceptors.request.use((config) => {
   if (config.method === 'post') {
     let param = JSON.parse(config.data.data)
     if (config.url.indexOf('/login') === -1) {
-      let userinfo = JSON.parse(sessionStorage.getItem('userinfo'))
+      let userinfo = getSStorage('userinfo')
       if (userinfo !== null) {
         param.userId = userinfo.id
       }

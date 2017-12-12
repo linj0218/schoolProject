@@ -31,7 +31,7 @@
 
 <script>
   import alert from '@/components/alert'
-  import {getShortName} from '@/plugins/util'
+  import {getShortName, getSStorage, removeSStorage} from '@/plugins/util'
   export default {
     components: {
       alert
@@ -55,7 +55,7 @@
     methods: {
       // 初始化用户信息
       initUserInfo () {
-        let userInfo = JSON.parse(sessionStorage.getItem('userinfo'))
+        let userInfo = getSStorage('userinfo');
         this.userName = userInfo.nom
         this.permission = userInfo.permission_title
         this.shortName = getShortName(userInfo.nom)
@@ -84,7 +84,7 @@
       // 登出
       logout () {
         this.$refs.alert.showDialog('Confirm Log out?').then(() => {
-          sessionStorage.removeItem('userinfo')
+          removeSStorage('userinfo')
           this.$router.push({ path: '/login' })
         })
       }

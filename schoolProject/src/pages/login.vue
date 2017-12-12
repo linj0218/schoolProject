@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import {setSStorage} from '@/plugins/util'
 export default {
   components: {
   },
@@ -64,7 +65,7 @@ export default {
           this.errorText = this.errorType[1]
         } else {
           localStorage.setItem('USERNAME', this.userName)
-          sessionStorage.setItem('userinfo', JSON.stringify(res.data))
+          setSStorage('userinfo', res.data)
           self.$router.push({ path: '/' })
         }
       })
