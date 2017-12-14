@@ -75,13 +75,17 @@
         this.language = lang
       },
       profileToggle () {
-        this.$emit('profileToggle')
+        this.$emit('profileToggle', true)
+        this.$emit('configToggle', false)
+        this.$emit('appSettingToggle', false)
       },
       appSettingToggle () {
-        this.$emit('appSettingToggle')
+        this.$emit('appSettingToggle', true)
+        this.$emit('profileToggle', false)
       },
       configToggle () {
-        this.$emit('configToggle')
+        this.$emit('configToggle', true)
+        this.$emit('profileToggle', false)
       },
       // 登出
       logout () {

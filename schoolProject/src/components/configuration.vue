@@ -139,7 +139,7 @@
                   </drapdown>
 
                   <span class="icon icon_edit" @click='editPlace()'></span>
-                  <span class="icon icon_delete" @click='submitPlace(-1)'></span>
+                  <span class="icon icon_delete" @click='delPlace()'></span>
                 </div>
               </div>
               <div class="member_box">
@@ -492,7 +492,6 @@ export default {
       })
     },
     selectWeekChanged (weekList) {
-      // console.log(weekList)
       this.addHoliday(weekList)
       this.showWeekSelectModal = false
     },
@@ -533,66 +532,66 @@ export default {
       })
     },
     // places functions
+    // Place切换事件
     placeChanged (item) {
       this.placesData.value = item.value
       this.placesData.name = item.name
       this.getRoomsById(item.value)
     },
+    // 添加Place
     addPlace () {
       this.$refs.prompt.showDialog().then((text) => {
         this.placesData.value = 0
         this.placesData.name = text
 
-        this.submitPlace(1)
+        return this.submitPlace(0);
+      }).then((ret) => {
+        this.init();
       })
     },
+    // 修改Place
     editPlace () {
       this.$refs.prompt.showDialog(this.placesData.name).then((text) => {
         this.placesData.name = text
 
-        this.submitPlace(0)
+        return this.submitPlace(0)
       })
     },
-    submitPlace (opt) {
-      // opt: -1 删除 0 修改 1 新增
-      let _submit = () => {
-        let param = {
-          'id': this.placesData.value,
-          'place_name': this.placesData.name,
-          'operation_flag': opt === 1 ? 0 : opt
-        }
-        return this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-          data: JSON.stringify(param)
-        }).then((res) => {
-          if (res.success) {
-            let banner = {
-              status: 'SUCCESS',
-              msg: 'Success!'
-            }
-            this.$emit('openBanner', banner);
-            return res;
-          } else {
-            let banner = {
-              status: 'FAIL',
-              msg: res.msg
-            }
-            this.$emit('openBanner', banner);
-            return false;
-          }
-        })
-      }
-      if (opt === -1) {
-        this.$refs.alert.showDialog().then(() => {
-          _submit().then(() => {
-            this.init();
-          })
-        })
-      } else {
-        _submit().then(() => {
-          if (opt === 1) this.init();
-        })
-      }
+    delPlace () {
+      this.$refs.alert.showDialog().then(() => {
+        return this.submitPlace(-1)
+      }).then((ret) => {
+        this.init();
+      })
     },
+    // 提交Place表单
+    submitPlace (opt) {
+      // opt: -1 删除 0 修改/新增
+      let param = {
+        'id': this.placesData.value,
+        'place_name': this.placesData.name,
+        'operation_flag': opt
+      }
+      return this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        let banner = {};
+        if (res.success) {
+          banner = {
+            status: 'SUCCESS',
+            msg: 'Success!'
+          }
+        } else {
+          banner = {
+            status: 'FAIL',
+            msg: res.msg
+          }
+        }
+        this.$emit('openBanner', banner);
+        return res;
+      })
+    },
+    // 通过Place ID查询rooms
     getRoomsById (id) {
       let param = JSON.stringify({campus_id: id})
       this.$http.post('/sharedcalendarSettingCtl/event/getPlacesByCampusId', {
@@ -610,59 +609,60 @@ export default {
         this.placesData.rooms = objList
       })
     },
+    // 添加room
     addPlaceRoom () {
       this.$refs.prompt.showDialog().then((text) => {
-        let param = {
-          'campus_id': this.placesData.value,
-          'place_name': text,
-          'operation_flag': 0,
-          'id': 0
+        let item = {
+          value: 0,
+          name: text
         }
-        this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-          data: JSON.stringify(param)
-        }).then((res) => {
-          if (res.success) {
-            this.getRoomsById(this.placesData.value)
-            // this.init()
-          }
-        })
+        return this.submitPlaceRoom(item, 0)
+      }).then(() => {
+        this.getRoomsById(this.placesData.value)
       })
     },
+    // 编辑room
     editPlaceRoom (item) {
       this.$refs.prompt.showDialog(item.name).then((text) => {
-        let param = {
-          'campus_id': this.placesData.value,
-          'place_name': text,
-          'operation_flag': 0,
-          'id': item.value
-        }
-        this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-          data: JSON.stringify(param)
-        }).then((res) => {
-          if (res.success) {
-            // this.init()
-            this.getRoomsById(this.placesData.value)
-          }
-        })
+        item.name = text;
+        return this.submitPlaceRoom(item, 0)
       })
     },
+    // 删除room
     delPlaceRoom (item) {
       this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
-        let param = {
-          'campus_id': this.placesData.value,
-          'place_name': item.name,
-          'operation_flag': -1,
-          'id': item.value
-        }
+        return this.submitPlaceRoom(item, -1)
+      }).then(() => {
+        this.getRoomsById(this.placesData.value)
+      })
+    },
+    // 提交room表单
+    submitPlaceRoom (item, opt) {
+      // opt: -1 删除 0 修改/新增
+      let param = {
+        'campus_id': this.placesData.value,
+        'place_name': item.name,
+        'operation_flag': opt,
+        'id': item.value
+      }
 
-        this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
-          data: JSON.stringify(param)
-        }).then((res) => {
-          if (res.success) {
-            // this.init()
-            this.getRoomsById(this.placesData.value)
+      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        let banner = {};
+        if (res.success) {
+          banner = {
+            status: 'SUCCESS',
+            msg: 'Success!'
           }
-        })
+        } else {
+          banner = {
+            status: 'FAIL',
+            msg: res.msg
+          }
+        }
+        this.$emit('openBanner', banner);
+        return res;
       })
     },
     // categories functions

@@ -211,8 +211,8 @@
         this.$refs.profile.show = !this.$refs.profile.show;
       },
       // 配置弹窗切换事件
-      appSettingToggle () {
-        this.$refs.appSetting.show = !this.$refs.appSetting.show;
+      appSettingToggle (bol) {
+        this.$refs.appSetting.show = bol;
       },
       openBanner (res) {
         this.$refs.banner.show(res.msg)

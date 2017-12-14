@@ -63,7 +63,7 @@
                 </drapdown>
 
               </div>
-              <button type="button" class="btn btn-primary" @click='()=>{this.eventType="new";this.showEvent=true}' v-if='data.role==0 || data.role==1'>
+              <button type="button" class="btn btn-primary" @click='newEvent()' v-if='data.role==0 || data.role==1'>
                 <span class="icon_btn_add"></span> New Event
               </button>
             </div>
@@ -211,7 +211,8 @@
         data: {
           initOver: false,
           actDateInfoLabel: '',
-          role: 0
+          role: 0,
+          checkActEventId: null
         },
         // part_1 ------------------------------------------------------------
         // Calendar
@@ -292,6 +293,7 @@
     },
     methods: {
       ...mapMutations(['SET_TEST']),
+      // 初始化页面
       initPageData () {
         let self = this
         return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
@@ -354,7 +356,7 @@
       // 周视图切换上下周
       switchWeek (targetStr) {
         let targetDate = null
-        let actDateTime = this.$moment([this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-'))
+        let actDateTime = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
         if (targetStr === 'prev') {
           targetDate = actDateTime.add(-7, 'days')
         } else {
@@ -397,19 +399,14 @@
       },
       // 获取周视图数据
       getWeekInfoData () {
-        let startDate = this.actWeekList[0]
-        let endDate = this.actWeekList[6]
-        let _startDate = formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd')
-        let _endDate = formatDate([endDate.yearValue, endDate.monthValue, endDate.day].join('-'), 'yyyy-mm-dd')
-
         let placesList = []
         this.placesList.map((o) => { if (o.isSelected) { placesList.push('\'' + o.name + '\'') } })
 
         let self = this
         let params = {
           dayFlag: 0,
-          startDate: _startDate,
-          endDate: _endDate,
+          startDate: this.$moment(this.actWeekList[0]).format('YYYY-MM-DD'),
+          endDate: this.$moment(this.actWeekList[6]).format('YYYY-MM-DD'),
           category_id: this.categoryId,
           group_id: this.seeCategoryId
         }
@@ -444,7 +441,7 @@
 
           // 递归构建周视图
           let formatWeekInfo = () => {
-            if (count > 15) return
+            if (count > 15) return false;
             count++
 
             for (let i = 0, len = self.weekTableHead.length; i < len; i++) {
@@ -455,30 +452,17 @@
                 let field = JSON.parse(JSON.stringify(resData[i2]))
                 if (field === null) continue
 
-                let dateList = field.start_date.split('-')
-                let taskStartYear = Number(dateList[0])
-                let taskStartMonth = Number(dateList[1])
-                let taskStartDate = Number(dateList[2])
+                let startDate = this.$moment(field.start_date)
+                let taskStartYear = startDate.get('year')
+                let taskStartMonth = startDate.get('month') + 1
+                let taskStartDate = startDate.get('date')
 
                 if (item.thisYear === taskStartYear && item.thisMonth === taskStartMonth && item.thisDate === taskStartDate) {
-                  if (field.days > 1) {
-                    i = i + field.days - 1
-                  }
-                  /*
-                  1.单天的event
-                  a.All day
-                  文本显示为：All day
-                  b.非All day
-                  文本显示为：2:00 am – 4:00 pm
+                  // 跳过该事件已占的日期
+                  i = i + field.days - 1
 
-                  2.跨天的evetn
-                  a.All day
-                  文本显示为：All day (28/11 – 29/11)
-                  b.非All day
-                  文本显示为：28/11 2:00 am – 29/11 4:00 pm
-
-                  显示顺序从上至下为：跨天allday，跨天非allday, 单天allday，单天非allday
-                  */
+                  // 重构time数据
+                  // 显示顺序从上至下为：跨天allday，跨天非allday, 单天allday，单天非allday
                   let time = ''
                   if (field.day_flag === 1) {
                     time = 'All day'
@@ -506,18 +490,11 @@
                   }
                   tempObj.source = field
 
-                  // 默认选中第一个Event
-                  if (emptyWeekFlg) {
-                    let endDateList = field.end_date.split('-')
-                    let taskEndYear = Number(endDateList[0])
-                    let taskEndMonth = Number(endDateList[1])
-                    let taskEndDate = Number(endDateList[2])
+                  // 如果没有选中周视图的具体事件，默认选中第一个，否则选中周视图对应事件
+                  if (emptyWeekFlg && (this.data.checkActEventId === null || this.data.checkActEventId === field.id)) {
+                    let actDate = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
 
-                    let actDate = new Date(formatDate([this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-'))).getTime()
-                    let _taskStartDate = new Date(formatDate([taskStartYear, taskStartMonth, taskStartDate].join('-'))).getTime()
-                    let _taskEndDate = new Date(formatDate([taskEndYear, taskEndMonth, taskEndDate].join('-'))).getTime()
-
-                    if (actDate >= _taskStartDate && actDate <= _taskEndDate) {
+                    if (actDate.isBetween(field.start_date, field.end_date) || actDate.isSame(field.start_date) || actDate.isSame(field.end_date)) {
                       emptyWeekFlg = false
                       this.weekTaskListActId = field.id
                       let createTime = field.create_time.split(' ')
@@ -536,25 +513,15 @@
                     }
                   }
 
+                  // 匹配数据从原始数据队列中用null占位
                   resData.splice(i2, 1, null)
                   break;
                 }
               }
 
+              // 如果未找到匹配数据用预设对象代替
               if (JSON.stringify(tempObj) === '{}') {
-                tempObj = {
-                  id: '',
-                  spanNum: 0,
-                  color: '',
-                  time: '',
-                  title: '',
-                  place: '',
-                  room: '',
-                  startTime: '',
-                  endTime: '',
-                  thisYear: item.thisYear,
-                  thisMonth: item.thisMonth,
-                  thisDate: item.thisDate}
+                tempObj = { id: '', spanNum: 0, color: '', time: '', title: '', place: '', room: '', startTime: '', endTime: '', thisYear: item.thisYear, thisMonth: item.thisMonth, thisDate: item.thisDate }
               }
               tempList.push(tempObj)
             }
@@ -570,8 +537,8 @@
             }
           }
           formatWeekInfo()
+          if (count === 16) console.log('周视图构造异常！');
           this.formatActDateInfoLabel()
-          // console.log(self.weekTaskList)
 
           return res
         })
@@ -607,6 +574,8 @@
       },
       // 从周视图同步数据到日历
       changeActDateFromWeekview (item) {
+        this.data.checkActEventId = item.id || null
+
         this.actDateInfo.thisYear = item.thisYear
         this.actDateInfo.thisMonth = item.thisMonth
         this.actDateInfo.thisDate = item.thisDate
@@ -627,19 +596,21 @@
         this.actWeekList = arguments[3] || {}
         this.createWeekInfo()
       },
-      profileToggle () {
-        this.$refs.profile.show = !this.$refs.profile.show;
+      profileToggle (bol) {
+        this.$refs.profile.show = bol;
+        this.showEvent = false;
       },
       // 配置弹窗切换事件
-      configToggle () {
-        this.$refs.config.show = !this.$refs.config.show
+      configToggle (bol) {
+        this.$refs.config.show = bol;
+        this.showEvent = false;
       },
       // Event弹窗关闭刷新数据
       closeEventModal () {
         this.getWeekInfoData().then(() => {
           this.getViews()
         })
-        this.showEvent = !this.showEvent
+        this.showEvent = false
       },
       categoryChanged (item) {
         this.categoryId = item.value
@@ -696,6 +667,11 @@
             self.eventsGroupList = resData.eventsGroupList
           }
         })
+      },
+      // 新建Event
+      newEvent () {
+        this.eventType = 'new'
+        this.showEvent = true
       },
       // Event详情编辑按钮
       editEvent () {
