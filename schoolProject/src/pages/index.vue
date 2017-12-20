@@ -70,7 +70,7 @@
                 </div>
               </div>
             </div>
-            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink">Weekly view >></router-link>
+            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink">Show Details >></router-link>
           </div>
         </div>
       </div>
@@ -207,8 +207,8 @@
         this.createWeekInfo()
         this.init()
       },
-      profileToggle () {
-        this.$refs.profile.show = !this.$refs.profile.show;
+      profileToggle (bol) {
+        this.$refs.profile.show = bol;
       },
       // 配置弹窗切换事件
       appSettingToggle (bol) {
@@ -298,6 +298,7 @@
       }
     }
     .part_3{
+      position: relative;
       .deps{
         padding: 0 30px 60px 30px;
         .title{
@@ -313,6 +314,9 @@
         }
         .media:first-child{margin-top: 15px;}
       }
+    }
+    .part_3:after{
+      content: 'Under Construction ...'; position: absolute;width: 100%; height: 100%;background: rgba(0, 0, 0, 0.7);top: 0;left: 0;color: #fff;text-align: center;line-height: 100px;font-size: 18px;
     }
   }
 </style>

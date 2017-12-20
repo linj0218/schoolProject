@@ -1,17 +1,17 @@
 --》已完成《--
 1.显示2个今日
 2.侧弹窗重叠bug
+3.config place接口失效（勇哥修复中）
+4.日历H标识
 5.config delete位置调整，提示确认及删除成功通知（缺成功通知）
+6.config groups接口联调（接口好了，待联调）
 7.权限：admin全权限，super user没有config，user没有config、new Event、see category as功能
 8.周视图点击跳转事件
 9.周视图Event排序
 11.loading只在Event保存、删除时出现
+12.APP管理（缺图片上传接口）
+13.APP授权（接口好了，待联调）
+14.profile页面（需求变更，功能废弃）
 
 --》未处理《--
-3.config place接口失效（需要王哥查一下）
-4.日历H标识
-6.config groups接口联调（缺接口）
 10.Event附件（缺接口）
-12.APP管理（缺图片上传接口）
-13.APP授权（缺接口）
-14.profile页面（缺图片上传接口）

@@ -7,6 +7,7 @@ import router from '@/router'
 import Axios from '@/http'
 import App from '@/App'
 import store from '@/store/'
+import config from '@/script/config'
 
 // 向IE兼容promise
 import 'babel-polyfill'
@@ -16,6 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 Vue.prototype.$http = Axios;
 Vue.prototype.$moment = Moment;
+Vue.prototype.$config = config;
 
 Vue.use(Table)
 Vue.use(TableColumn)

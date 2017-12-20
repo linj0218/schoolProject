@@ -7,21 +7,17 @@
       </div>
       <div class="content">
         <div class="short_name">
-          <el-upload class="upload-demo"
+          {{data.shortName}}
+          <!-- <el-upload class="upload-demo"
                      action="https://jsonplaceholder.typicode.com/posts/"
                      :on-preview="handlePreview"
                      :on-success="handleAvatarSuccess"
                      :before-upload="beforeAvatarUpload"
                      :show-file-list="false">
-            {{data.shortName}}
             <img v-if="false" :src='""' class="avatar" style="width: 100px;height: 100px;position: absolute;left: 0;top: 0;">
             <i class="icon" :class='data.sex'></i>
             <button class="btn" type="primary"><i class="icon_profile_edit"></i></button>
-          </el-upload>
-        </div>
-        <div class="user_info">
-          <span class="label_key">System Role:</span>
-          <div class="label_value">{{data.role}}</div>
+          </el-upload> -->
         </div>
         <div class="user_info">
           <span class="label_key">Position:</span>
@@ -39,9 +35,13 @@
           <span class="label_key">E-mail:</span>
           <div class="label_value">{{data.email}}</div>
         </div>
-        <div class="save_btn">
-            <button type="button" class="btn btn-primary" @click="submit()">Save</button>
-          </div>
+        <div class="user_info">
+          <span class="label_key">System Role:</span>
+          <div class="label_value">{{data.role}}</div>
+        </div>
+        <!-- <div class="save_btn">
+          <button type="button" class="btn btn-primary" @click="submit()">Save</button>
+        </div> -->
       </div>
     </div>
 

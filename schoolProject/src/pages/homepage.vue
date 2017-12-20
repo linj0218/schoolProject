@@ -728,7 +728,7 @@
       .title.bg_color{background: #5ACE6D;margin-top: 95px;}
       .title.bg_color:after{background: url('../images/icon_other2.png') 24px 0 / auto 100% no-repeat;}
       .places{
-        padding: 40px 90px;
+        padding: 40px 30px;
         .btn{
           border: 1px solid #ccc;font-size: 20px;color: #ccc;height: 36px;padding: 0;position: relative;outline: none;background: #fff;
           span{position: absolute;width: 30px;height: 27px;right: -2px;top: -2px;background: url('../images/icon_checked.png') 0 0 / 100% 100% no-repeat;display: none;}

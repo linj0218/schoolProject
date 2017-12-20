@@ -3,13 +3,13 @@
     <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
     <div class="title">LFS Applications Portal</div>
     <div class="userInfo">
-      Welcome {{permission}}, <span>{{userName}}</span>
+      <span>{{userName}}</span>
       <div class="icon head_portrait">
         {{shortName}}
         <ul class="drop_down">
           <div class="icon_other1"></div>
           <li @click='profileToggle()'><span class="icon1"></span>Profile</li>
-          <li @click='appSettingToggle()' v-if='showAppSetting'><span class="icon2"></span>App permission</li>
+          <li @click='appSettingToggle()' v-if='showAppSetting'><span class="icon2"></span>App Configuration</li>
           <li @click='configToggle()' v-if='showConfig'><span class="icon2"></span>Configuration</li>
           <li @click='logout()'><span class="icon3"></span>Log out</li>
         </ul>
@@ -67,7 +67,7 @@
         let pageName = this.$route.name
         if (pageName === 'homepage' && this.userRole === 0) {
           this.showConfig = true
-        } else if (pageName === 'index') {
+        } else if (pageName === 'index' && this.userRole === 0) {
           this.showAppSetting = true
         }
       },

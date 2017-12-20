@@ -7,8 +7,8 @@
       </div>
       <div class="content">
         <div class="nav_tab flex">
-          <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>Application Management</div></div>
-          <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>Application Permission</div></div>
+          <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>Management</div></div>
+          <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
         </div>
         <div class="nav_body">
           <div class="body">
@@ -28,6 +28,7 @@
                   </drapdown>
 
                   <span class="icon icon_edit" @click='editApplication(data.appName)'></span>
+                  <span class="icon icon_delete" @click='deleteApp()'></span>
                 </div>
               </div>
               <div class="name_box">
@@ -36,7 +37,9 @@
 
                   <!-- 图片上传 -->
                   <el-upload class="logo_box"
-                             action="https://jsonplaceholder.typicode.com/posts/"
+                             name="file"
+                             :data="{appid: data.appId}"
+                             :action="actionUrl"
                              :show-file-list="false"
                              :on-success="handleAvatarSuccess"
                              :before-upload="beforeAvatarUpload">
@@ -62,14 +65,14 @@
             <!-- Application Permission -->
             <div class="nav_content_1" v-show='data.tab==1'>
               <!-- sub tabs -->
-              <div class="nav_subtab">
+              <!-- <div class="nav_subtab">
                 <div :class='{"act": data.subtab==0}' @click='()=>{this.data.subtab=0}'>AD Groups</div>
                 <div :class='{"act": data.subtab==1}' @click='()=>{this.data.subtab=1}'>Users</div>
                 <div class="slide_block" :class='{"right": data.subtab==1}'></div>
-              </div>
+              </div> -->
               <!-- sub tabs content -->
               <!-- Groups -->
-              <div v-show='data.subtab==0'>
+              <!-- <div v-show='data.subtab==0'>
                 <div class="name_box">
                   <span class="lab">AD Groups:</span>
                   <div class="name_value">
@@ -77,13 +80,12 @@
                     <drapdown :input-value='data.groupId'
                               :input-name='data.groupName'
                               :input-select='data.groupList'
-                              :input-add='true'
+                              :input-add='false'
                               :input-item-text='"New Group"'
                               @inputChange='groupChanged'
                               @addItem='addGroup'>
                     </drapdown>
 
-                    <span class="icon icon_edit" @click='editGroup(data.groupName)'></span>
                   </div>
                   <div class="name_box">
                     <span class="lab">Permissions:</span>
@@ -107,14 +109,17 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
               <!-- Users -->
               <div v-show='data.subtab==1'>
                 <div class="name_box">
                   <span class="lab">User:</span>
                   <div class="name_value">
 
-                    <el-select v-model="data.userName" filterable default-first-option placeholder="请选择">
+                    <el-select filterable default-first-option placeholder="请选择"
+                               v-model="data.userId"
+                               :name="data.userName"
+                               @change="userChanged(data.userId)">
                       <el-option v-for="user in data.userList"
                                  :key="user.value"
                                  :label="user.name"
@@ -138,7 +143,7 @@
                     <div class="check_all">
                       <div class="checkbox">
                         <label :class='{"checked": data.userPermissionAll}'>
-                          <input @click='checkAllChange("user")' type="checkbox" v-model='data.userPermissionAll'> All Programs
+                          <input @click='checkAllChange("user")' type="checkbox" v-model='data.userPermissionAll'> All Applucations
                         </label>
                       </div>
                     </div>
@@ -159,15 +164,15 @@
 
           <div v-show='data.tab==0' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="saveApp()">Save</button>
-            <button type="button" class="btn btn-danger" @click="deleteApp()">Delete</button>
+            <!-- <button type="button" class="btn btn-danger" @click="deleteApp()">Delete</button> -->
           </div>
-          <div v-show='data.tab==1 && data.subtab==0' class="nav_content_1_btn">
+          <!-- <div v-show='data.tab==1 && data.subtab==0' class="nav_content_1_btn">
             <button type="button" class="btn btn-primary" @click="saveGroup()">Save</button>
             <button type="button" class="btn btn-danger" @click="deleteGroup()">Delete</button>
-          </div>
+          </div> -->
           <div v-show='data.tab==1 && data.subtab==1' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="">Save</button>
-            <button type="button" class="btn btn-danger" @click="">Delete</button>
+            <button type="button" class="btn btn-primary" @click="saveGroup()">Save</button>
+            <!-- <button type="button" class="btn btn-danger" @click="">Delete</button> -->
           </div>
         </div>
       </div>
@@ -194,9 +199,10 @@ export default {
   data () {
     return {
       show: false,
+      actionUrl: this.$config.api_path.img_upload,
       data: {
         tab: 0,
-        subtab: 0,
+        subtab: 1,
         // App management
         appList: [
           {value: '1', name: 'app 1'},
@@ -204,7 +210,7 @@ export default {
         ],
         appId: '1',
         appName: 'app 1',
-        appScouce: null,
+        appSource: null,
         appLogo: '',
         appUrl: 'http://www.baidu.com',
         appDesc: 'description',
@@ -241,44 +247,54 @@ export default {
     show () {
       if (this.show) {
         this.getAppList();
-        this.getUsers();
+        // this.getUsers()
+        let promises = [];
+        promises.push(this.getUsers())
+        promises.push(this.getGroups())
+        Promise.all(promises).then((ret) => {
+          this.getPermission('group');
+          this.getPermission('user');
+        })
       }
     }
   },
   methods: {
-    // 获取数据
+    // 获取所有APP数据
     getAppList () {
       let param = {apps: ''};
-      return this.$http.post('/appCtl/app/appAllList', {
-        data: JSON.stringify(param)
-      }).then((res) => {
+      return this.$http.post('/appCtl/app/appAllList', param).then((res) => {
         let appList = [];
         forEach(res.data, (i, item) => {
           appList.push({
             value: item.id,
             name: item.nom,
+            checked: false,
             source: item
           })
         })
         // 设置默认值
         if (appList.length) {
-          this.data.appId = appList[0].source.id;
-          this.data.appName = appList[0].source.nom;
-          this.data.appScouce = appList[0].source;
-          this.data.appLogo = appList[0].source.picUrl;
-          this.data.appUrl = appList[0].source.baseaddress;
-          this.data.appDesc = appList[0].source.description;
+          let defaultItem = appList[0].source;
+          this.data.appId = defaultItem.id;
+          this.data.appName = defaultItem.nom;
+          this.data.appSource = defaultItem;
+          this.data.appLogo = this.$config.api_path.img_path + defaultItem.picUrl;
+          this.data.appUrl = defaultItem.baseaddress;
+          this.data.appDesc = defaultItem.description;
         }
 
         this.data.appList = appList;
+        this.data.groupPermissionAll = false;
+        this.data.groupPermissionList = JSON.parse(JSON.stringify(appList));
+        this.data.userPermissionAll = false;
+        this.data.userPermissionList = JSON.parse(JSON.stringify(appList));
         return res;
       })
     },
+    // 获取所有user数据
     getUsers () {
       let params = {flag: 1};
-      return this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
-        data: JSON.stringify(params)
-      }).then((res) => {
+      return this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', params).then((res) => {
         // console.log(res)
         let userList = [];
         forEach(res.data, (i, item) => {
@@ -292,19 +308,72 @@ export default {
         if (userList.length) {
           this.data.userId = userList[0].value;
           this.data.userName = userList[0].name;
+          this.data.userGroupedIn = userList[0].source.group_name;
         }
 
         this.data.userList = userList;
         return res;
       })
     },
+    // 获取所有AD group数据
+    getGroups () {
+      return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {event_id: 0}).then((ret) => {
+        let groupList = [];
+        forEach(ret.data.groupsList, (i, item) => {
+          groupList.push({
+            value: item.id,
+            name: item.group_name
+          })
+        })
+
+        if (groupList.length) {
+          this.data.groupId = groupList[0].value;
+          this.data.groupName = groupList[0].name;
+        }
+
+        this.data.groupList = groupList;
+        return ret;
+      })
+    },
+    // 通过groupId、userId获取group权限、user权限
+    getPermission (role) {
+      let params = {};
+      if (role === 'group') {
+        params = {group_id: this.data.groupId, role_flag: 0}
+      } else if (role === 'user') {
+        params = {user_id: this.data.userId, role_flag: 1}
+      }
+      return this.$http.post('/sharedcalendarSettingCtl/event/searchAppRole', params).then((ret) => {
+        let list = [];
+        if (role === 'group') {
+          list = this.data.groupPermissionList;
+        } else if (role === 'user') {
+          list = this.data.userPermissionList;
+        }
+        if (!ret.data.length) {
+          forEach(list, (i, item) => {
+            item.checked = false;
+          })
+        }
+        forEach(ret.data, (i, item) => {
+          for (let i2 = 0; i2 < list.length; i2++) {
+            if (item.app_id === list[i2].value) {
+              list[i2].checked = true;
+            } else {
+              list[i2].checked = false;
+            }
+          }
+        })
+        return ret;
+      });
+    },
     // Application Manage functions
     // APP切换
     applicationChanged (item) {
       this.data.appId = item.source.id;
       this.data.appName = item.source.nom;
-      this.data.appScouce = item.source;
-      this.data.appLogo = item.source.picUrl;
+      this.data.appSource = item.source;
+      this.data.appLogo = this.$config.api_path.img_path + item.source.picUrl;
       this.data.appUrl = item.source.baseaddress;
       this.data.appDesc = item.source.description;
     },
@@ -313,7 +382,7 @@ export default {
       this.$refs.prompt.showDialog().then((text) => {
         this.data.appId = '';
         this.data.appName = text;
-        this.data.appScouce = null;
+        this.data.appSource = null;
         this.data.appLogo = '';
         this.data.appUrl = '';
         this.data.appDesc = '';
@@ -335,7 +404,16 @@ export default {
     },
     // 图标上传成功
     handleAvatarSuccess (res, file) {
-      this.data.appLogo = URL.createObjectURL(file.raw);
+      if (res.success) {
+        // this.data.appLogo = URL.createObjectURL(file.raw);
+        this.data.appLogo = this.$config.api_path.img_path + res.data[0].picUrl;
+      } else {
+        let banner = {
+          status: 'ERROR',
+          msg: res.msg
+        }
+        this.$emit('openBanner', banner);
+      }
     },
     // 图标上传前校验
     beforeAvatarUpload (file) {
@@ -369,15 +447,13 @@ export default {
         // picUrl: this.data.appLogo,
         baseaddress: this.data.appUrl,
         description: this.data.appDesc,
-        insideschool: this.data.appScouce ? this.data.appScouce.insideschool : 1,
-        auth_required: this.data.appScouce ? this.data.appScouce.auth_required : 1,
+        insideschool: this.data.appSource ? this.data.appSource.insideschool : 1,
+        auth_required: this.data.appSource ? this.data.appSource.auth_required : 1,
         disabled: opt
       }
 
       // console.log(params)
-      return this.$http.post('/sharedcalendarSettingCtl/event/editApplication', {
-        data: JSON.stringify(params)
-      }).then((res) => {
+      return this.$http.post('/sharedcalendarSettingCtl/event/editApplication', params).then((res) => {
         if (res.result === 'SUCCESS') {
           let banner = {
             status: 'SUCCESS',
@@ -401,7 +477,7 @@ export default {
       this.data.groupId = item.value
       this.data.groupName = item.name
     },
-    // 修改AD Groups
+    // 修改AD Groups(废弃)
     editGroup (oldText) {
       this.$refs.prompt.showDialog(oldText).then((text) => {
         this.data.groupName = text;
@@ -414,7 +490,7 @@ export default {
         }
       })
     },
-    // 新增group
+    // 新增group(废弃)
     addGroup () {
       this.$refs.prompt.showDialog().then((text) => {
         this.data.groupId = '';
@@ -426,25 +502,38 @@ export default {
     saveGroup () {
       this.submitGroup(0);
     },
-    // 删除group
+    // 删除group(废弃)
     deleteGroup () {
       this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
         this.submitGroup(-1);
       })
     },
-    // 提交group
+    // 提交group权限
     submitGroup (opt) {
       let params = {
-        groupId: this.data.groupId,
-        groupName: this.data.groupName,
-        opt: opt,
-        apps: ''
+        id: 1,
+        role_flag: this.data.subtab, // 0-group,1-user
+        operation_flag: 0,
+        appIdList: []
+      }
+      if (this.data.subtab === 0) {
+        params.group_id = this.data.groupId;
+        forEach(this.data.groupPermissionList, (i, item) => {
+          if (item.checked) {
+            params.appIdList.push(item.value)
+          }
+        })
+      } else if (this.data.subtab === 1) {
+        params.user_id = this.data.userId;
+        forEach(this.data.userPermissionList, (i, item) => {
+          if (item.checked) {
+            params.appIdList.push(item.value)
+          }
+        })
       }
 
-      console.log(params)
-      return this.$http.post('/', {
-        data: JSON.stringify(params)
-      }).then((res) => {
+      // console.log(params)
+      return this.$http.post('/sharedcalendarSettingCtl/event/editAppRole', params).then((res) => {
         if (res.result === 'SUCCESS') {
           let banner = {
             status: 'SUCCESS',
@@ -454,6 +543,17 @@ export default {
         }
         return res;
       })
+    },
+    // 用户切换
+    userChanged (id) {
+      this.getPermission('user')
+      for (let i = 0, len = this.data.userList.length; i < len; i++) {
+        let item = this.data.userList[i];
+        if (item.value === id) {
+          this.data.userGroupedIn = item.source.group_name;
+          break;
+        }
+      }
     },
     // 全选
     checkAllChange (str) {
@@ -537,7 +637,10 @@ export default {
             .name_value{
               display: inline-block;width: 350px;position: relative;text-align: left;
               .textarea{height: 140px;}
-              .logo_box{width: 80px;height: 80px;border: 1px dashed #ccc;border-radius: 50%;background: #fff;}
+              .logo_box{
+                width: 80px;height: 80px;border: 1px dashed #ccc;border-radius: 50%;background: #fff;overflow: hidden;
+                img{width: 100%;height: 100%;}
+              }
               .default_icon{height: 100%;background: url('../images/icon_update.png') 50% 50% / auto auto no-repeat;display: block;}
               .check_all{padding: 0 16px;}
               .check_list{padding: 0 16px 0 32px;}
@@ -551,9 +654,10 @@ export default {
               .icon_member{left: 16px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
               .icon_members{left: 16px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
             }
-            .name_value.show_border{border-radius: 2px;border: 1px solid #ccc;height: 300px;background: #fff;}
-            .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 45px;top: 50%;transform: translateY(-50%);cursor: pointer;}
-            .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
+            .name_value.show_border{border-radius: 2px;border: 1px solid #ccc;height: 300px;background: #fff;overflow: auto;}
+            .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);cursor: pointer;}
+            .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;right: 65px;}
+            .name_value > .icon.icon_delete{background: url('../images/icon_delete.png') 0 0 / 100% 100% no-repeat;}
             .button_box .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
             .nav_subtab{
               width: 300px;margin: auto;border-radius: 34px;overflow: hidden;color: #4F81BE;position: relative;z-index: 0;background: #fff;border: 1px solid #ccc;

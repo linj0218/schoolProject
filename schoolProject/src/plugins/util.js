@@ -204,5 +204,26 @@ export const clearSStorage = function () {
   } else { return false; }
 }
 
+export const getByObject = (array, paramObject) => {
+  if (array === undefined || array === null) { return };
+  var equalFlag = false;
+
+  for (var i = 0; i < array.length; i++) {
+    equalFlag = true;
+    var item = array[i];
+    for (var property in paramObject) {
+      if (item[property] !== paramObject[property]) {
+        equalFlag = false;
+        break;
+      }
+    }
+
+    if (equalFlag) {
+      return array[i];
+    }
+  }
+  return undefined;
+};
+
 export default {
 }

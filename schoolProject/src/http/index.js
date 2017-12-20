@@ -3,11 +3,11 @@ import qs from 'qs'
 import {getSStorage} from '@/plugins/util'
 
 // default
-axios.defaults.timeout = 5000
+axios.defaults.timeout = 20000
 axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
 axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
-// axios.defaults.baseURL = 'http://192.168.8.104:8081/HTMS_WeChat/'
+// axios.defaults.baseURL = 'http://192.168.148.187:8081/HTMS_WeChat/'
 
 // request
 axios.interceptors.request.use((config) => {
@@ -17,7 +17,12 @@ axios.interceptors.request.use((config) => {
   }
   // console.log('request: ', config)
   if (config.method === 'post') {
-    let param = JSON.parse(config.data.data)
+    let param = null;
+    if (config.data.data) {
+      param = JSON.parse(config.data.data);
+    } else {
+      param = config.data;
+    }
     if (config.url.indexOf('/login') === -1) {
       let userinfo = getSStorage('userinfo')
       if (userinfo !== null) {

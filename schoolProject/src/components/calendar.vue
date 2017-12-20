@@ -17,7 +17,9 @@
         <!-- A、B、H 周 -->
         <div class="table_left" v-if='showABWeek'>
           <div></div>
-          <div v-for='(row, index) in calendarList'><div>{{getABHWeek(row, index)}}</div></div>
+          <div v-for='(row, index) in calendarList'>
+            <div :class='getABHWeek(row, index)'>{{getABHWeek(row, index)}}</div>
+          </div>
         </div>
         <div class="table_right">
           <!-- 星期 -->
@@ -88,19 +90,16 @@
       }
     },
     computed: {
-      ...mapState(['holidays', 'initHoliday'])
+      ...mapState(['initHoliday', 'holidays', 'initHoliday'])
     },
     created () {
       this.actDateInfo = this.inputActDateInfo
-      // if (!this.initHoliday) {
-      //   this.SET_INITHOLIDAY(!this.initHoliday);
-      //   this.getHoliday().then(() => {
-      //     this.createCalendar()
-      //   })
-      // } else {
-      //   this.createCalendar()
-      // }
-      this.createCalendar()
+      if (!this.initHoliday) {
+        this.SET_INITHOLIDAY(true);
+        this.getHoliday()
+      } else {
+        this.createCalendar()
+      }
     },
     watch: {
       // 监听活动日期改变，当活动日期与月视图不匹配，重绘日历
@@ -117,16 +116,14 @@
         deep: true
       },
       holidays () {
-        console.log(this.holidays)
+        this.createCalendar()
       }
     },
     methods: {
       ...mapMutations(['SET_HOLIDAY', 'SET_INITHOLIDAY']),
       getHoliday () {
         let params = {event_id: 0};
-        return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {
-          data: JSON.stringify(params)
-        }).then((res) => {
+        return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', params).then((res) => {
           let holidayList = [];
           forEach(res.data.schoolYearList, (i, item) => {
             if (item.hoildayList) holidayList = holidayList.concat(item.hoildayList)
@@ -267,10 +264,20 @@
       getYearWeek () {
         return getYearWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate)
       },
+      // 判断本周为A、B、H周
       getABHWeek (row, index) {
-        // console.log(getSessionStorage('holidays'))
-        // console.log(this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day}).format('YYYY-MM-DD'))
-        return index % 2 === 0 ? 'A' : 'B';
+        // console.log(this.holidays, row)
+        let weekStr = index % 2 === 0 ? 'A' : 'B';
+        for (let i = 0; i < this.holidays.length; i++) {
+          let item = this.holidays[i];
+          let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day}).format('YYYY-MM-DD');
+          let firstHolidayDate = this.$moment(item.start_date).format('YYYY-MM-DD');
+          if (firstWeekDate == firstHolidayDate) {
+            weekStr = 'H';
+            break;
+          }
+        }
+        return weekStr;
       },
       // 获取当前日期所属的周数据
       getActWeek () {
@@ -321,8 +328,9 @@
           color: #fff;height: 38px;padding: 4px 0;
           & div{height: 100%;line-height: 30px;border-radius: 2px;}
         }
-        & :nth-child(even) div{background: #4A90E2;}
-        & :nth-child(odd) div{background: #5ACE6D;}
+        & .A{background: #4A90E2;}
+        & .B{background: #5ACE6D;}
+        & .H{background: #F3A222;}
       }
       .table_right{
         overflow: hidden;

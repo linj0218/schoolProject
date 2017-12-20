@@ -26,12 +26,12 @@
                                  label="Ad group"
                                  show-overflow-tooltip>
                 </el-table-column>
-                <el-table-column prop="group_name"
+                <el-table-column prop="group_alias_name"
                                  label="Alias"
                                  show-overflow-tooltip>
                 </el-table-column>
                 <el-table-column label=""
-                                 width="60">
+                                 width="140">
                   <template slot-scope="scope">
                     <span class="icon icon_edit" @click='editGroupAlias(scope.$index, scope.row)'></span>
                   </template>
@@ -40,7 +40,7 @@
                                  width="80">
                   <template slot-scope="scope">
                     <div class="checkbox"
-                         :class='{"checked": scope.row.operation_flag==0}'
+                         :class='{"checked": scope.row.operation_flag==1}'
                          @click='groupStatusChanged(scope.$index, scope.row)'></div>
                   </template>
                 </el-table-column>
@@ -229,18 +229,17 @@
 <script>
 import drapdown from '@/components/drapdown'
 import dateSelect from '@/components/dateSelect'
-import confirmModal from '@/components/confirmModal'
-import addParticipantModal from '@/components/addParticipantModal'
 import weekSelectModal from '@/components/weekSelectModal'
 import alert from '@/components/alert'
 import prompt from '@/components/prompt'
 import banner from '@/components/banner'
 import {forEach, formatDate} from '@/plugins/util'
+import {mapMutations} from 'vuex'
 export default {
   props: {
   },
   components: {
-    drapdown, dateSelect, confirmModal, addParticipantModal, weekSelectModal, alert, prompt, banner
+    drapdown, dateSelect, weekSelectModal, alert, prompt, banner
   },
   data () {
     return {
@@ -296,6 +295,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['SET_HOLIDAY']),
     // 初始化页面数据
     init () {
       let self = this
@@ -390,13 +390,39 @@ export default {
       this.show = false;
     },
     // groups functions
+    // 修改group别名
     editGroupAlias (index, row) {
-      this.$refs.prompt.showDialog(row.group_name).then((text) => {
-        row.group_name = text;
+      this.$refs.prompt.showDialog(row.group_alias_name).then((text) => {
+        row.group_alias_name = text;
+        this.submitGroup(row)
       })
     },
+    // group状态修改
     groupStatusChanged (index, row) {
       row.operation_flag = row.operation_flag === 1 ? 0 : 1;
+      this.submitGroup(row)
+    },
+    // 提交groups表单
+    submitGroup (row) {
+      // console.log(row)
+      let param = {
+        'id': row.id,
+        'group_name': row.group_name,
+        'operation_flag': row.operation_flag,
+        'group_alias_name': row.group_alias_name
+      }
+      return this.$http.post('/sharedcalendarSettingCtl/event/editGroups', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        if (res.success) {
+          let banner = {
+            status: 'SUCCESS',
+            msg: 'Success!'
+          }
+          this.$emit('openBanner', banner);
+          return res;
+        }
+      })
     },
     // School years functions
     yearChanged (item) {
@@ -511,6 +537,7 @@ export default {
       }).then((res) => {
         if (res.success) {
           this.getHoliday()
+          this.resetHoliday();
         }
       })
     },
@@ -527,8 +554,21 @@ export default {
         }).then((res) => {
           if (res.success) {
             this.getHoliday()
+            this.resetHoliday();
           }
         })
+      })
+    },
+    // 重新给vuex中的holidays赋值
+    resetHoliday () {
+      let params = {event_id: 0};
+      return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', params).then((res) => {
+        let holidayList = [];
+        forEach(res.data.schoolYearList, (i, item) => {
+          if (item.hoildayList) holidayList = holidayList.concat(item.hoildayList)
+        })
+        this.SET_HOLIDAY(holidayList)
+        return res;
       })
     },
     // places functions
@@ -569,10 +609,11 @@ export default {
       // opt: -1 删除 0 修改/新增
       let param = {
         'id': this.placesData.value,
-        'place_name': this.placesData.name,
+        'campus_name': this.placesData.name,
+        'address': this.placesData.name,
         'operation_flag': opt
       }
-      return this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+      return this.$http.post('/sharedcalendarSettingCtl/event/editCampus', {
         data: JSON.stringify(param)
       }).then((res) => {
         let banner = {};
@@ -646,7 +687,7 @@ export default {
         'id': item.value
       }
 
-      this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
+      return this.$http.post('/sharedcalendarSettingCtl/event/editPlaces', {
         data: JSON.stringify(param)
       }).then((res) => {
         let banner = {};

@@ -26,6 +26,8 @@ module.exports = {
     // 分号检查
     'semi': 0,
     // 禁用行尾空格
-    'no-trailing-spaces': 0
+    'no-trailing-spaces': 0,
+    // 要求使用 === 和 !== (eqeqeq)
+    'eqeqeq': 0
   }
 }
