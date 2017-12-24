@@ -100,7 +100,7 @@
                 </div>
               </div>
               <div class="member_box">
-                <span class="lab long_text">Hoilday（week）:</span>
+                <span class="lab long_text">Week to Skip:</span>
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in schoolYearData.holidays'>
                     {{item.name}}

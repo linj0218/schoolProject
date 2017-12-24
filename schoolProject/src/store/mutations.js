@@ -1,17 +1,17 @@
 import {
   SET_TEST,
-  SET_HOLIDAY,
-  SET_INITHOLIDAY
+  SET_INITHOLIDAY,
+  SET_SCHOOLYEARINFO
 } from '@/store/mutation-types'
 
 export default {
   [SET_TEST] (state, str) {
     state.test = str;
   },
-  [SET_HOLIDAY] (state, list) {
-    state.holidays = list;
-  },
   [SET_INITHOLIDAY] (state, flg) {
     state.initHoliday = flg;
+  },
+  [SET_SCHOOLYEARINFO] (state, list) {
+    state.schoolYearInfo = list;
   }
 }

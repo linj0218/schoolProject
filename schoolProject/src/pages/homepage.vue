@@ -119,7 +119,7 @@
               <div class="tast_detail_right">
                 <div class="title">Participants</div>
                 <template v-for='(item, index) in eventsUserGroupList'>
-                  <button type="button" class="btn btn-block" v-if='index < 4'>
+                  <button type="button" class="btn btn-block typeone" v-if='index < 4'>
                     <span class="icon icon_members"></span>{{item.group_alias_name}}
                   </button>
                 </template>
@@ -148,14 +148,14 @@
                   <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
                 </div>
                 <div class="item">
-                  <span>Attachment:</span><div><a target="_blank" href="http://www.baidu.com">test<i class="icon_attachment"></i></a></div>
+                  <span>Attachment:</span><div><a target="_blank" href="http://117.78.50.43:8080/pic/pdf/TEST.pdf">test<i class="icon_attachment"></i></a></div>
                 </div>
               </div>
               <div class="edit_btn">
-                <button type="button" class="btn btn-primary" @click='editEvent()'>
+                <button type="button" class="btn btn-primary" @click='editEvent()' v-if='data.role==0 || data.role==1'>
                   <span class="icon icon_btn_edit"></span> Edit
                 </button>
-                <button type="button" class="btn btn-danger" @click='deleteEvent()'>
+                <button type="button" class="btn btn-danger" @click='deleteEvent()' v-if='data.role==0 || data.role==1'>
                   <span class="icon icon_btn_del"></span> Delete
                 </button>
                 <div class="creater_info">
@@ -796,7 +796,7 @@
             .task_4 > div,
             .task_5 > div,
             .task_6 > div,
-            .task_7 > div{padding: 4px 8px;height: 60px;display: table;width: 100%;position: relative;}
+            .task_7 > div{padding: 4px 8px;height: 60px;display: table;width: 100%;position: relative;cursor: pointer;}
             .task_1 > div > div,
             .task_2 > div > div,
             .task_3 > div > div,
@@ -844,15 +844,16 @@
           }
         }
         .tast_detail_right{
-          float: right;width: 260px;padding: 30px 30px 94px 30px;height: 100%;position: relative;
+          float: right;width: 300px;padding: 30px 30px 94px 30px;height: 100%;position: relative;
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
           & > .btn{
-            border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;position: relative;padding: 6px 48px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
+            border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;position: relative;padding: 6px 20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
             .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;position: absolute;}
             .icon_member{left: 12px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
             .icon_members{left: 12px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
           }
+          & > .btn.typeone{padding: 6px 40px;}
         }
         .edit_btn{
           position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;

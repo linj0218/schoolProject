@@ -102,6 +102,20 @@ export const getYearWeek = (a, b, c) => {
   return Math.ceil((d + (d2.getDay() === 0 ? 7 : d2.getDay())) / 7);
 }
 
+/**
+ * 获取指定日期距离目标日期的周数
+ * @param  {String} actDate    指定日期：2017-09-01
+ * @param  {String} targetDate 目标日期：2017-01-01
+ * @return {Number}            周数：36
+ */
+export const getWeekFromTarget = (actDate, targetDate) => {
+  let _actDate = new Date(actDate);
+  let _targetDate = new Date(targetDate);
+  if (_actDate - _targetDate < 0) return -1;
+  var count = Math.round((_actDate - _targetDate) / 86400000);
+  return Math.ceil((count + (_targetDate.getDay() === 0 ? 7 : _targetDate.getDay())) / 7);
+}
+
 /*******************************************
  * 判断浏览器内核                                 *
  * 用法：if(browser.ios) console.log("ios终端") *

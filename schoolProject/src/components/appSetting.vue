@@ -8,7 +8,7 @@
       <div class="content">
         <div class="nav_tab flex">
           <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>Management</div></div>
-          <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
+          <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>Permission</div></div>
         </div>
         <div class="nav_body">
           <div class="body">
@@ -114,7 +114,7 @@
               <div v-show='data.subtab==1'>
                 <div class="name_box">
                   <span class="lab">User:</span>
-                  <div class="name_value">
+                  <div class="name_value hide-icon">
 
                     <el-select filterable default-first-option placeholder="请选择"
                                v-model="data.userId"
@@ -247,12 +247,14 @@ export default {
     show () {
       if (this.show) {
         this.getAppList();
-        // this.getUsers()
-        let promises = [];
-        promises.push(this.getUsers())
-        promises.push(this.getGroups())
-        Promise.all(promises).then((ret) => {
-          this.getPermission('group');
+        // let promises = [];
+        // promises.push(this.getUsers())
+        // promises.push(this.getGroups())
+        // Promise.all(promises).then((ret) => {
+        //   this.getPermission('group');
+        //   this.getPermission('user');
+        // })
+        this.getUsers().then(() => {
           this.getPermission('user');
         })
       }

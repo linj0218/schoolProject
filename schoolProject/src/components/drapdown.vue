@@ -9,6 +9,7 @@
       <span v-show='inputColorType=="circle"' class="icon_circle" :class='inputColor'></span>
       <span class="caret"></span>
     </button>
+    <button type="button" v-if='inputAdd' @click='addItem()' class="li_add"></button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
       <li v-for='item in inputSelect'
           :class='{"isSelected": item.value == inputValue}'
@@ -19,11 +20,11 @@
          <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle" && item.color'></span>
         </a>
       </li>
-      <li class="li_add" v-if='inputAdd' @click='addItem()'>
+      <!-- <li class="li_add" v-if='inputAdd' @click='addItem()'>
         <a href="javascript:void(0)">
           <span class="icon_li_add"></span> {{inputItemText}}
         </a>
-      </li>
+      </li> -->
     </ul>
   </div>
 </template>
@@ -96,14 +97,12 @@
 
 <style lang='scss' scoped>
   @import '../styles/mixin';
+  .dropdown{position: relative;}
   .dropdown-menu > .isSelected > a{color: #337ab7;}
   .dropdown-menu a.background {color: #fff !important;}
   .dropdown-menu > li > a{height: 34px;line-height: 28px;position: relative;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
   .dropdown-menu li:nth-child(odd) a{background: #f9f9f9;}
-  .dropdown-menu .li_add a{
-    color: #4E81BD;
-    .icon_li_add{display: inline-block;width: 16px;height: 16px;background: url('../images/icon_li_add.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;margin-right: 5px;}
-  }
+  .li_add{position: absolute;width: 32px;height: 32px;background: url('../images/icon_li_add.png') 0 0 / 100% 100% no-repeat;right: -45px;top: 0;border: 0;}
   .btn-default{
     width: 100%;position: relative;text-align: left;height: 34px;padding: 4px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
     .button_bg{display: block;margin-right: 35px;padding-left: 8px;height: 24px;line-height: 24px;border-radius: 2px;}

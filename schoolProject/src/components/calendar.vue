@@ -52,7 +52,7 @@
 </template>
 
 <script>
-  import {monthMap, getMonthWeek, getYearWeek, forEach} from '@/plugins/util'
+  import {monthMap, getMonthWeek, getYearWeek, getWeekFromTarget} from '@/plugins/util'
   import {mapState, mapMutations} from 'vuex'
   export default {
     props: {
@@ -78,6 +78,9 @@
     },
     data () {
       return {
+        data: {
+          schoolYearInfo: null // 学年信息
+        },
         // 日历数组
         calendarList: [],
         thisDateInfo: { // 今日
@@ -90,7 +93,7 @@
       }
     },
     computed: {
-      ...mapState(['initHoliday', 'holidays', 'initHoliday'])
+      ...mapState(['initHoliday', 'schoolYearInfo'])
     },
     created () {
       this.actDateInfo = this.inputActDateInfo
@@ -115,20 +118,25 @@
         },
         deep: true
       },
-      holidays () {
+      schoolYearInfo () {
+        // 设置活动日期所属学期的学年信息
+        let actDate = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
+        for (let i = 0; i < this.schoolYearInfo.length; i++) {
+          let item = this.schoolYearInfo[i];
+          if (this.$moment(item.start_date) <= actDate && this.$moment(item.end_date) >= actDate) {
+            this.data.schoolYearInfo = item;
+            break;
+          }
+        }
         this.createCalendar()
       }
     },
     methods: {
-      ...mapMutations(['SET_HOLIDAY', 'SET_INITHOLIDAY']),
+      ...mapMutations(['SET_INITHOLIDAY', 'SET_SCHOOLYEARINFO']),
       getHoliday () {
         let params = {event_id: 0};
         return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', params).then((res) => {
-          let holidayList = [];
-          forEach(res.data.schoolYearList, (i, item) => {
-            if (item.hoildayList) holidayList = holidayList.concat(item.hoildayList)
-          })
-          this.SET_HOLIDAY(holidayList)
+          this.SET_SCHOOLYEARINFO(res.data.schoolYearList);
           return res;
         })
       },
@@ -266,17 +274,32 @@
       },
       // 判断本周为A、B、H周
       getABHWeek (row, index) {
-        // console.log(this.holidays, row)
+        // console.log(this.data.schoolYearInfo, row)
         let weekStr = index % 2 === 0 ? 'A' : 'B';
-        for (let i = 0; i < this.holidays.length; i++) {
-          let item = this.holidays[i];
-          let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day}).format('YYYY-MM-DD');
-          let firstHolidayDate = this.$moment(item.start_date).format('YYYY-MM-DD');
-          if (firstWeekDate == firstHolidayDate) {
-            weekStr = 'H';
-            break;
+        // 从学年开始日期计算A、B周，遇到H周跳过
+        let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day});
+        let scount = getWeekFromTarget(firstWeekDate, this.data.schoolYearInfo.start_date);
+        let quantity = 0; // 活动日期之前的holiday数量
+        if (this.data.schoolYearInfo && this.data.schoolYearInfo.hoildayList) {
+          for (let i = 0; i < this.data.schoolYearInfo.hoildayList.length; i++) {
+            let item = this.data.schoolYearInfo.hoildayList[i];
+
+            if (firstWeekDate > this.$moment(item.start_date)) {
+              quantity++;
+            }
+
+            if (firstWeekDate.format('YYYY-MM-DD') === this.$moment(item.start_date).format('YYYY-MM-DD')) {
+              scount = -1;
+              weekStr = 'H';
+              break;
+            }
           }
         }
+        if (scount > -1) {
+          scount -= quantity;
+          weekStr = scount % 2 === 0 ? 'A' : 'B';
+        }
+
         return weekStr;
       },
       // 获取当前日期所属的周数据

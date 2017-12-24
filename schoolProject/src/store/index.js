@@ -12,8 +12,8 @@ const state = {
   appSettingStatus: 0, // App Setting状态 0 关闭 1 开启
   configStatus: 0, // Config状态 0 关闭 1 开启
   eventStatus: 0, // Event状态 0 关闭 1 开启
-  holidays: null, // holiday集合
-  initHoliday: false // 是否初始化
+  initHoliday: false, // 是否初始化
+  schoolYearInfo: null // 学期信息
 }
 
 const store = new Vuex.Store({

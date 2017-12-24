@@ -70,7 +70,7 @@
                 </div>
               </div>
             </div>
-            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink">Show Details >></router-link>
+            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink"><i></i>Show Details >></router-link>
           </div>
         </div>
       </div>
@@ -272,7 +272,10 @@
       .calendar{
         .title{font-size: 40px;color: #4A90E2;text-align: center;height: 85px;line-height: 85px;border-bottom: 1px solid #f5f5f5;cursor: pointer;}
         .title:hover{text-decoration: underline;}
-        .homePageLink{right: 25px;font-size: 20px;color: #00f;display: block;text-align: right;padding: 10px 20px;}
+        .homePageLink{
+          i{display: inline-block;width: 20px;height: 20px;background: url('../images/icon_homepagelink.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;margin-right: 10px;}
+          right: 25px;font-size: 16px;color: #333;display: block;text-align: right;padding: 10px 20px;
+        }
         .week_cal{
           padding: 0 20px;color: #003;
           .drawer_title{background: rgba(74,144,226,0.1);line-height: 40px;font-size: 18px;padding-left: 16px;border-bottom: 1px solid #fff;border-left: 4px solid #4A90E2;}
@@ -316,7 +319,7 @@
       }
     }
     .part_3:after{
-      content: 'Under Construction ...'; position: absolute;width: 100%; height: 100%;background: rgba(0, 0, 0, 0.7);top: 0;left: 0;color: #fff;text-align: center;line-height: 100px;font-size: 18px;
+      content: 'Under Construction ...'; position: absolute;width: 100%; height: 100%;background: rgba(144,144,144, 1);top: 0;left: 0;color: #fff;text-align: center;line-height: 540px;font-size: 42px;
     }
   }
 </style>

@@ -327,7 +327,7 @@ export default {
           viewedList.push({
             id: item.id,
             value: self.eventType === 'new',
-            name: item.group_name
+            name: item.group_alias_name
           })
         })
         self.data.viewedList = viewedList
@@ -337,7 +337,7 @@ export default {
         forEach(resData.groupsList, (i, item) => {
           groupList.push({
             id: item.id,
-            name: item.group_name,
+            name: item.group_alias_name,
             type: 'icon_members',
             selected: false,
             show: true
