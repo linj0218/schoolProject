@@ -103,6 +103,7 @@
                 <span class="lab long_text">Week to Skip:</span>
                 <div class="member_value">
                   <div class="li" v-for='(item, index) in schoolYearData.holidays'>
+                    <span class="icon_H">H</span>
                     {{item.name}}
                     <span class="action_icon icon_delete" @click='delHoliday(item)'></span>
                   </div>
@@ -233,7 +234,7 @@ import weekSelectModal from '@/components/weekSelectModal'
 import alert from '@/components/alert'
 import prompt from '@/components/prompt'
 import banner from '@/components/banner'
-import {forEach, formatDate} from '@/plugins/util'
+import {forEach, formatDate, monthMap} from '@/plugins/util'
 import {mapMutations} from 'vuex'
 export default {
   props: {
@@ -509,7 +510,7 @@ export default {
             value: item.id,
             start_date: item.start_date,
             end_date: item.end_date,
-            name: [item.start_date, item.end_date].join(' - ')
+            name: this.formatHolidayDate(item.start_date) + '-' + this.formatHolidayDate(item.end_date)
           }
           holidays.push(tempObj)
         })
@@ -558,6 +559,10 @@ export default {
           }
         })
       })
+    },
+    formatHolidayDate (date) {
+      let d = this.$moment(date)
+      return d.date() + '.' + monthMap[d.month() + 1].substr(0, 3) + ',' + d.year();
     },
     // 重新给vuex中的holidays赋值
     resetHoliday () {
@@ -803,7 +808,8 @@ export default {
             .member_value{
               display: inline-block;width: 350px;height: 293px;background: #fff;border: 1px solid #ddd;border-radius: 2px;text-align: left;overflow-y: auto;overflow-x: hidden;
               .li{
-                position: relative;line-height: 34px;padding: 0 16px;color: #333;
+                position: relative;line-height: 42px;padding: 0 16px;color: #333;
+                .icon_H{width: 30px;height: 30px;background: #F4A222;font-size: 16px;color: #fff;display: inline-block;vertical-align: middle;line-height: 30px;text-align: center;border-radius: 2px;margin-right: 10px;}
                 .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}
                 .icon_member{left: 16px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
                 .icon_members{left: 16px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}

@@ -2,12 +2,14 @@
   <div class="month_cal">
     <!-- 日历导航 -->
     <div class="month_nav">
-      <button @click='changeActMonth("last_month")'
+      <button class="nav_left" @click='changeActMonth("last_month")'
               @focus='()=>{this.$emit("buttonFocus")}'
               @blur='()=>{this.$emit("buttonBlur")}' >
       </button>
-      {{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}
-      <button @click='changeActMonth("next_month")'
+      <el-tooltip content="Back to Today" placement="bottom">
+        <span class="back_to_today">{{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}</span>
+      </el-tooltip>
+      <button class="nav_right" @click='changeActMonth("next_month")'
               @focus='()=>{this.$emit("buttonFocus")}'
               @blur='()=>{this.$emit("buttonBlur")}' >
       </button>
@@ -100,6 +102,9 @@
       if (!this.initHoliday) {
         this.SET_INITHOLIDAY(true);
         this.getHoliday()
+      } else if (!this.data.schoolYearInfo && this.schoolYearInfo) {
+        this.data.schoolYearInfo = this.schoolYearInfo;
+        this.createCalendar();
       } else {
         this.createCalendar()
       }
@@ -339,9 +344,10 @@
     text-align: center;
     .month_nav{
       font-size: 20px;color: #333;padding: 20px;
-      button{width: 28px;height: 28px;border: 0;margin: 0 34px;vertical-align: middle;}
-      button:nth-child(1){background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;}
-      button:nth-child(2){background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;}
+      .back_to_today{cursor: pointer;}
+      button{width: 28px;height: 28px;border: 0;vertical-align: middle;}
+      button.nav_left{background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;margin-right: 34px;}
+      button.nav_right{background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;margin-left: 34px;}
     }
     .month_body{
       font-size: 14px;padding: 0 20px;

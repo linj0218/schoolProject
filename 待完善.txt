@@ -22,6 +22,7 @@ v0.2
   2.App permission更名为“App Confugruation”
   3.App Confugruation页面中，applicaion management改为management；application permission改为permission
   4.App Confugruation-Permission中，Users为输入搜索框，all programs改为All applications
+  5.所有设置页面中，新建都放在name的右边（原来在下拉列表最后一项），删除全部移动到name上，Save全部移除（接口需要返回保存、修改的数据）
   6.只有admin在portal首页和Calendar中有设置权限
   7.Campus的选项拉长
   8.participants和viewed by文字区域拉长
@@ -31,15 +32,16 @@ v0.2
 
   14.去掉首页右上角welcome xxx部分
   15.weekly view 样式优化，文本改为“show details”（需要设计）
+  17.profile页面中system role移到最下面；移除SAVE，其他页面同
   19.App Confugruation-Permission中，移除adgroup的设置页面，只保留Users
   20.event加入光标移入变化
+
+  28.new event中的时间加入半小时
 --》未处理《--
-  5.所有设置页面中，新建都放在name的右边（原来在下拉列表最后一项），删除全部移动到name上，Save全部移除（接口需要返回保存、修改的数据）
   10.Creater名称显示（王哥返回）
   12.Configuration-groups中ad groups为所有ad组（王哥接口）
 
   16.头像使用AD账号图片（王哥返回）
-  17.profile页面中system role移到最下面；移除SAVE，其他页面同
   18.App Confugruation-management中，加入Permission权限设置，用以直接进行组的权限设置
   21.category文字和logo显示优化
   22.participants中选择的组，自动在viewed by中选中
@@ -49,4 +51,3 @@ v0.2
   25.加入地址栏面包屑
   26.日历上加入”back to today"功能
   27.New event加入上传附件功能
-  28.new event中的时间加入半小时

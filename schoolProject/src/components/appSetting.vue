@@ -52,13 +52,13 @@
               <div class="name_box">
                 <span class="lab">URL:</span>
                 <div class="name_value">
-                  <input class="form-control" type="text" name="" v-model='data.appUrl'>
+                  <input class="form-control" type="text" name="" v-model='data.appUrl' @blur='submitApp(0)'>
                 </div>
               </div>
               <div class="name_box">
                 <span class="lab">Description:</span>
                 <div class="name_value">
-                  <textarea class="form-control textarea" v-model='data.appDesc'></textarea>
+                  <textarea class="form-control textarea" v-model='data.appDesc' @blur='submitApp(0)'></textarea>
                 </div>
               </div>
             </div>
@@ -163,7 +163,7 @@
           </div>
 
           <div v-show='data.tab==0' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="saveApp()">Save</button>
+            <!-- <button type="button" class="btn btn-primary" @click="saveApp()">Save</button> -->
             <!-- <button type="button" class="btn btn-danger" @click="deleteApp()">Delete</button> -->
           </div>
           <!-- <div v-show='data.tab==1 && data.subtab==0' class="nav_content_1_btn">
@@ -171,7 +171,7 @@
             <button type="button" class="btn btn-danger" @click="deleteGroup()">Delete</button>
           </div> -->
           <div v-show='data.tab==1 && data.subtab==1' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="saveGroup()">Save</button>
+            <!-- <button type="button" class="btn btn-primary" @click="saveGroup()">Save</button> -->
             <!-- <button type="button" class="btn btn-danger" @click="">Delete</button> -->
           </div>
         </div>
@@ -209,7 +209,7 @@ export default {
           {value: '2', name: 'app 2'}
         ],
         appId: '1',
-        appName: 'app 1',
+        appName: '',
         appSource: null,
         appLogo: '',
         appUrl: 'http://www.baidu.com',
@@ -266,7 +266,19 @@ export default {
       let param = {apps: ''};
       return this.$http.post('/appCtl/app/appAllList', param).then((res) => {
         let appList = [];
+        let setDefault = (item) => {
+          let defaultItem = item || appList[0].source;
+          this.data.appId = defaultItem.id;
+          this.data.appName = defaultItem.nom;
+          this.data.appSource = defaultItem;
+          this.data.appLogo = this.$config.api_path.img_path + defaultItem.picUrl;
+          this.data.appUrl = defaultItem.baseaddress;
+          this.data.appDesc = defaultItem.description;
+        }
         forEach(res.data, (i, item) => {
+          if (appList.length && this.data.appName === item.nom) {
+            setDefault(item);
+          }
           appList.push({
             value: item.id,
             name: item.nom,
@@ -275,14 +287,8 @@ export default {
           })
         })
         // 设置默认值
-        if (appList.length) {
-          let defaultItem = appList[0].source;
-          this.data.appId = defaultItem.id;
-          this.data.appName = defaultItem.nom;
-          this.data.appSource = defaultItem;
-          this.data.appLogo = this.$config.api_path.img_path + defaultItem.picUrl;
-          this.data.appUrl = defaultItem.baseaddress;
-          this.data.appDesc = defaultItem.description;
+        if ((appList.length && this.data.appName === '')) {
+          setDefault();
         }
 
         this.data.appList = appList;
@@ -352,20 +358,31 @@ export default {
         } else if (role === 'user') {
           list = this.data.userPermissionList;
         }
-        if (!ret.data.length) {
-          forEach(list, (i, item) => {
-            item.checked = false;
-          })
-        }
+        forEach(list, (i, item) => {
+          item.checked = false;
+        })
         forEach(ret.data, (i, item) => {
           for (let i2 = 0; i2 < list.length; i2++) {
             if (item.app_id === list[i2].value) {
               list[i2].checked = true;
-            } else {
-              list[i2].checked = false;
             }
           }
         })
+        if (!ret.data.length) {
+          this.data.userPermissionAll = false;
+          forEach(list, (i, item) => {
+            item.checked = false;
+          })
+        } else {
+          let checkAll = true;
+          for (let i = 0; i < list.length; i++) {
+            if (!list[i].checked) {
+              checkAll = false;
+              break;
+            }
+          }
+          this.data.userPermissionAll = checkAll;
+        }
         return ret;
       });
     },
@@ -388,20 +405,14 @@ export default {
         this.data.appLogo = '';
         this.data.appUrl = '';
         this.data.appDesc = '';
-        this.data.appList.push({value: text, name: text});
+        this.submitApp(0)
       })
     },
     // 修改APP名称
     editApplication (oldText) {
       this.$refs.prompt.showDialog(oldText).then((text) => {
-        for (let i = 0, len = this.data.appList.length; i < len; i++) {
-          let item = this.data.appList[i];
-          if (oldText === item.name) {
-            item.value = item.name = text;
-            break;
-          }
-        }
         this.data.appName = text;
+        this.submitApp(0);
       })
     },
     // 图标上传成功
@@ -430,13 +441,14 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    // 保存APP
+    // 保存APP（废弃）
     saveApp () {
       this.submitApp(0)
     },
     // 删除APP
     deleteApp () {
       this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
+        this.data.appName = '';
         this.submitApp(-1)
         this.$refs.alert.show = false;
       })
@@ -572,6 +584,7 @@ export default {
           item.checked = bol;
         })
       }
+      this.submitGroup(0);
     },
     // 复选框状态切换
     checkChange (item, str) {
@@ -602,6 +615,7 @@ export default {
           }
         }
       }
+      this.submitGroup(0);
     },
     closeDialog () {
       this.show = false;
