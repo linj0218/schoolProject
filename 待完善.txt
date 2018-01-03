@@ -27,7 +27,9 @@ v0.2
   7.Campus的选项拉长
   8.participants和viewed by文字区域拉长
   9.Users没有Edit和Delete权限
+  10.Creater名称显示（王哥返回）
   11.Calendar中的组使用别名
+  12.Configuration-groups中ad groups为所有ad组（王哥接口）
   13.School years中，week to skip和“H”标志（H标识有问题）
 
   14.去掉首页右上角welcome xxx部分
@@ -36,18 +38,15 @@ v0.2
   19.App Confugruation-Permission中，移除adgroup的设置页面，只保留Users
   20.event加入光标移入变化
 
+  23.日历上加入”back to today"功能（需要设计）
+  25.加入地址栏面包屑（需要设计）
+  26.group迁到首页
   28.new event中的时间加入半小时
 --》未处理《--
-  10.Creater名称显示（王哥返回）
-  12.Configuration-groups中ad groups为所有ad组（王哥接口）
-
   16.头像使用AD账号图片（王哥返回）
-  18.App Confugruation-management中，加入Permission权限设置，用以直接进行组的权限设置
+  18.App Confugruation-management中，加入Permission权限设置，用以直接进行组的权限设置（接口未返回，隐藏）
   21.category文字和logo显示优化
   22.participants中选择的组，自动在viewed by中选中
 
-  23.日历上加入”back to today"功能（需要设计）
-  24.App Confugruation-management中。加入字段position id，用以进行APP的显示排序，数字越小越靠前，同数字按祖母排序
-  25.加入地址栏面包屑
-  26.日历上加入”back to today"功能
-  27.New event加入上传附件功能
+  24.App Confugruation-management中。加入字段position id，用以进行APP的显示排序，数字越小越靠前，同数字按祖母排序（接口未返回，隐藏）
+  27.New event加入上传附件功能（需要设计）

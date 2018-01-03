@@ -6,6 +6,8 @@
              @profileToggle='profileToggle'>
     </headerr>
 
+    <crumbs></crumbs>
+
     <div class="page_body">
       <div class="page_body_box clearfix">
         <div class="part_1">
@@ -87,8 +89,7 @@
                     <div :title='td.title' v-show='!(td.spanNum==1 && td.time!="All day")'>
                       <div :class='[td.color, {"no_table_cell": td.spanNum>1&&td.time!="All day"}]'>
                         <div class="title_line">
-                          <div class="time_line" v-show='td.spanNum>1&&td.time!="All day"'>{{td.startTime}}</div>
-                          <div class="time_line right" v-show='td.spanNum>1&&td.time!="All day"'>{{td.endTime}}</div>
+                          <div class="time_line">{{td.startTime}}</div><div class="time_line right">{{td.endTime}}</div>
                           {{td.title}}
                         </div>
                       </div>
@@ -192,6 +193,7 @@
 
 <script>
   import headerr from '@/components/header'
+  import crumbs from '@/components/crumbs'
   import banner from '@/components/banner'
   import profile from '@/components/profile'
   import config from '@/components/configuration'
@@ -204,7 +206,7 @@
 
   export default {
     components: {
-      headerr, banner, calendar, profile, config, newEvent, drapdown, alert
+      headerr, crumbs, banner, calendar, profile, config, newEvent, drapdown, alert
     },
     data () {
       return {
@@ -719,7 +721,7 @@
   @import '../styles/mixin';
   #body{height: 100%;background: #f5f5f5;overflow: auto;}
   .page_body{
-    padding: 30px 180px;position: relative;
+    padding: 0 180px 30px 180px;position: relative;
     .icon_btn_add{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
     .part_1{
       background: #fff;float: left;width: 380px;height: 918px;margin-right: 20px;box-shadow: 0 0 1px #ddd;
@@ -783,20 +785,20 @@
           }
           .li{
             display: flex;height: 60px;
-            .task_1{flex: 1;}
-            .task_2{flex: 2;}
-            .task_3{flex: 3;}
-            .task_4{flex: 4;}
-            .task_5{flex: 5;}
-            .task_6{flex: 6;}
-            .task_7{flex: 7;}
+            .task_1{flex: 1;width: 0;}
+            .task_2{flex: 2;width: 0;}
+            .task_3{flex: 3;width: 0;}
+            .task_4{flex: 4;width: 0;}
+            .task_5{flex: 5;width: 0;}
+            .task_6{flex: 6;width: 0;}
+            .task_7{flex: 7;width: 0;}
             .task_1 > div,
             .task_2 > div,
             .task_3 > div,
             .task_4 > div,
             .task_5 > div,
             .task_6 > div,
-            .task_7 > div{padding: 4px 8px;height: 60px;display: table;width: 100%;position: relative;cursor: pointer;}
+            .task_7 > div{padding: 4px 8px;height: 60px;width: 100%;position: relative;cursor: pointer;}
             .task_1 > div > div,
             .task_2 > div > div,
             .task_3 > div > div,
@@ -804,7 +806,7 @@
             .task_5 > div > div,
             .task_6 > div > div,
             .task_7 > div > div{
-              height: 52px;border-radius: 3px;font-size: 16px;color: #fff;display: table-cell;vertical-align: middle;line-height: 17.4px;
+              height: 52px;border-radius: 3px;font-size: 16px;color: #fff;vertical-align: middle;line-height: 17.4px;
               &.no_table_cell{display: block;}
               .title_line{overflow: hidden;padding: 0 5px;max-height: 52px;}
               .time_line{font-size: 12px;display: inline-block;width: 49%;text-align: left;}

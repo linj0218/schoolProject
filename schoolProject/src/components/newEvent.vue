@@ -92,6 +92,19 @@
                 <textarea class="form-control textarea" v-model='data.description'></textarea>
               </div>
             </div>
+            <div v-if="false">
+              <el-upload
+                class="upload-demo"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                multiple
+                :limit="3"
+                :on-exceed="handleExceed"
+                :file-list="data.fileList">
+                <button>Upload</button>
+              </el-upload>
+            </div>
           </div>
           <div class="right">
             <div>

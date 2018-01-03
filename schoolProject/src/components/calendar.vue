@@ -6,9 +6,8 @@
               @focus='()=>{this.$emit("buttonFocus")}'
               @blur='()=>{this.$emit("buttonBlur")}' >
       </button>
-      <el-tooltip content="Back to Today" placement="bottom">
-        <span class="back_to_today">{{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}</span>
-      </el-tooltip>
+      {{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}
+      <div class="back_to_today" v-if='showABWeek' @click='backToToday()'>Today</div>
       <button class="nav_right" @click='changeActMonth("next_month")'
               @focus='()=>{this.$emit("buttonFocus")}'
               @blur='()=>{this.$emit("buttonBlur")}' >
@@ -277,6 +276,18 @@
       getYearWeek () {
         return getYearWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate)
       },
+      // 返回今日
+      backToToday () {
+        let date = this.$moment()
+        let dateObj = {
+          thisYear: date.year(),
+          thisMonth: date.month() + 1,
+          thisDate: date.date()
+        }
+        this.actDateInfo = dateObj;
+        this.createCalendar();
+        // changeActDate(dayInfo, selectModel)
+      },
       // 判断本周为A、B、H周
       getABHWeek (row, index) {
         // console.log(this.data.schoolYearInfo, row)
@@ -343,11 +354,11 @@
   .month_cal{
     text-align: center;
     .month_nav{
-      font-size: 20px;color: #333;padding: 20px;
-      .back_to_today{cursor: pointer;}
+      font-size: 20px;color: #333;padding: 20px;position: relative;
+      .back_to_today{cursor: pointer;width: 70px;height: 28px;background: #4A90E2;color: #fff;border-radius: 2px;position: absolute;right: 10px;top: 50%;transform: translateY(-50%);font-size: 14px;line-height: 28px;}
       button{width: 28px;height: 28px;border: 0;vertical-align: middle;}
-      button.nav_left{background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;margin-right: 34px;}
-      button.nav_right{background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;margin-left: 34px;}
+      button.nav_left{background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;margin-right: 10px;}
+      button.nav_right{background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;margin-left: 10px;}
     }
     .month_body{
       font-size: 14px;padding: 0 20px;

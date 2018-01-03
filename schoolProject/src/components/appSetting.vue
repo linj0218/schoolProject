@@ -3,15 +3,48 @@
     <div class="config_bg" @click='closeDialog()'></div>
     <div class="config_body">
       <div class="title">
-        <span class="icon_back" @click='closeDialog()'></span>App permission
+        <span class="icon_back" @click='closeDialog()'></span>Configuration
       </div>
       <div class="content">
         <div class="nav_tab flex">
-          <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>Management</div></div>
-          <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>Permission</div></div>
+          <div><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>Groups</div></div>
+          <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
+          <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
         </div>
         <div class="nav_body">
           <div class="body">
+            <!-- Groups -->
+            <div class="nav_content_1" v-show='data.tab==3' style="padding: 0;text-align: left;">
+              <el-table ref="groups"
+                        :data="groupsData.groupList"
+                        tooltip-effect="dark"
+                        style="width: 100%"
+                        @selection-change="">
+                </el-table-column>
+                <el-table-column prop="group_name"
+                                 label="Ad group"
+                                 show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column prop="group_alias_name"
+                                 label="Alias"
+                                 show-overflow-tooltip>
+                </el-table-column>
+                <el-table-column label=""
+                                 width="140">
+                  <template slot-scope="scope">
+                    <span class="icon icon_edit" @click='editGroupAlias(scope.$index, scope.row)'></span>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Active"
+                                 width="80">
+                  <template slot-scope="scope">
+                    <div class="checkbox"
+                         :class='{"checked": scope.row.operation_flag==1}'
+                         @click='groupStatusChanged(scope.$index, scope.row)'></div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
             <!-- Application Management -->
             <div class="nav_content_1" v-show='data.tab==0'>
               <div class="name_box">
@@ -61,55 +94,22 @@
                   <textarea class="form-control textarea" v-model='data.appDesc' @blur='submitApp(0)'></textarea>
                 </div>
               </div>
-            </div>
-            <!-- Application Permission -->
-            <div class="nav_content_1" v-show='data.tab==1'>
-              <!-- sub tabs -->
-              <!-- <div class="nav_subtab">
-                <div :class='{"act": data.subtab==0}' @click='()=>{this.data.subtab=0}'>AD Groups</div>
-                <div :class='{"act": data.subtab==1}' @click='()=>{this.data.subtab=1}'>Users</div>
-                <div class="slide_block" :class='{"right": data.subtab==1}'></div>
-              </div> -->
-              <!-- sub tabs content -->
-              <!-- Groups -->
-              <!-- <div v-show='data.subtab==0'>
-                <div class="name_box">
-                  <span class="lab">AD Groups:</span>
-                  <div class="name_value">
+              <div class="name_box" v-if="false">
+                <span class="lab">Name:</span>
+                <div class="name_value">
 
-                    <drapdown :input-value='data.groupId'
-                              :input-name='data.groupName'
-                              :input-select='data.groupList'
-                              :input-add='false'
-                              :input-item-text='"New Group"'
-                              @inputChange='groupChanged'
-                              @addItem='addGroup'>
-                    </drapdown>
+                  <drapdown :input-value='data.appName'
+                            :input-name='data.appName'
+                            :input-select='data.levels'
+                            :input-add='false'
+                            @inputChange='applicationChanged'>
+                  </drapdown>
 
-                  </div>
-                  <div class="name_box">
-                    <span class="lab">Permissions:</span>
-                    <div class="name_value show_border">
-                      <div class="check_all">
-                        <div class="checkbox">
-                          <label :class='{"checked": data.groupPermissionAll}'>
-                            <input @click='checkAllChange("group")' type="checkbox" v-model='data.groupPermissionAll'> All Programs
-                          </label>
-                        </div>
-                      </div>
-                      <div class="check_list">
-                        <div class="checkbox" v-for='item in data.groupPermissionList'>
-                          <label :class='{"checked": item.checked}'>
-                            <input @click='checkChange(item, "group")' type="checkbox" v-model='item.checked'>
-                            <span class="app_app_bg"></span>
-                            {{item.name}}
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div> -->
+              </div>
+            </div>
+            <!-- User Permission -->
+            <div class="nav_content_1" v-show='data.tab==1'>
               <!-- Users -->
               <div v-show='data.subtab==1'>
                 <div class="name_box">
@@ -161,19 +161,6 @@
               </div>
             </div>
           </div>
-
-          <div v-show='data.tab==0' class="nav_content_1_btn">
-            <!-- <button type="button" class="btn btn-primary" @click="saveApp()">Save</button> -->
-            <!-- <button type="button" class="btn btn-danger" @click="deleteApp()">Delete</button> -->
-          </div>
-          <!-- <div v-show='data.tab==1 && data.subtab==0' class="nav_content_1_btn">
-            <button type="button" class="btn btn-primary" @click="saveGroup()">Save</button>
-            <button type="button" class="btn btn-danger" @click="deleteGroup()">Delete</button>
-          </div> -->
-          <div v-show='data.tab==1 && data.subtab==1' class="nav_content_1_btn">
-            <!-- <button type="button" class="btn btn-primary" @click="saveGroup()">Save</button> -->
-            <!-- <button type="button" class="btn btn-danger" @click="">Delete</button> -->
-          </div>
         </div>
       </div>
     </div>
@@ -201,7 +188,7 @@ export default {
       show: false,
       actionUrl: this.$config.api_path.img_upload,
       data: {
-        tab: 0,
+        tab: 3,
         subtab: 1,
         // App management
         appList: [
@@ -237,23 +224,29 @@ export default {
         userPermissionList: [
           {value: 3, name: 'App name 3', checked: false},
           {value: 4, name: 'App name 4', checked: false}
-        ]
+        ],
+        levels: []
+      },
+      // Groups data
+      groupsData: {
+        groupList: [],
+        names: [],
+        membersList: []
       }
     }
   },
   mounted () {
+    let levels = [];
+    for (let i = 1; i <= 20; i++) {
+      levels.push({value: i, name: i})
+    }
+    this.data.levels = levels;
   },
   watch: {
     show () {
       if (this.show) {
         this.getAppList();
-        // let promises = [];
-        // promises.push(this.getUsers())
-        // promises.push(this.getGroups())
-        // Promise.all(promises).then((ret) => {
-        //   this.getPermission('group');
-        //   this.getPermission('user');
-        // })
+        this.getGroups();
         this.getUsers().then(() => {
           this.getPermission('user');
         })
@@ -326,21 +319,43 @@ export default {
     // 获取所有AD group数据
     getGroups () {
       return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {event_id: 0}).then((ret) => {
-        let groupList = [];
-        forEach(ret.data.groupsList, (i, item) => {
-          groupList.push({
-            value: item.id,
-            name: item.group_name
-          })
-        })
-
-        if (groupList.length) {
-          this.data.groupId = groupList[0].value;
-          this.data.groupName = groupList[0].name;
-        }
-
-        this.data.groupList = groupList;
+        this.groupsData.groupList = ret.data.groupsList
         return ret;
+      })
+    },
+    // groups functions
+    // 修改group别名
+    editGroupAlias (index, row) {
+      this.$refs.prompt.showDialog(row.group_alias_name).then((text) => {
+        row.group_alias_name = text;
+        this.submitGroup1(row)
+      })
+    },
+    // group状态修改
+    groupStatusChanged (index, row) {
+      row.operation_flag = row.operation_flag === 1 ? 0 : 1;
+      this.submitGroup1(row)
+    },
+    // 提交groups表单
+    submitGroup1 (row) {
+      // console.log(row)
+      let param = {
+        'id': row.id,
+        'group_name': row.group_name,
+        'operation_flag': row.operation_flag,
+        'group_alias_name': row.group_alias_name
+      }
+      return this.$http.post('/sharedcalendarSettingCtl/event/editGroups', {
+        data: JSON.stringify(param)
+      }).then((res) => {
+        if (res.success) {
+          let banner = {
+            status: 'SUCCESS',
+            msg: 'Success!'
+          }
+          this.$emit('openBanner', banner);
+          return res;
+        }
       })
     },
     // 通过groupId、userId获取group权限、user权限
@@ -441,10 +456,6 @@ export default {
       }
       return isJPG && isLt2M;
     },
-    // 保存APP（废弃）
-    saveApp () {
-      this.submitApp(0)
-    },
     // 删除APP
     deleteApp () {
       this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
@@ -490,37 +501,6 @@ export default {
     groupChanged (item) {
       this.data.groupId = item.value
       this.data.groupName = item.name
-    },
-    // 修改AD Groups(废弃)
-    editGroup (oldText) {
-      this.$refs.prompt.showDialog(oldText).then((text) => {
-        this.data.groupName = text;
-        for (let i = 0, len = this.data.groupList.length; i < len; i++) {
-          let item = this.data.groupList[i];
-          if (oldText === item.name) {
-            item.name = text;
-            break;
-          }
-        }
-      })
-    },
-    // 新增group(废弃)
-    addGroup () {
-      this.$refs.prompt.showDialog().then((text) => {
-        this.data.groupId = '';
-        this.data.groupName = text;
-        this.data.groupList.push({value: text, name: text});
-      })
-    },
-    // 保存group
-    saveGroup () {
-      this.submitGroup(0);
-    },
-    // 删除group(废弃)
-    deleteGroup () {
-      this.$refs.alert.showDialog('Confirm the deletion?').then(() => {
-        this.submitGroup(-1);
-      })
     },
     // 提交group权限
     submitGroup (opt) {
@@ -683,13 +663,13 @@ export default {
               .slide_block.right{left: 50%;}
             }
           }
-          .nav_content_1_btn{
-            text-align: center;
-            .btn{width: 150px;margin-top: 50px;}
-            .cancel{background: #ccc;color: #fff;}
-          }
         }
       }
+      table .icon{position: absolute;width: 22px;height: 22px;left: 0;top: 50%;transform: translateY(-50%);cursor: pointer;}
+      table .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
+      .button_box .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
+      table .checkbox{width: 20px;height: 20px;background: url('../images/icon_checkbox_unchecked.png') 50% 50%/auto auto no-repeat;cursor: pointer;}
+      table .checkbox.checked{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
     }
   }
   .configuration.act{

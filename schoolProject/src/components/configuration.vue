@@ -7,7 +7,7 @@
       </div>
       <div class="content">
         <div class="nav_tab flex">
-          <div><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div>
+          <div v-if='false'><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div>
           <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>School years</div></div>
           <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>Places</div></div>
           <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>Categories</div></div>
@@ -15,7 +15,7 @@
         <div class="nav_body">
           <div class="body">
             <!-- Groups -->
-            <div class="nav_content_1" v-show='tab==0' style="padding: 0;text-align: left;">
+            <div class="nav_content_1" v-show='tab==0' style="padding: 0;text-align: left;display: none;">
               <el-table ref="groups"
                         :data="groupsData.groupList"
                         tooltip-effect="dark"
@@ -244,7 +244,7 @@ export default {
   },
   data () {
     return {
-      tab: 0,
+      tab: 1,
       show: false,
       // Groups data
       groupsData: {
