@@ -6,9 +6,9 @@
              @profileToggle='profileToggle'>
     </headerr>
 
-    <crumbs></crumbs>
 
     <div class="page_body">
+      <crumbs></crumbs>
       <div class="page_body_box clearfix">
         <div class="part_1">
           <div class="title">Calendar</div>
@@ -148,7 +148,7 @@
                 <div class="item">
                   <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
                 </div>
-                <div class="item">
+                <div class="item" v-if='false'>
                   <span>Attachment:</span><div><a target="_blank" href="http://117.78.50.43:8080/pic/pdf/TEST.pdf">test<i class="icon_attachment"></i></a></div>
                 </div>
               </div>

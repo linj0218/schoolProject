@@ -92,17 +92,15 @@
                 <textarea class="form-control textarea" v-model='data.description'></textarea>
               </div>
             </div>
-            <div v-if="false">
+            <div v-if='false'>
               <el-upload
                 class="upload-demo"
                 action="https://jsonplaceholder.typicode.com/posts/"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
                 multiple
                 :limit="3"
                 :on-exceed="handleExceed"
                 :file-list="data.fileList">
-                <button>Upload</button>
+                <button class="btn btn-primary">Upload</button>
               </el-upload>
             </div>
           </div>
@@ -150,11 +148,15 @@
         <button type="button" class="btn cancel" @click='closeConfig()'>Cancel</button>
       </div>
     </div>
+
+    <alert ref='alert'></alert>
+
   </div>
 </template>
 
 <script>
 import drapdown from '@/components/drapdown'
+import alert from '@/components/alert'
 import dateSelect from '@/components/dateSelect'
 import addParticipantModal from '@/components/addParticipantModal'
 import {forEach, formatDate} from '@/plugins/util'
@@ -177,7 +179,7 @@ export default {
     }
   },
   components: {
-    drapdown, dateSelect, addParticipantModal
+    drapdown, alert, dateSelect, addParticipantModal
   },
   data () {
     return {
@@ -215,7 +217,8 @@ export default {
         showAddParticipantPopup: false,
         // Viewed by
         viewedAll: false,
-        viewedList: []
+        viewedList: [],
+        fileList: []
       },
       copyData: {}
     }
@@ -563,19 +566,31 @@ export default {
     },
     // 检验开始、结束日期
     checkDateChange (startDateStr, endDateStr) {
-      let startDateTime = new Date(startDateStr.split('/').reverse().join('.')).getTime()
-      let endDateTime = new Date(endDateStr.split('/').reverse().join('.')).getTime()
-      if (startDateTime > endDateTime) {
-        alert('The end time cannot be earlier than the start time')
+      let startDate = this.$moment(startDateStr + ' ' + this.data.start_time, 'DD/MM/YYYY H:m A');
+      let endDate = this.$moment(endDateStr + ' ' + this.data.end_time, 'DD/MM/YYYY H:m A');
+      if (startDate > endDate) {
+        this.$refs.alert.showDialog('The end time cannot be earlier than the start time');
         return false
       }
       return true
     },
     startTimeChanged (item) {
       this.data.start_time = item.value
+      this.data.end_time = item.value
     },
     endTimeChanged (item) {
+      if (!this.checkTimeChange(this.data.start_time, item.value)) return false;
       this.data.end_time = item.value
+    },
+    // 校验开始、结束时间
+    checkTimeChange (start, end) {
+      let startTime = this.$moment(this.data.start_date + ' ' + start, 'DD/MM/YYYY H:m A');
+      let endTime = this.$moment(this.data.end_date + ' ' + end, 'DD/MM/YYYY H:m A');
+      if (startTime > endTime) {
+        this.$refs.alert.showDialog('The end time cannot be earlier than the start time');
+        return false;
+      }
+      return true;
     },
     categoryChanged (item) {
       this.data.category_id = item.value
@@ -611,11 +626,27 @@ export default {
       this.data.showAddParticipantPopup = false
       if (resData && resData.status === 'ok') {
         this.data.participants = this.data.participants.concat(resData.data)
+        for (let i = 0; i < resData.data.length; i++) {
+          let item = resData.data[i];
+          if (item.type === 'icon_member') continue;
+          for (let i2 = 0; i2 < this.data.viewedList.length; i2++) {
+            let item2 = this.data.viewedList[i2];
+            if (item.id === item2.id) {
+              item2.value = true;
+              this.checkChange(item2)
+              break;
+            }
+          }
+        }
       }
     },
     // 删除Participant
     deleteParticipant (item, index) {
       this.data.participants.splice(index, 1)
+    },
+    // 图片上传
+    handleExceed (files, fileList) {
+      this.$refs.alert.showDialog('限制3个文件');
     },
     // 关闭弹窗
     closeConfig () {
@@ -644,12 +675,11 @@ export default {
           .all_day{text-align: right;}
           .lab{color: #999;font-size: 16px;line-height: 34px;display: block;}
           .name_value{
-            height: 34px;
-            .textarea{height: 322px;}
+            .textarea{height: 200px;}
             .form-control{background: #f5f5f5;}
           }
           .name_value .dropdown{
-            flex: 1;background: #f5f5f5;
+            flex: 1;
           }
           .name_value .dropdown:nth-child(2){margin-left: 20px;}
         }
@@ -698,4 +728,5 @@ export default {
   .checkbox label{padding-left: 24px;}
   .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;margin-left: -24px;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;}
   .checkbox .checked:before{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
+  .upload-demo{padding: 10px;}
 </style>

@@ -143,7 +143,7 @@
                     <div class="check_all">
                       <div class="checkbox">
                         <label :class='{"checked": data.userPermissionAll}'>
-                          <input @click='checkAllChange("user")' type="checkbox" v-model='data.userPermissionAll'> All Applucations
+                          <input @click='checkAllChange("user")' type="checkbox" v-model='data.userPermissionAll'> All Applications
                         </label>
                       </div>
                     </div>

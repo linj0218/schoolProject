@@ -70,7 +70,7 @@
                 </div>
               </div>
             </div>
-            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink"><i></i>Show Details >></router-link>
+            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink"><i></i>Show Details</router-link>
           </div>
         </div>
       </div>
@@ -126,7 +126,6 @@
       }
     },
     mounted () {
-      // this.init()
       this.initAppList()
     },
     methods: {
@@ -146,12 +145,16 @@
         }).then((res) => {
           let resData = res.data
 
+          // console.log(this.weekList, resData);
           // TODO更新周视图数据
           for (let i = 0, len = this.weekList.length; i < len; i++) {
             let item = this.weekList[i]
             let taskList = []
             for (let i2 = 0, len2 = resData.length; i2 < len2; i2++) {
-              if (item.date === Number(resData[i2].start_date.split('-')[2])) {
+              var targetDate = this.$moment(item.dateStr);
+              var startDate = this.$moment(resData[i2].start_date);
+              var endDate = this.$moment(resData[i2].end_date);
+              if (targetDate >= startDate && targetDate <= endDate) {
                 taskList.push({
                   id: resData[i2].id,
                   time: resData[i2].day_flag === 1 ? 'All day' : resData[i2].start_time + '-' + resData[i2].end_time,
@@ -173,6 +176,7 @@
           }
           let tempObj = {}
           tempObj = {
+            dateStr: this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}).format('YYYY-MM-DD'),
             week: weekMap[Number(i) + 1].substr(0, 3),
             date: item.day,
             month: monthMap[item.monthValue].substr(0, 3),

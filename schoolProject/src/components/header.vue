@@ -9,7 +9,7 @@
         <ul class="drop_down">
           <div class="icon_other1"></div>
           <li @click='profileToggle()'><span class="icon1"></span>Profile</li>
-          <li @click='appSettingToggle()' v-if='showAppSetting'><span class="icon2"></span>App Configuration</li>
+          <li @click='appSettingToggle()' v-if='showAppSetting'><span class="icon2"></span>Configuration</li>
           <li @click='configToggle()' v-if='showConfig'><span class="icon2"></span>Configuration</li>
           <li @click='logout()'><span class="icon3"></span>Log out</li>
         </ul>

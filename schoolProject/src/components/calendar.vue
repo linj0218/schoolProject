@@ -355,7 +355,7 @@
     text-align: center;
     .month_nav{
       font-size: 20px;color: #333;padding: 20px;position: relative;
-      .back_to_today{cursor: pointer;width: 70px;height: 28px;background: #4A90E2;color: #fff;border-radius: 2px;position: absolute;right: 10px;top: 50%;transform: translateY(-50%);font-size: 14px;line-height: 28px;}
+      .back_to_today{cursor: pointer;width: 70px;height: 28px;background: #4A90E2;color: #fff;border-radius: 2px;position: absolute;right: 20px;top: 50%;transform: translateY(-50%);font-size: 14px;line-height: 28px;}
       button{width: 28px;height: 28px;border: 0;vertical-align: middle;}
       button.nav_left{background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;margin-right: 10px;}
       button.nav_right{background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;margin-left: 10px;}

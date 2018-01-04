@@ -20,7 +20,7 @@
         ]
       } else if (this.$route.path === '/homepage') {
         this.data.crumbs = [
-          { name: 'Home', path: '/', isHome: true }, { name: 'homepage', path: '/homepage' }
+          { name: 'Home', path: '/', isHome: true }, { name: 'Calendar', path: '/homepage' }
         ]
       }
     },
@@ -31,7 +31,7 @@
 
 <style lang='scss' scoped>
   @import '../styles/mixin';
-  .crumbs{padding: 15px 180px;}
+  .crumbs{padding: 15px 0;}
   .crumbs:after{content: '';display: block;clear: both;}
   .nav{
     display: inline-block;width: 90px;height: 26px;line-height: 27px;background: #fff;font-size: 12px;color: #4E81BD;position: relative;float: left;margin-left: 18px;padding-left: 10px;
