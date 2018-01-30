@@ -38,7 +38,7 @@
               <span class="week_info">
                 Week: <span class="week_num">{{getYearWeek()}}</span>
               </span>
-              <span class="week_ab" :class='getMonthWeek()'>{{getMonthWeek()}}</span>
+              <span class="week_ab" :class='getABHWeek()'>{{getABHWeek()}}</span>
             </div>
             <div class="filter_condition">
               <span>Category:</span>
@@ -85,13 +85,16 @@
               </div>
               <template v-for='li in weekTaskList'>
                 <div class="li" v-show='showli(li)'>
-                  <div v-for='td in li' :class='"task_" + td.spanNum' @click='changeActDateFromWeekview(td)'>
+                  <div v-for='td in li' :class='"task_" + td.spanNum' @click='()=>{if(td.spanNum<=1){changeActDateFromWeekview(td)}}'>
                     <div :title='td.title' v-show='!(td.spanNum==1 && td.time!="All day")'>
-                      <div :class='[td.color, {"no_table_cell": td.spanNum>1&&td.time!="All day"}]'>
+                      <div class="content_box" :class='[td.color, {"no_table_cell": td.spanNum>1&&td.time!="All day"}]'>
                         <div class="title_line">
                           <div class="time_line">{{td.startTime}}</div><div class="time_line right">{{td.endTime}}</div>
                           {{td.title}}
                         </div>
+                      </div>
+                      <div class="event_box">
+                        <div v-for='(num, $index) in td.spanNum' @click='()=>{if(td.spanNum>1){changeActDateFromWeekview(td, $index)}}'></div>
                       </div>
                     </div>
                   </div>
@@ -119,24 +122,38 @@
             <div v-if='weekTaskListActId!=null'>
               <div class="tast_detail_right">
                 <div class="title">Participants</div>
-                <template v-for='(item, index) in eventsUserGroupList'>
-                  <button type="button" class="btn btn-block typeone" v-if='index < 4'>
-                    <span class="icon icon_members"></span>{{item.group_alias_name}}
-                  </button>
-                </template>
-                <template v-for='(item, index) in eventsUserList'>
-                  <button type="button" class="btn btn-block" v-if='eventsUserGroupList.length < 4 && index < 4 - eventsUserGroupList.length'>
-                    <span class="icon icon_member"></span>{{item.nom}}
-                  </button>
-                </template>
-                <div v-if='eventsUserGroupList.length + eventsUserList.length > 4'>...</div>
+                <div class="scroll_box">
+                  <template v-for='(item, index) in eventsUserGroupList'>
+                    <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
+                      <span class="icon icon_members"></span>
+
+                      <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="top">
+                        <span>{{item.group_alias_name || item.group_name}}</span>
+                      </el-tooltip>
+                    </button>
+                  </template>
+                  <template v-for='(item, index) in eventsUserList'>
+                    <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 0}'>
+                      <span class="icon icon_member"></span>
+
+                      <el-tooltip class="item" effect="dark" :content="item.nom" placement="top">
+                        <span>{{item.nom}}</span>
+                      </el-tooltip>
+                    </button>
+                  </template>
+                </div>
                 <div class="title margin_top">Viewed by</div>
-                <button type="button" class="btn btn-block" v-if='eventsGroupList.length == 7'>All Employees</button>
-                <template v-for='(item, index) in eventsGroupList' v-else>
-                  <button type="button" class="btn btn-block">
-                    {{item.group_alias_name}}
-                  </button>
-                </template>
+                <div class="scroll_box">
+                  <template v-for='(item, index) in eventsGroupList'>
+                    <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
+                      <span class="icon icon_members"></span>
+
+                      <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="top">
+                        <span>{{item.group_alias_name || item.group_name}}</span>
+                      </el-tooltip>
+                    </button>
+                  </template>
+                </div>
               </div>
               <div class="tast_detail_left">
                 <div class="item">
@@ -148,8 +165,13 @@
                 <div class="item">
                   <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
                 </div>
-                <div class="item" v-if='false'>
-                  <span>Attachment:</span><div><a target="_blank" href="http://117.78.50.43:8080/pic/pdf/TEST.pdf">test<i class="icon_attachment"></i></a></div>
+                <div class="item" v-if='taskDetailInfo.fileList.length'>
+                  <span>Attachment:</span>
+                  <div>
+                    <template v-for='file in taskDetailInfo.fileList'>
+                      <a class="link_download" download :href="$config.api_path.img_path+file.file_url">{{file.file_name}}<i class="icon_attachment"></i></a><br/>
+                    </template>
+                  </div>
                 </div>
               </div>
               <div class="edit_btn">
@@ -174,7 +196,7 @@
       <profile ref='profile' @openBanner='openBanner'></profile>
 
       <!-- 系统设置 -->
-      <config ref='config' @openBanner='openBanner'></config>
+      <config ref='config' @openBanner='openBanner' @close='fresh'></config>
 
       <new-event :show-config='showEvent'
                  :event-type='eventType'
@@ -201,7 +223,7 @@
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
   import alert from '@/components/alert'
-  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate, getSStorage} from '@/plugins/util'
+  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate, getSStorage, getWeekFromTarget} from '@/plugins/util'
   import {mapState, mapMutations} from 'vuex'
 
   export default {
@@ -214,7 +236,8 @@
           initOver: false,
           actDateInfoLabel: '',
           role: 0,
-          checkActEventId: null
+          checkActEventId: null,
+          schoolYearInfo: []
         },
         // part_1 ------------------------------------------------------------
         // Calendar
@@ -264,7 +287,11 @@
         eventType: null
       }
     },
+    computed: {
+      ...mapState(['test', 'schoolYearInfo'])
+    },
     created () {
+      // this.data.schoolYearInfo = this.schoolYearInfo;
       if (JSON.stringify(this.$route.query) !== '{}') {
         this.actDateInfo.thisYear = Number(this.$route.query.year)
         this.actDateInfo.thisMonth = Number(this.$route.query.month)
@@ -272,10 +299,17 @@
       }
       this.data.role = getSStorage('userinfo').role;
     },
-    computed: {
-      ...mapState(['test'])
-    },
     mounted () {
+      if (!this.data.schoolYearInfo.length && this.schoolYearInfo) {
+        let actDate = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
+        for (let i = 0; i < this.schoolYearInfo.length; i++) {
+          let item = this.schoolYearInfo[i];
+          if (this.$moment(item.start_date) <= actDate && this.$moment(item.end_date) >= actDate) {
+            this.data.schoolYearInfo = item;
+            break;
+          }
+        }
+      }
       // console.log(this)
       if (JSON.stringify(this.$route.query) !== '{}') {
         this.createWeekInfo()
@@ -291,6 +325,17 @@
     watch: {
       test () {
         console.log(this.test)
+      },
+      schoolYearInfo () {
+        // 设置活动日期所属学期的学年信息
+        let actDate = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
+        for (let i = 0; i < this.schoolYearInfo.length; i++) {
+          let item = this.schoolYearInfo[i];
+          if (this.$moment(item.start_date) <= actDate && this.$moment(item.end_date) >= actDate) {
+            this.data.schoolYearInfo = item;
+            break;
+          }
+        }
       }
     },
     methods: {
@@ -329,9 +374,10 @@
           // groups
           let seeCategorys = [{value: '0', name: 'All'}]
           forEach(resData.groupsList, (i, item) => {
+            if (item.operation_flag == 0) return;
             let obj = {
               value: item.id,
-              name: item.group_name
+              name: item.group_alias_name || item.group_name
             }
             seeCategorys.push(obj)
           })
@@ -405,10 +451,12 @@
         this.placesList.map((o) => { if (o.isSelected) { placesList.push('\'' + o.name + '\'') } })
 
         let self = this
+        console.log(this.actWeekList[6]);
         let params = {
           dayFlag: 0,
-          startDate: this.$moment(this.actWeekList[0]).format('YYYY-MM-DD'),
-          endDate: this.$moment(this.actWeekList[6]).format('YYYY-MM-DD'),
+          indexFlag: '1',
+          startDate: this.$moment({y: this.actWeekList[0].yearValue, M: this.actWeekList[0].monthValue - 1, d: this.actWeekList[0].day}).format('YYYY-MM-DD'),
+          endDate: this.$moment({y: this.actWeekList[6].yearValue, M: this.actWeekList[6].monthValue - 1, d: this.actWeekList[6].day}).format('YYYY-MM-DD'),
           category_id: this.categoryId,
           group_id: this.seeCategoryId
         }
@@ -502,7 +550,7 @@
                       let createTime = field.create_time.split(' ')
                       this.taskDetailInfo = {
                         title: field.title,
-                        creater: field.nom,
+                        creater: field.create_user,
                         create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
                         categroy: field.category_no,
                         color: field.category_remark,
@@ -510,7 +558,8 @@
                         room: field.place_name,
                         start: formatDate(field.start_date, 'dd/mm/yy') + ' ' + field.start_time,
                         end: formatDate(field.end_date, 'dd/mm/yy') + ' ' + field.end_time,
-                        description: field.description
+                        description: field.description,
+                        fileList: field.fileEntities
                       }
                     }
                   }
@@ -578,9 +627,16 @@
       changeActDateFromWeekview (item) {
         this.data.checkActEventId = item.id || null
 
-        this.actDateInfo.thisYear = item.thisYear
-        this.actDateInfo.thisMonth = item.thisMonth
-        this.actDateInfo.thisDate = item.thisDate
+        if (arguments[1] != undefined) {
+          let date = this.$moment(item.source.start_date).add(arguments[1], 'days')
+          this.actDateInfo.thisYear = date.year()
+          this.actDateInfo.thisMonth = date.month() + 1
+          this.actDateInfo.thisDate = date.date()
+        } else {
+          this.actDateInfo.thisYear = item.thisYear
+          this.actDateInfo.thisMonth = item.thisMonth
+          this.actDateInfo.thisDate = item.thisDate
+        }
         this.createWeekInfo()
       },
       // 日历日期切换事件
@@ -637,7 +693,7 @@
         let createTime = item.create_time.split(' ')
         this.taskDetailInfo = {
           title: item.title,
-          creater: item.nom,
+          creater: item.create_user,
           create_time: formatDate(createTime[0], 'dd/mm/yy') + ' ' + createTime[1],
           categroy: item.category_no,
           color: item.category_remark,
@@ -645,7 +701,8 @@
           room: item.place_name,
           start: formatDate(item.start_date, 'dd/mm/yy') + ' ' + item.start_time,
           end: formatDate(item.end_date, 'dd/mm/yy') + ' ' + item.end_time,
-          description: item.description
+          description: item.description,
+          fileList: item.fileEntities
         }
         this.getViews()
       },
@@ -692,7 +749,7 @@
             if (res.success) {
               let banner = {
                 status: 'SUCCESS',
-                msg: 'Delete Successed'
+                msg: 'Delete Succeeded'
               }
               this.openBanner(banner)
               return res
@@ -709,6 +766,43 @@
       },
       getMonthWeek () {
         return getMonthWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate) % 2 ? 'A' : 'B'
+      },
+      getABHWeek () {
+        let row = this.actWeekList;
+        // console.log(row, this.data.schoolYearInfo)
+        if (!row || !row.length || !this.data.schoolYearInfo) return '';
+        // let weekStr = index % 2 === 0 ? 'A' : 'B';
+        let weekStr = '';
+        // 从学年开始日期计算A、B周，遇到H周跳过
+        let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day});
+        let scount = getWeekFromTarget(firstWeekDate, this.data.schoolYearInfo.start_date);
+        let quantity = 0; // 活动日期之前的holiday数量
+        // console.log(this.data.schoolYearInfo);
+        if (this.data.schoolYearInfo && this.data.schoolYearInfo.hoildayList) {
+          for (let i = 0; i < this.data.schoolYearInfo.hoildayList.length; i++) {
+            let item = this.data.schoolYearInfo.hoildayList[i];
+
+            if (firstWeekDate > this.$moment(item.start_date)) {
+              quantity++;
+            }
+
+            if (firstWeekDate.format('YYYY-MM-DD') === this.$moment(item.start_date).format('YYYY-MM-DD')) {
+              scount = -1;
+              weekStr = 'H';
+              break;
+            }
+          }
+        }
+        if (scount > -1) {
+          scount -= quantity;
+          weekStr = scount % 2 === 0 ? 'A' : 'B';
+        }
+        return weekStr;
+      },
+      fresh () {
+        this.getWeekInfoData().then(() => {
+          this.getViews()
+        })
       },
       getYearWeek () {
         return getYearWeek(this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate)
@@ -756,6 +850,7 @@
           .week_ab{font-size: 16px;display: inline-block;width: 28px;height: 28px;color: #fff;border-radius: 2px;text-align: center;line-height: 28px;}
           .week_ab.A{background: #4A90E2;}
           .week_ab.B{background: #5ACE6D;}
+          .week_ab.H{background: #F3A222;}
         }
         .filter_condition{
           text-align: right;line-height: 76px;padding: 0 30px;
@@ -785,13 +880,13 @@
           }
           .li{
             display: flex;height: 60px;
-            .task_1{flex: 1;width: 0;}
-            .task_2{flex: 2;width: 0;}
-            .task_3{flex: 3;width: 0;}
-            .task_4{flex: 4;width: 0;}
-            .task_5{flex: 5;width: 0;}
-            .task_6{flex: 6;width: 0;}
-            .task_7{flex: 7;width: 0;}
+            .task_1{flex: 1;min-width: 0;}
+            .task_2{flex: 2;min-width: 0;}
+            .task_3{flex: 3;min-width: 0;}
+            .task_4{flex: 4;min-width: 0;}
+            .task_5{flex: 5;min-width: 0;}
+            .task_6{flex: 6;min-width: 0;}
+            .task_7{flex: 7;min-width: 0;}
             .task_1 > div,
             .task_2 > div,
             .task_3 > div,
@@ -799,18 +894,28 @@
             .task_5 > div,
             .task_6 > div,
             .task_7 > div{padding: 4px 8px;height: 60px;width: 100%;position: relative;cursor: pointer;}
-            .task_1 > div > div,
-            .task_2 > div > div,
-            .task_3 > div > div,
-            .task_4 > div > div,
-            .task_5 > div > div,
-            .task_6 > div > div,
-            .task_7 > div > div{
+            .task_1 > div > .content_box,
+            .task_2 > div > .content_box,
+            .task_3 > div > .content_box,
+            .task_4 > div > .content_box,
+            .task_5 > div > .content_box,
+            .task_6 > div > .content_box,
+            .task_7 > div > .content_box{
               height: 52px;border-radius: 3px;font-size: 16px;color: #fff;vertical-align: middle;line-height: 17.4px;
               &.no_table_cell{display: block;}
               .title_line{overflow: hidden;padding: 0 5px;max-height: 52px;}
               .time_line{font-size: 12px;display: inline-block;width: 49%;text-align: left;}
               .time_line.right{text-align: right;}
+            }
+            .task_1 > div > .event_box,
+            .task_2 > div > .event_box,
+            .task_3 > div > .event_box,
+            .task_4 > div > .event_box,
+            .task_5 > div > .event_box,
+            .task_6 > div > .event_box,
+            .task_7 > div > .event_box{
+              position: absolute;top: 0;left: 0;width: 100%;height: 100%;display: flex;
+              & > div{flex: 1;}
             }
             .task_0{flex: 1;}
           }
@@ -842,20 +947,29 @@
             span{float: left;width: 140px;text-align: right;color: #999;font-size: 14px;margin-right: 10px;}
             div{overflow: hidden;font-size: 14px;color: #333;}
             i{display: inline-block;width: 20px;height: 20px;border-radius: 50%;vertical-align: middle;margin-left: 10px;}
+            .link_download{display: inline-block;margin-bottom: 10px;}
             .icon_attachment{display: inline-block; width: 28px;height: 28px;background: url('../images/icon_attachment.png') 0 0 / 100% 100% no-repeat;}
           }
         }
         .tast_detail_right{
-          float: right;width: 300px;padding: 30px 30px 94px 30px;height: 100%;position: relative;
+          float: right;width: 300px;padding: 30px 5px 94px 30px;height: 100%;position: relative;
+          .scroll_box{max-height: 158px;overflow-y: scroll;padding-right: 10px;}
+          .scroll_box::-webkit-scrollbar {width: 5px;height: auto;}
+          .scroll_box::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
+          .scroll_box::-webkit-scrollbar-track-piece {background-color: #fff;}
           .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
           .margin_top{margin-top: 35px;}
-          & > .btn{
-            border: 1px solid #4E81BD;color: #4E81BD;font-size: 14px;background: #fff;outline: none;cursor: default;position: relative;padding: 6px 20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
-            .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;position: absolute;}
-            .icon_member{left: 12px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
-            .icon_members{left: 12px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
+          & .btn{
+            border: 1px solid #aaa;color: #aaa;font-size: 14px;background: #fff;outline: none;cursor: default;position: relative;padding: 0 10px 0 40px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;text-align: left;line-height: 26px;
+            .icon{width: 17px;height: 14px;display: inline-block;vertical-align: middle;position: absolute;top: 50%;transform: translateY(-50%);}
+            .icon_member{left: 10px;background: url('../images/icon_member_disabled_v2.png') 50% 0 / auto 100% no-repeat;}
+            .icon_members{left: 10px;background: url('../images/icon_members_disabled_v2.png') 0 0 / 100% 100% no-repeat;}
           }
-          & > .btn.typeone{padding: 6px 40px;}
+          & .btn.act{
+            border: 1px solid #4E81BD;color: #4E81BD;
+            .icon_member{left: 12px;background: url('../images/icon_member_v2.png') 50% 0 / auto 100% no-repeat;}
+            .icon_members{left: 12px;background: url('../images/icon_members_v2.png') 0 0 / 100% 100% no-repeat;}
+          }
         }
         .edit_btn{
           position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;

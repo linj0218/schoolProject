@@ -25,9 +25,9 @@
 <script>
   /**
    * 组件使用：
-   * 
+   *
    * <prompt ref='dialog'></prompt>
-   * 
+   *
    * this.$refs.dialog.showDialog('some msg').then((res) => {
    *   // TODO callback
    *   this.$refs.dialog.show = false

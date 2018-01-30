@@ -45,7 +45,7 @@
       },
       // 下拉按钮选中文字
       inputName: {
-        type: String,
+        type: [Number, String],
         required: true
       },
       // 数据源

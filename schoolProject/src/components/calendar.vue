@@ -47,7 +47,7 @@
     <!-- 活动周信息 -->
     <div class="month_info" v-if='showMonthInfo'>
         Week: {{getYearWeek()}}
-        <span :class='getMonthWeek()'></span>
+        <span :class='getABHWeek2()'></span>
     </div>
   </div>
 </template>
@@ -102,7 +102,15 @@
         this.SET_INITHOLIDAY(true);
         this.getHoliday()
       } else if (!this.data.schoolYearInfo && this.schoolYearInfo) {
-        this.data.schoolYearInfo = this.schoolYearInfo;
+        // this.data.schoolYearInfo = this.schoolYearInfo;
+        let actDate = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
+        for (let i = 0; i < this.schoolYearInfo.length; i++) {
+          let item = this.schoolYearInfo[i];
+          if (this.$moment(item.start_date) <= actDate && this.$moment(item.end_date) >= actDate) {
+            this.data.schoolYearInfo = item;
+            break;
+          }
+        }
         this.createCalendar();
       } else {
         this.createCalendar()
@@ -296,6 +304,7 @@
         let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day});
         let scount = getWeekFromTarget(firstWeekDate, this.data.schoolYearInfo.start_date);
         let quantity = 0; // 活动日期之前的holiday数量
+        // console.log(this.data.schoolYearInfo);
         if (this.data.schoolYearInfo && this.data.schoolYearInfo.hoildayList) {
           for (let i = 0; i < this.data.schoolYearInfo.hoildayList.length; i++) {
             let item = this.data.schoolYearInfo.hoildayList[i];
@@ -316,6 +325,38 @@
           weekStr = scount % 2 === 0 ? 'A' : 'B';
         }
 
+        return weekStr;
+      },
+      getABHWeek2 () {
+        let row = this.getActWeek();
+        // console.log(row, this.data.schoolYearInfo)
+        if (!row || !row.length || !this.data.schoolYearInfo) return '';
+        // let weekStr = index % 2 === 0 ? 'A' : 'B';
+        let weekStr = '';
+        // 从学年开始日期计算A、B周，遇到H周跳过
+        let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day});
+        let scount = getWeekFromTarget(firstWeekDate, this.data.schoolYearInfo.start_date);
+        let quantity = 0; // 活动日期之前的holiday数量
+        // console.log(this.data.schoolYearInfo);
+        if (this.data.schoolYearInfo && this.data.schoolYearInfo.hoildayList) {
+          for (let i = 0; i < this.data.schoolYearInfo.hoildayList.length; i++) {
+            let item = this.data.schoolYearInfo.hoildayList[i];
+
+            if (firstWeekDate > this.$moment(item.start_date)) {
+              quantity++;
+            }
+
+            if (firstWeekDate.format('YYYY-MM-DD') === this.$moment(item.start_date).format('YYYY-MM-DD')) {
+              scount = -1;
+              weekStr = 'H';
+              break;
+            }
+          }
+        }
+        if (scount > -1) {
+          scount -= quantity;
+          weekStr = scount % 2 === 0 ? 'A' : 'B';
+        }
         return weekStr;
       },
       // 获取当前日期所属的周数据
@@ -401,6 +442,8 @@
       span.A:after{content: 'A';}
       span.B{background: #5ACE6D;}
       span.B:after{content: 'B';}
+      span.H{background: #F3A222;}
+      span.H:after{content: 'H';}
     }
   }
 </style>

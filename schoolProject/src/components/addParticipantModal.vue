@@ -13,7 +13,7 @@
               <div>
                 <input type="text" class="form-control" placeholder="Search staff"
                        v-model='searchValue'
-                       @keyup.enter='formSearch()'>
+                       @keyup='formSearch()'>
               </div>
             </div>
             <div>

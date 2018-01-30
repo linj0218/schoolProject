@@ -12,12 +12,11 @@
           <div class="apps container-fluid">
             <!-- <div class="app col-lg-4" v-for='app in applicationList'> -->
             <template v-for='app in applicationList'>
-              <a class="app col-xs-4 col-sm-4 col-md-4 col-lg-4" target="_blank" :href='app.baseaddress'>
+              <a class="app col-xs-4 col-sm-4 col-md-4 col-lg-4" target="_blank" :href='app.baseaddress' :title='app.nom' :class='{small_font: app.small_font}'>
                 <div class="icon">
-                  <img :src='"../images/app_" + app.id + ".png"'>
-                  <img class="icon_on" :src='"../images/app_" + app.id + "_on.png"'>
-                </div>
-                {{app.nom}}
+                  <img v-if='app.picUrl' :src='$config.api_path.img_path + app.picUrl'>
+                  <img v-if='!app.picUrl' src="../images/icon_default.png">
+                </div><div class="text">{{app.nom}}</div>
               </a>
             </template>
           </div>
@@ -82,7 +81,7 @@
       <profile ref='profile' @openBanner='openBanner'></profile>
 
       <!-- APP设置 -->
-      <app-setting ref='appSetting' @openBanner='openBanner'></app-setting>
+      <app-setting ref='appSetting' @openBanner='openBanner' @close='fresh'></app-setting>
 
     </div>
   </div>
@@ -135,6 +134,7 @@
         let params = {
           dayFlag: 0,
           place: '',
+          indexFlag: '0',
           category_id: 0,
           group_id: 0,
           startDate: formatDate([startDate.yearValue, startDate.monthValue, startDate.day].join('-'), 'yyyy-mm-dd'),
@@ -221,21 +221,21 @@
       openBanner (res) {
         this.$refs.banner.show(res.msg)
       },
+      fresh () {
+        this.initAppList()
+      },
       // 初始化appList列表
       initAppList () {
-        let self = this
         let param = '{"apps": ""}'
         this.$http.post('/appCtl/app/appList', {
           data: param
         }).then((res) => {
-          let resData = res.data
-          self.placesList = []
-          forEach(resData, (i, item) => {
-            let obj = item
-            if (i < 6) {
-              self.applicationList.push(obj)
+          this.applicationList = res.data;
+          for (let i = 0; i < this.applicationList.length; i++) {
+            if (this.applicationList[i].nom.length > 15) {
+              this.applicationList[i].small_font = true;
             }
-          })
+          }
         })
       }
     },
@@ -254,17 +254,19 @@
     padding: 30px 180px;position: relative;
     .part_1, .part_3{float: left;width: 63%;background: #fff;box-shadow: 0 0 1px #ddd;margin-right: 20px;margin-bottom: 20px;}
     .part_1{
-      height: 304px;padding: 12px;
+      padding: 12px;
       .apps{
         height: 100%;padding: 0;
         .app{
-          height: 50%;background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 22px;line-height: 140px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;text-decoration: none;
+          background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 22px;height: 140px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;text-decoration: none;overflow: hidden;position: relative;display: table;
           .icon{
-            display: inline-block;width: 80px;height: 80px;background: #fff;border-radius: 50%;vertical-align: middle;margin-right: 15px;position: relative;
+            position: absolute;width: 80px;height: 80px;background: #fff;border-radius: 50%;overflow: hidden;vertical-align: middle;margin-right: 15px;top: 50%;transform: translateY(-50%);
             img{width: 100%;height: 100%;position: absolute;left: 0;top: 0;}
             img.icon_on{z-index: -1;}
           }
+          .text{display: table-cell;vertical-align: middle;padding-left: 90px;}
         }
+        .app.small_font{font-size: 19px;}
         .app:hover{
           color: #fff;background: #4E81BD;
           img.icon_on{z-index: 1;}

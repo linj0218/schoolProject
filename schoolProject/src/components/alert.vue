@@ -11,9 +11,12 @@
         {{text}}
       </div>
 
-      <div class="popup_footer">
+      <div class="popup_footer" v-if='!showOK'>
         <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
         <button type="button" class="btn cancel" @click='cancel()'>Cancel</button>
+      </div>
+      <div class="popup_footer" v-if='showOK'>
+        <button type="button" class="btn btn-primary" @click='cancel()'>OK</button>
       </div>
     </div>
   </div>
@@ -22,9 +25,9 @@
 <script>
   /**
    * 组件使用：
-   * 
+   *
    * <alert ref='dialog'></alert>
-   * 
+   *
    * this.$refs.dialog.showDialog('some msg').then(() => {
    *   // TODO callback
    *   this.$refs.dialog.show = false
@@ -37,15 +40,17 @@
         resolve: null,
         reject: null,
         promise: null,
-        text: ''
+        text: '',
+        showOK: false
       }
     },
     created () {
     },
     methods: {
-      showDialog (text) {
+      showDialog (text, showOK) {
         this.text = text || 'Confirm the deletion?'
         this.show = true
+        this.showOK = showOK;
         this.promise = new Promise((resolve, reject) => {
           this.resolve = resolve
           this.reject = reject

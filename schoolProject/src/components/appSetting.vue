@@ -16,6 +16,7 @@
             <!-- Groups -->
             <div class="nav_content_1" v-show='data.tab==3' style="padding: 0;text-align: left;">
               <el-table ref="groups"
+                        height="772"
                         :data="groupsData.groupList"
                         tooltip-effect="dark"
                         style="width: 100%"
@@ -94,17 +95,41 @@
                   <textarea class="form-control textarea" v-model='data.appDesc' @blur='submitApp(0)'></textarea>
                 </div>
               </div>
-              <div class="name_box" v-if="false">
-                <span class="lab">Name:</span>
+              <div class="name_box">
+                <span class="lab">Position:</span>
                 <div class="name_value">
 
-                  <drapdown :input-value='data.appName'
-                            :input-name='data.appName'
-                            :input-select='data.levels'
+                  <drapdown :input-value='data.sortNum'
+                            :input-name='data.sortNum'
+                            :input-select='data.positionList'
                             :input-add='false'
-                            @inputChange='applicationChanged'>
+                            @inputChange='positionChanged'>
                   </drapdown>
 
+                </div>
+              </div>
+              <div class="name_box">
+                <span class="lab">Permission:</span>
+                <div class="name_value show_border scroll_box">
+                  <div class="check_all">
+                    <div class="checkbox">
+                      <label :class='{"checked": data.groupsInAppChecked}'>
+                        <input @click='appCheckAllChange()' type="checkbox" v-model='data.groupsInAppChecked'> All Groups
+                      </label>
+                    </div>
+                  </div>
+                  <div class="check_list">
+                    <div class="checkbox" v-for='item in data.groupsInApp' v-if='item.operation_flag==1'>
+                      <label :class='{"checked": item.checked}'>
+                        <input @click='appCheckChange(item)' type="checkbox" v-model='item.checked'>
+                        <span class="app_app_bg"></span>
+
+                        <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="left">
+                          <span>{{item.group_alias_name || item.group_name}}</span>
+                        </el-tooltip>
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -116,7 +141,7 @@
                   <span class="lab">User:</span>
                   <div class="name_value hide-icon">
 
-                    <el-select filterable default-first-option placeholder="请选择"
+                    <el-select filterable default-first-option placeholder=""
                                v-model="data.userId"
                                :name="data.userName"
                                @change="userChanged(data.userId)">
@@ -131,15 +156,15 @@
                 </div>
                 <div class="name_box">
                   <span class="lab" style="vertical-align: middle;">Grouped in:</span>
-                  <div class="name_value" style="vertical-align: middle;">
-                    <div class="card">
-                      <span class="icon icon_member"></span> {{data.userGroupedIn}}
+                  <div class="name_value" style="vertical-align: top;">
+                    <div class="card" v-for='group in data.userGroupedIn' :title='group.name' :class='{enable: group.operation_flag == 1}'>
+                      <span class="icon icon_members"></span> {{group.name}}
                     </div>
                   </div>
                 </div>
                 <div class="name_box">
-                  <span class="lab">Permissions:</span>
-                  <div class="name_value show_border">
+                  <span class="lab">Permission:</span>
+                  <div class="name_value show_border scroll_box">
                     <div class="check_all">
                       <div class="checkbox">
                         <label :class='{"checked": data.userPermissionAll}'>
@@ -151,8 +176,11 @@
                       <div class="checkbox" v-for='item in data.userPermissionList'>
                         <label :class='{"checked": item.checked}'>
                           <input @click='checkChange(item, "user")' type="checkbox" v-model='item.checked'>
-                          <span class="app_app_bg"></span>
-                          {{item.name}}
+                          <span class="app_app_bg" :class='{defaultIcon: !item.background}' :style="{ background: item.background }"></span>
+
+                          <el-tooltip class="item" effect="dark" :content="item.name" placement="left">
+                            <span>{{item.name}}</span>
+                          </el-tooltip>
                         </label>
                       </div>
                     </div>
@@ -217,15 +245,24 @@ export default {
           {value: '1', name: 'William Trang'},
           {value: '2', name: 'William Trang 2'}
         ],
-        userId: '1',
-        userName: 'William Trang',
-        userGroupedIn: 'Qingpu Techer',
+        userId: '',
+        userName: '',
+        userGroupedIn: [],
         userPermissionAll: false,
         userPermissionList: [
           {value: 3, name: 'App name 3', checked: false},
           {value: 4, name: 'App name 4', checked: false}
         ],
-        levels: []
+        levels: [],
+        sortNum: '1',
+        positionList: [
+          {value: '1', name: '1'}, {value: '2', name: '2'}, {value: '3', name: '3'}, {value: '4', name: '4'}, {value: '5', name: '5'},
+          {value: '6', name: '6'}, {value: '7', name: '7'}, {value: '8', name: '8'}, {value: '9', name: '9'}, {value: '10', name: '10'},
+          {value: '11', name: '11'}, {value: '12', name: '12'}, {value: '13', name: '13'}, {value: '14', name: '14'}, {value: '15', name: '15'},
+          {value: '16', name: '16'}, {value: '17', name: '17'}, {value: '18', name: '18'}, {value: '19', name: '19'}, {value: '20', name: '20'}
+        ],
+        groupsInAppChecked: false,
+        groupsInApp: []
       },
       // Groups data
       groupsData: {
@@ -245,8 +282,9 @@ export default {
   watch: {
     show () {
       if (this.show) {
-        this.getAppList();
-        this.getGroups();
+        this.getGroups().then(() => {
+          this.getAppList();
+        })
         this.getUsers().then(() => {
           this.getPermission('user');
         })
@@ -255,19 +293,40 @@ export default {
   },
   methods: {
     // 获取所有APP数据
-    getAppList () {
+    getAppList (flg) {
       let param = {apps: ''};
       return this.$http.post('/appCtl/app/appAllList', param).then((res) => {
         let appList = [];
+        // 设置默认值
         let setDefault = (item) => {
+          // console.log(item);
           let defaultItem = item || appList[0].source;
           this.data.appId = defaultItem.id;
           this.data.appName = defaultItem.nom;
           this.data.appSource = defaultItem;
-          this.data.appLogo = this.$config.api_path.img_path + defaultItem.picUrl;
+          if (defaultItem.picUrl) {
+            this.data.appLogo = this.$config.api_path.img_path + defaultItem.picUrl;
+          } else {
+            this.data.appLogo = '';
+          }
           this.data.appUrl = defaultItem.baseaddress;
           this.data.appDesc = defaultItem.description;
+
+          this.data.sortNum = defaultItem.sortNum || '1';
+          // 设置选中groups
+          if (!defaultItem || !defaultItem.appRoleList || !defaultItem.appRoleList.length) return false;
+          for (let i = 0; i < defaultItem.appRoleList.length; i++) {
+            let item = defaultItem.appRoleList[i].group_id;
+            for (let i2 = 0; i2 < this.data.groupsInApp.length; i2++) {
+              let item2 = this.data.groupsInApp[i2];
+              if (item == item2.id) {
+                item2.checked = true;
+                break;
+              }
+            }
+          }
         }
+
         forEach(res.data, (i, item) => {
           if (appList.length && this.data.appName === item.nom) {
             setDefault(item);
@@ -280,7 +339,7 @@ export default {
           })
         })
         // 设置默认值
-        if ((appList.length && this.data.appName === '')) {
+        if ((appList.length && this.data.appName === '') || flg) {
           setDefault();
         }
 
@@ -289,6 +348,14 @@ export default {
         this.data.groupPermissionList = JSON.parse(JSON.stringify(appList));
         this.data.userPermissionAll = false;
         this.data.userPermissionList = JSON.parse(JSON.stringify(appList));
+        for (let i = 0; i < this.data.userPermissionList.length; i++) {
+          let item = this.data.userPermissionList[i];
+          if (item.source.picUrl) {
+            item.background = 'url("' + this.$config.api_path.img_path + item.source.picUrl + '") 0 0 / 100% 100% no-repeat';
+          } else {
+            item.background = '';
+          }
+        }
         return res;
       })
     },
@@ -306,11 +373,11 @@ export default {
           })
         })
 
-        if (userList.length) {
-          this.data.userId = userList[0].value;
-          this.data.userName = userList[0].name;
-          this.data.userGroupedIn = userList[0].source.group_name;
-        }
+        // if (userList.length) {
+        //   this.data.userId = userList[0].value;
+        //   this.data.userName = userList[0].name;
+        //   this.data.userGroupedIn = userList[0].source.group_name;
+        // }
 
         this.data.userList = userList;
         return res;
@@ -319,7 +386,8 @@ export default {
     // 获取所有AD group数据
     getGroups () {
       return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', {event_id: 0}).then((ret) => {
-        this.groupsData.groupList = ret.data.groupsList
+        this.groupsData.groupList = ret.data.groupsList;
+        this.data.groupsInApp = JSON.parse(JSON.stringify(ret.data.groupsList));
         return ret;
       })
     },
@@ -334,7 +402,11 @@ export default {
     // group状态修改
     groupStatusChanged (index, row) {
       row.operation_flag = row.operation_flag === 1 ? 0 : 1;
-      this.submitGroup1(row)
+      this.submitGroup1(row).then(() => {
+        return this.getGroups();
+      }).then(() => {
+        this.getAppList(true);
+      })
     },
     // 提交groups表单
     submitGroup1 (row) {
@@ -351,7 +423,7 @@ export default {
         if (res.success) {
           let banner = {
             status: 'SUCCESS',
-            msg: 'Success!'
+            msg: 'Succeeded!'
           }
           this.$emit('openBanner', banner);
           return res;
@@ -364,6 +436,7 @@ export default {
       if (role === 'group') {
         params = {group_id: this.data.groupId, role_flag: 0}
       } else if (role === 'user') {
+        if (!this.data.userId) return;
         params = {user_id: this.data.userId, role_flag: 1}
       }
       return this.$http.post('/sharedcalendarSettingCtl/event/searchAppRole', params).then((ret) => {
@@ -407,9 +480,39 @@ export default {
       this.data.appId = item.source.id;
       this.data.appName = item.source.nom;
       this.data.appSource = item.source;
-      this.data.appLogo = this.$config.api_path.img_path + item.source.picUrl;
+      if (item.source.picUrl) {
+        this.data.appLogo = this.$config.api_path.img_path + item.source.picUrl;
+      } else {
+        this.data.appLogo = '';
+      }
       this.data.appUrl = item.source.baseaddress;
       this.data.appDesc = item.source.description;
+      // console.log(item, this.data.groupsInApp);
+      this.data.sortNum = item.source.sortNum || '1';
+      if (this.data.groupsInApp || this.data.groupsInApp.length) {
+        for (let i2 = 0; i2 < this.data.groupsInApp.length; i2++) {
+          let item2 = this.data.groupsInApp[i2];
+          item2.checked = false;
+        }
+      }
+      for (let i = 0; i < item.source.appRoleList.length; i++) {
+        let obj = item.source.appRoleList[i];
+        for (let i2 = 0; i2 < this.data.groupsInApp.length; i2++) {
+          let item2 = this.data.groupsInApp[i2];
+          // console.log(obj.group_id, item2.id);
+          if (obj.group_id == item2.id) {
+            item2.checked = true;
+            break;
+          }
+        }
+      }
+      this.data.groupsInAppChecked = true;
+      for (let i = 0; i < this.data.groupsInApp.length; i++) {
+        if (!this.data.groupsInApp[i].checked && this.data.groupsInApp[i].operation_flag == 1) {
+          this.data.groupsInAppChecked = false;
+          break;
+        }
+      }
     },
     // 新增APP
     addApplication () {
@@ -449,10 +552,10 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isJPG) {
-        this.$refs.alert.showDialog('上传头像图片只能是 JPG 格式!');
+        this.$refs.alert.showDialog('Uploading image images can only be JPG format!', true);
       }
       if (!isLt2M) {
-        this.$refs.alert.showDialog('上传头像图片大小不能超过 2MB!');
+        this.$refs.alert.showDialog('Upload profile picture size can\'t exceed 2MB!');
       }
       return isJPG && isLt2M;
     },
@@ -464,8 +567,44 @@ export default {
         this.$refs.alert.show = false;
       })
     },
+    appCheckAllChange () {
+      this.data.groupsInAppChecked = !this.data.groupsInAppChecked;
+      forEach(this.data.groupsInApp, (i, item) => {
+        if (item.operation_flag === 0) return;
+        item.checked = this.data.groupsInAppChecked;
+      })
+      this.submitApp(0)
+    },
+    appCheckChange (obj) {
+      let bol = !obj.checked;
+      obj.checked = bol;
+      if (!bol) {
+        this.data.groupsInAppChecked = bol;
+      } else {
+        this.data.groupsInAppChecked = bol;
+        for (let i = 0, len = this.data.groupsInApp.length; i < len; i++) {
+          let item = this.data.groupsInApp[i];
+          if (item.operation_flag == 1 && !item.checked) {
+            this.data.groupsInAppChecked = false;
+            break;
+          }
+        }
+      }
+      this.submitApp(0);
+    },
+    // position切换事件
+    positionChanged (item) {
+      this.data.sortNum = item.value;
+      this.submitApp(0);
+    },
     // 提交APP
     submitApp (opt) {
+      let groups = [];
+      forEach(this.data.groupsInApp, (i, item) => {
+        if (item.operation_flag == 1 && item.checked) {
+          groups.push(item.id);
+        }
+      })
       let params = {
         id: this.data.appId || 0,
         nom: this.data.appName,
@@ -474,7 +613,9 @@ export default {
         description: this.data.appDesc,
         insideschool: this.data.appSource ? this.data.appSource.insideschool : 1,
         auth_required: this.data.appSource ? this.data.appSource.auth_required : 1,
-        disabled: opt
+        disabled: opt,
+        sortNum: Number(this.data.sortNum),
+        groupIdList: groups
       }
 
       // console.log(params)
@@ -482,7 +623,7 @@ export default {
         if (res.result === 'SUCCESS') {
           let banner = {
             status: 'SUCCESS',
-            msg: 'Success!'
+            msg: 'Succeeded!'
           }
           this.$emit('openBanner', banner);
           this.getAppList();
@@ -531,7 +672,7 @@ export default {
         if (res.result === 'SUCCESS') {
           let banner = {
             status: 'SUCCESS',
-            msg: 'Success!'
+            msg: 'Succeeded!'
           }
           this.$emit('openBanner', banner);
         }
@@ -544,7 +685,11 @@ export default {
       for (let i = 0, len = this.data.userList.length; i < len; i++) {
         let item = this.data.userList[i];
         if (item.value === id) {
-          this.data.userGroupedIn = item.source.group_name;
+          this.data.userGroupedIn = [];
+          // this.data.userGroupedIn = item.source.group_name;
+          forEach(item.source.userGroupList, (i2, field) => {
+            this.data.userGroupedIn.push({name: field.group_alias_name || field.group_name, operation_flag: field.operation_flag});
+          })
           break;
         }
       }
@@ -564,7 +709,7 @@ export default {
           item.checked = bol;
         })
       }
-      this.submitGroup(0);
+      this.submitGroup(0)
     },
     // 复选框状态切换
     checkChange (item, str) {
@@ -595,10 +740,11 @@ export default {
           }
         }
       }
-      this.submitGroup(0);
+      this.submitGroup(0)
     },
     closeDialog () {
       this.show = false;
+      this.$emit('close')
     }
   }
 }
@@ -626,7 +772,7 @@ export default {
           padding: 0 30px;min-height: 465px;
           .body{border: 1px solid #eee;border-radius: 2px;background: #F9F9F9;height: 100%;}
           .nav_content_1{
-            text-align: center;padding: 26px 0;
+            text-align: center;padding: 26px 0;max-height: 772px;overflow: auto;
             .name_box{margin-top: 14px;}
             .lab{font-size: 18px;color: #999;vertical-align: top;display: inline-block;width: 120px;text-align: right;margin-right: 10px;line-height: 34px;}
             .lab.long_text{width: 185px;}
@@ -638,19 +784,22 @@ export default {
                 img{width: 100%;height: 100%;}
               }
               .default_icon{height: 100%;background: url('../images/icon_update.png') 50% 50% / auto auto no-repeat;display: block;}
-              .check_all{padding: 0 16px;}
-              .check_list{padding: 0 16px 0 32px;}
+              .check_all{padding: 0 40px 0 16px;}
+              .check_list{padding: 0 40px 0 32px;}
               .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox]{display: none;}
-              .checkbox label{padding-left: 0;display: block;}
-              .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;right: 0;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;top: 50%;transform: translateY(-50%);}
+              .checkbox label{padding-left: 0;display: block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+              .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;right: -24px;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;top: 50%;transform: translateY(-50%);}
               .checkbox .checked:before{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
-              .checkbox .app_app_bg{display: inline-block;width: 30px;height: 30px;background: #ccc;vertical-align: middle;border-radius: 50%;}
-              .card{width: 150px;border-radius: 2px;border: 1px solid #4F81BE;vertical-align: middle;padding: 3px 5px;background: #fff;}
-              .icon{width: 20px;height: 20px;display: inline-block;vertical-align: middle;margin-right: 5px;}
-              .icon_member{left: 16px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
-              .icon_members{left: 16px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
+              .checkbox .app_app_bg{display: inline-block;width: 30px;height: 30px;background: url('../images/icon_members_disabled.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;border-radius: 50%;}
+              .checkbox .app_app_bg.defaultIcon{background: url('../images/icon_default.png') 0 0 / 100% 100% no-repeat !important;}
+              .checkbox .checked .app_app_bg{background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
+              .card{width: 240px;border-radius: 2px;border: 1px solid #aaa;color: #aaa;vertical-align: middle;padding: 5px 5px 5px 40px;background: #fff;margin-bottom: 5px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;}
+              .card.enable{border: 1px solid #4F81BE;color: #4F81BE;}
+              .icon{width: 25px;height: 25px;display: inline-block;vertical-align: middle;margin-right: 5px;}
+              .icon_members{left: 10px;background: url('../images/icon_members_disabled.png') 0 0 / 100% 100% no-repeat;position: absolute;top: 50%;transform: translateY(-50%);}
+              .enable .icon_members{left: 10px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;position: absolute;top: 50%;transform: translateY(-50%);}
             }
-            .name_value.show_border{border-radius: 2px;border: 1px solid #ccc;height: 300px;background: #fff;overflow: auto;}
+            .name_value.show_border{border-radius: 2px;border: 1px solid #ccc;max-height: 560px;background: #fff;overflow: auto;}
             .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);cursor: pointer;}
             .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;right: 65px;}
             .name_value > .icon.icon_delete{background: url('../images/icon_delete.png') 0 0 / 100% 100% no-repeat;}
@@ -662,6 +811,10 @@ export default {
               .slide_block{position: absolute;left: 0;height: 100%;background: #4F81BE;z-index: -1;border-radius: 34px;transition: all 0.2s;}
               .slide_block.right{left: 50%;}
             }
+            .scroll_box{}
+            .scroll_box::-webkit-scrollbar {width: 5px;height: auto;}
+            .scroll_box::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
+            .scroll_box::-webkit-scrollbar-track-piece {background-color: #F9F9F9;}
           }
         }
       }

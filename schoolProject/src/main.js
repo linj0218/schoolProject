@@ -1,5 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+// 项目架构没做好，没时间重构，代码很乱
 import Vue from 'vue'
 import Moment from 'moment'
 import { Table, TableColumn, Tooltip, Upload, Select, Option } from 'element-ui'

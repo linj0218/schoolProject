@@ -92,16 +92,22 @@
                 <textarea class="form-control textarea" v-model='data.description'></textarea>
               </div>
             </div>
-            <div v-if='false'>
-              <el-upload
-                class="upload-demo"
-                action="https://jsonplaceholder.typicode.com/posts/"
-                multiple
-                :limit="3"
-                :on-exceed="handleExceed"
-                :file-list="data.fileList">
-                <button class="btn btn-primary">Upload</button>
-              </el-upload>
+            <div>
+              <span class="lab">Attachment</span>
+              <div class="name_value">
+                <el-upload class="upload-demo"
+                          :action="actionUrl"
+                          :limit="3"
+                          :on-exceed="handleExceed"
+                          :before-upload="beforeAvatarUpload"
+                          :on-success="handleAvatarSuccess"
+                          :on-remove='handleRemove'
+                          :file-list="data.fileList">
+                  <button class="btn btn-primary" v-show='data.fileList.length < 3'>
+                    <span class="icon_btn_add"></span>Upload
+                  </button>
+                </el-upload>
+              </div>
             </div>
           </div>
           <div class="right">
@@ -131,7 +137,7 @@
                   </div>
                 </div>
                 <div class="check_list">
-                  <div class="checkbox" v-for='item in data.viewedList'>
+                  <div class="checkbox" v-for='item in data.viewedList' v-if='item.operation_flag==1'>
                     <label :class='{"checked": item.value}'>
                       <input @click='checkChange(item)' type="checkbox" v-model='item.value'> {{item.name}}
                     </label>
@@ -159,7 +165,7 @@ import drapdown from '@/components/drapdown'
 import alert from '@/components/alert'
 import dateSelect from '@/components/dateSelect'
 import addParticipantModal from '@/components/addParticipantModal'
-import {forEach, formatDate} from '@/plugins/util'
+import {forEach, formatDate, getSStorage} from '@/plugins/util'
 export default {
   props: {
     showConfig: {
@@ -183,6 +189,7 @@ export default {
   },
   data () {
     return {
+      actionUrl: this.$config.api_path.file_upload,
       data: {
         // part_left ------------------------------------------------------
         title: '',
@@ -343,7 +350,8 @@ export default {
           viewedList.push({
             id: item.id,
             value: self.eventType === 'new',
-            name: item.group_alias_name
+            name: item.group_alias_name || item.group_name,
+            operation_flag: item.operation_flag
           })
         })
         self.data.viewedList = viewedList
@@ -351,9 +359,10 @@ export default {
         // TODO设置participants包含groups和users
         let groupList = []
         forEach(resData.groupsList, (i, item) => {
+          if (item.operation_flag == 0) return;
           groupList.push({
             id: item.id,
-            name: item.group_alias_name,
+            name: item.group_alias_name || item.group_name,
             type: 'icon_members',
             selected: false,
             show: true
@@ -371,6 +380,19 @@ export default {
           self.data.end_date = formatDate(resData.eventInfo.end_date, 'dd/mm/yyyy')
           self.data.end_time = resData.eventInfo.end_time
           self.data.description = resData.eventInfo.description
+        }
+
+        // 附件
+        if (resData.eventInfo && resData.eventInfo.fileEntities) {
+          let fileList = [];
+          forEach(resData.eventInfo.fileEntities, (i, item) => {
+            fileList.push({
+              id: item.id,
+              name: item.file_name,
+              url: this.$config.api_path.img_path + item.file_url
+            })
+          })
+          this.data.fileList = fileList;
         }
         return res
       })
@@ -477,7 +499,12 @@ export default {
 
       let groupIds = []
       forEach(this.data.viewedList, (i, item) => {
-        if (item.value) groupIds.push(item.id)
+        if (item.value && item.operation_flag == 1) groupIds.push(item.id)
+      })
+      // 文件
+      let files = [];
+      forEach(this.data.fileList, (i, item) => {
+        files.push(item.id)
       })
 
       let reqData = {
@@ -493,7 +520,11 @@ export default {
         place_id: this.data.roomId,
         groupIds: groupIds.join(','),
         userIds: userIds.join(','),
-        userGroupId: userGroupId.join(',')
+        userGroupId: userGroupId.join(','),
+        eventFileIds: files
+      }
+      if (this.eventType === 'new') {
+        reqData.createUserId = getSStorage('userinfo').id;
       }
       // console.log(reqData)
 
@@ -503,7 +534,7 @@ export default {
         if (res.success) {
           let result = {
             status: 'ok',
-            msg: 'Save Successed'
+            msg: 'Save Succeeded'
           }
           this.$emit('openBanner', result)
           return res
@@ -569,7 +600,7 @@ export default {
       let startDate = this.$moment(startDateStr + ' ' + this.data.start_time, 'DD/MM/YYYY H:m A');
       let endDate = this.$moment(endDateStr + ' ' + this.data.end_time, 'DD/MM/YYYY H:m A');
       if (startDate > endDate) {
-        this.$refs.alert.showDialog('The end time cannot be earlier than the start time');
+        this.$refs.alert.showDialog('The end time cannot be earlier than the start time', true);
         return false
       }
       return true
@@ -587,7 +618,7 @@ export default {
       let startTime = this.$moment(this.data.start_date + ' ' + start, 'DD/MM/YYYY H:m A');
       let endTime = this.$moment(this.data.end_date + ' ' + end, 'DD/MM/YYYY H:m A');
       if (startTime > endTime) {
-        this.$refs.alert.showDialog('The end time cannot be earlier than the start time');
+        this.$refs.alert.showDialog('The end time cannot be earlier than the start time', true);
         return false;
       }
       return true;
@@ -646,7 +677,35 @@ export default {
     },
     // 图片上传
     handleExceed (files, fileList) {
-      this.$refs.alert.showDialog('限制3个文件');
+      this.$refs.alert.showDialog('No More Then 3 Files', true);
+    },
+    // 上传前校验
+    beforeAvatarUpload (file) {
+      const isLt2M = file.size / 1024 / 1024 < 10;
+
+      if (!isLt2M) {
+        this.$refs.alert.showDialog('The File Size Cannot Exceed 10MB!', true);
+      }
+      return isLt2M;
+    },
+    // 上传成功
+    handleAvatarSuccess (res, file) {
+      if (res.success) {
+        this.data.fileList.push({
+          id: res.data[0].id,
+          name: res.data[0].file_name,
+          url: res.data[0].file_url
+        })
+        // this.$nextTick(() => {
+        // })
+      } else {
+        // this.data.fileList = [{name: file.name, url: '', status: 'error'}]
+      }
+    },
+    // 删除
+    handleRemove (file, fileList) {
+      // console.log(file, fileList);
+      this.data.fileList = fileList;
     },
     // 关闭弹窗
     closeConfig () {
@@ -705,7 +764,7 @@ export default {
             .btn{position: absolute;bottom: 12px;right: 10px;}
           }
           .viewed_by{
-            height: 368px;background: #f5f5f5;border-radius: 2px;border: 1px solid #ddd;
+            height: 368px;background: #f5f5f5;border-radius: 2px;border: 1px solid #ddd;overflow: auto;
             .check_all{padding: 0 16px;}
             .check_list{padding: 0 52px;}
           }

@@ -389,6 +389,7 @@ export default {
     },
     closeConfig () {
       this.show = false;
+      this.$emit('close');
     },
     // groups functions
     // 修改group别名

@@ -6,8 +6,10 @@ import {getSStorage} from '@/plugins/util'
 axios.defaults.timeout = 20000
 axios.defaults.withCredentials = true
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
-axios.defaults.baseURL = 'http://117.78.50.43:8080/HTMS_WeChat/'
-// axios.defaults.baseURL = 'http://192.168.148.187:8081/HTMS_WeChat/'
+// axios.defaults.baseURL = 'http://13.75.92.183:8121/HTMS_WeChat/'
+axios.defaults.baseURL = 'http://116.228.73.106:8111/HTMS_WeChat/'
+// axios.defaults.baseURL = 'http://192.168.8.120:8081/HTMS_WeChat/' // 周勇
+// axios.defaults.baseURL = 'http://192.168.8.119:8080/HTMS_WeChat/' // 王俊
 
 // request
 axios.interceptors.request.use((config) => {
@@ -47,7 +49,7 @@ axios.interceptors.response.use((res) => {
   return res.data
 }, (err) => {
   document.getElementById('loading').className = ''
-  alert('网络异常')
+  console.log('网络异常')
   return Promise.reject(err)
 })
 
