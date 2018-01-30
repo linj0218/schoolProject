@@ -51,3 +51,5 @@ v0.2
   24.App Confugruation-management中。加入字段position id，用以进行APP的显示排序，数字越小越靠前，同数字按祖母排序（接口未返回，隐藏）
   27.New event加入上传附件功能（接口字段未添加，隐藏）
   28.附件下载接口未返回，隐藏
+
+11
