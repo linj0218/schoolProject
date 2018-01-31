@@ -231,49 +231,28 @@ export default {
     }
   },
   created () {
-    let date = new Date()
-    let year = date.getFullYear()
-    let month = date.getMonth() + 1
-    let day = date.getDate()
-    this.data.start_date = day + '/' + month + '/' + year
-    this.data.end_date = day + '/' + month + '/' + year
-    let hour = date.getHours();
-    if (hour <= 12) {
-      hour = hour + ':00 AM'
-    } else {
-      hour = (hour - 12) + ':00 PM'
+    this.data.start_date = this.$moment().format('DD/MM/YYYY')
+    this.data.end_date = this.$moment().format('DD/MM/YYYY')
+
+    this.data.start_time = '8:00'
+    this.data.end_time = '18:00'
+
+    let timeList = [];
+    let stime = this.$moment('2000-01-01 00:00:00');
+    let etime = this.$moment('2000-01-02 00:00:00');
+    // 递归构造时间
+    let dealFunc = () => {
+      if (stime < etime) {
+        let formatTime = stime.format('H:mm');
+        timeList.push({value: formatTime, name: formatTime})
+        stime.add(15, 'm');
+        dealFunc();
+      }
     }
-    this.data.start_time =
-    this.data.startTimeName =
-    this.data.end_time =
-    this.data.endTimeName = hour
+    dealFunc();
+    // console.log(timeList);
     this.data.startTimeList =
-    this.data.endTimeList = [
-      {value: '0:00 AM', name: '0:00 AM'}, {value: '0:30 AM', name: '0:30 AM'},
-      {value: '1:00 AM', name: '1:00 AM'}, {value: '1:30 AM', name: '1:30 AM'},
-      {value: '2:00 AM', name: '2:00 AM'}, {value: '2:30 AM', name: '2:30 AM'},
-      {value: '3:00 AM', name: '3:00 AM'}, {value: '3:30 AM', name: '3:30 AM'},
-      {value: '4:00 AM', name: '4:00 AM'}, {value: '4:30 AM', name: '4:30 AM'},
-      {value: '5:00 AM', name: '5:00 AM'}, {value: '5:30 AM', name: '5:30 AM'},
-      {value: '6:00 AM', name: '6:00 AM'}, {value: '6:30 AM', name: '6:30 AM'},
-      {value: '7:00 AM', name: '7:00 AM'}, {value: '7:30 AM', name: '7:30 AM'},
-      {value: '8:00 AM', name: '8:00 AM'}, {value: '8:30 AM', name: '8:30 AM'},
-      {value: '9:00 AM', name: '9:00 AM'}, {value: '9:30 AM', name: '9:30 AM'},
-      {value: '10:00 AM', name: '10:00 AM'}, {value: '10:00 AM', name: '10:30 AM'},
-      {value: '11:00 AM', name: '11:00 AM'}, {value: '11:00 AM', name: '11:30 AM'},
-      {value: '0:00 PM', name: '0:00 PM'}, {value: '0:30 PM', name: '0:30 PM'},
-      {value: '1:00 PM', name: '1:00 PM'}, {value: '1:30 PM', name: '1:30 PM'},
-      {value: '2:00 PM', name: '2:00 PM'}, {value: '2:30 PM', name: '2:30 PM'},
-      {value: '3:00 PM', name: '3:00 PM'}, {value: '3:30 PM', name: '3:30 PM'},
-      {value: '4:00 PM', name: '4:00 PM'}, {value: '4:30 PM', name: '4:30 PM'},
-      {value: '5:00 PM', name: '5:00 PM'}, {value: '5:30 PM', name: '5:30 PM'},
-      {value: '6:00 PM', name: '6:00 PM'}, {value: '6:30 PM', name: '6:30 PM'},
-      {value: '7:00 PM', name: '7:00 PM'}, {value: '7:30 PM', name: '7:30 PM'},
-      {value: '8:00 PM', name: '8:00 PM'}, {value: '8:30 PM', name: '8:30 PM'},
-      {value: '9:00 PM', name: '9:00 PM'}, {value: '9:30 PM', name: '9:30 PM'},
-      {value: '10:00 PM', name: '10:00 PM'}, {value: '10:30 PM', name: '10:30 PM'},
-      {value: '11:00 PM', name: '11:00 PM'}, {value: '11:30 PM', name: '11:30 PM'}
-    ]
+    this.data.endTimeList = timeList;
     this.copyData = JSON.parse(JSON.stringify(this.data))
   },
   watch: {

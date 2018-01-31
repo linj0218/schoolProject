@@ -451,7 +451,7 @@
         this.placesList.map((o) => { if (o.isSelected) { placesList.push('\'' + o.name + '\'') } })
 
         let self = this
-        console.log(this.actWeekList[6]);
+        // console.log(this.actWeekList[6]);
         let params = {
           dayFlag: 0,
           indexFlag: '1',

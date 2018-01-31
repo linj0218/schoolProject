@@ -113,4 +113,7 @@
   .circle .icon_circle{display: inline-block;}
   .li_icon_circle{position: absolute;width: 22px;height: 22px;right: 15px;top: 50%;transform: translateY(-50%);border-radius: 50%;}
   .open > .dropdown-menu{width: 100%;overflow-y: auto;max-height: 300px;overflow-x: hidden;}
+  .open > .dropdown-menu::-webkit-scrollbar {width: 5px;height: auto;}
+  .open > .dropdown-menu::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
+  .open > .dropdown-menu::-webkit-scrollbar-track-piece {background-color: #fff;}
 </style>
