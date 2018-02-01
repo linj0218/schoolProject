@@ -34,3 +34,7 @@ $color_11: #5ACE6D;
 .bg_color_9{background: $color_9 !important;}
 .bg_color_10{background: $color_10 !important;}
 .bg_color_11{background: $color_11 !important;}
+
+::-webkit-scrollbar {width: 5px;height: auto;}
+::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
+::-webkit-scrollbar-track-piece {background-color: #F9F9F9;}
