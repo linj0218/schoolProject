@@ -144,6 +144,8 @@
                     <el-select filterable default-first-option placeholder=""
                                v-model="data.userId"
                                :name="data.userName"
+                               :filter-method="userFilter"
+                               @visible-change="visibleChanged"
                                @change="userChanged(data.userId)">
                       <el-option v-for="user in data.userList"
                                  :key="user.value"
@@ -155,6 +157,16 @@
                   </div>
                 </div>
                 <div class="name_box">
+                  <span class="lab"></span>
+                  <div class="name_value">
+                    <div class="checkbox">
+                      <label class="allCheck" :class='{"checked": data.user_flag}'>
+                        <input type="checkbox" @click='userPermissionChanged' v-model='data.user_flag'>Only search in custom permission users
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="name_box">
                   <span class="lab" style="vertical-align: middle;">Grouped in:</span>
                   <div class="name_value" style="vertical-align: top;">
                     <div class="card" v-for='group in data.userGroupedIn' :title='group.name' :class='{enable: group.operation_flag == 1}'>
@@ -163,19 +175,27 @@
                   </div>
                 </div>
                 <div class="name_box">
-                  <span class="lab">Permission:</span>
+                  <span class="lab">Custom Permission:</span>
+                  <div class="name_value">
+                    <div class="lj_switch" :class='{"on": data.switch_flag, "off": !data.switch_flag}' @click='switchChanged'>
+                      <div class="icon_switch"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="name_box">
+                  <span class="lab"></span>
                   <div class="name_value show_border scroll_box">
                     <div class="check_all">
                       <div class="checkbox">
                         <label :class='{"checked": data.userPermissionAll}'>
-                          <input @click='checkAllChange("user")' type="checkbox" v-model='data.userPermissionAll'> All Applications
+                          <input @click='checkAllChange("user")' :disabled='!data.switch_flag' type="checkbox" v-model='data.userPermissionAll'> All Applications
                         </label>
                       </div>
                     </div>
                     <div class="check_list">
                       <div class="checkbox" v-for='item in data.userPermissionList'>
                         <label :class='{"checked": item.checked}'>
-                          <input @click='checkChange(item, "user")' type="checkbox" v-model='item.checked'>
+                          <input @click='checkChange(item, "user")' :disabled='!data.switch_flag' type="checkbox" v-model='item.checked'>
                           <span class="app_app_bg" :class='{defaultIcon: !item.background}' :style="{ background: item.background }"></span>
 
                           <el-tooltip class="item" effect="dark" :content="item.name" placement="left">
@@ -241,12 +261,11 @@ export default {
           {value: 1, name: 'App name 1', checked: false},
           {value: 2, name: 'App name 2', checked: false}
         ],
-        userList: [
-          {value: '1', name: 'William Trang'},
-          {value: '2', name: 'William Trang 2'}
-        ],
+        userList: [],
         userId: '',
         userName: '',
+        user_flag: false,
+        switch_flag: false,
         userGroupedIn: [],
         userPermissionAll: false,
         userPermissionList: [
@@ -369,17 +388,13 @@ export default {
           userList.push({
             value: item.id,
             name: item.nom,
+            user_flag: !!item.user_flag,
             source: item
           })
         })
 
-        // if (userList.length) {
-        //   this.data.userId = userList[0].value;
-        //   this.data.userName = userList[0].name;
-        //   this.data.userGroupedIn = userList[0].source.group_name;
-        // }
-
-        this.data.userList = userList;
+        // this.data.userList = userList;
+        this.data.copyUserList = JSON.parse(JSON.stringify(userList));
         return res;
       })
     },
@@ -439,6 +454,7 @@ export default {
         if (!this.data.userId) return;
         params = {user_id: this.data.userId, role_flag: 1}
       }
+      params.user_flag = this.switch_flag;
       return this.$http.post('/sharedcalendarSettingCtl/event/searchAppRole', params).then((ret) => {
         let list = [];
         if (role === 'group') {
@@ -649,7 +665,8 @@ export default {
         id: 1,
         role_flag: this.data.subtab, // 0-group,1-user
         operation_flag: 0,
-        appIdList: []
+        appIdList: [],
+        user_flag: this.data.switch_flag ? 1 : 0
       }
       if (this.data.subtab === 0) {
         params.group_id = this.data.groupId;
@@ -679,14 +696,57 @@ export default {
         return res;
       })
     },
-    // 用户切换
+    // 用户过滤器
+    userFilter (input) {
+      if (input) {
+        let tempUserList = [];
+        if (this.data.user_flag) {
+          let len = this.data.copyUserList.length;
+          for (let i = 0; i < len; i++) {
+            if (this.data.user_flag === this.data.copyUserList[i].user_flag && this.data.copyUserList[i].name.toLowerCase().indexOf(input) > -1) {
+              tempUserList.push(this.data.copyUserList[i])
+            }
+          }
+          this.data.userList = tempUserList;
+        } else {
+          let len = this.data.copyUserList.length;
+          for (let i = 0; i < len; i++) {
+            if (this.data.copyUserList[i].name.toLowerCase().indexOf(input) > -1) {
+              tempUserList.push(this.data.copyUserList[i])
+            }
+          }
+          this.data.userList = tempUserList;
+        }
+      } else {
+        let tempUserList = [];
+        if (this.data.user_flag) {
+          let len = this.data.copyUserList.length;
+          for (let i = 0; i < len; i++) {
+            if (this.data.user_flag === this.data.copyUserList[i].user_flag) {
+              tempUserList.push(this.data.copyUserList[i])
+            }
+          }
+          this.data.userList = tempUserList;
+        } else {
+          this.data.userList = this.data.copyUserList;
+        }
+      }
+      // this.data.userList
+    },
+    // 下拉框显示、隐藏事件
+    visibleChanged (bol) {
+      if (bol) this.userFilter('')
+    },
+    // 用户改变
     userChanged (id) {
       this.getPermission('user')
       for (let i = 0, len = this.data.userList.length; i < len; i++) {
         let item = this.data.userList[i];
+        // TODO 设置所属组和user_flag
         if (item.value === id) {
+          console.log(item);
+          this.data.switch_flag = !!item.user_flag;
           this.data.userGroupedIn = [];
-          // this.data.userGroupedIn = item.source.group_name;
           forEach(item.source.userGroupList, (i2, field) => {
             this.data.userGroupedIn.push({name: field.group_alias_name || field.group_name, operation_flag: field.operation_flag});
           })
@@ -694,8 +754,21 @@ export default {
         }
       }
     },
+    // 用户自定义过滤条件改变事件
+    userPermissionChanged () {
+      this.data.user_flag = !this.data.user_flag;
+    },
+    // 用户自定义权限开关改变事件
+    switchChanged () {
+      if (!this.data.userId) return;
+      this.data.switch_flag = !this.data.switch_flag;
+      this.submitGroup(0).then(() => {
+        this.getPermission('user');
+      })
+    },
     // 全选
     checkAllChange (str) {
+      if (!this.data.switch_flag) return;
       if (str === 'group') {
         let bol = !this.data.groupPermissionAll;
         this.data.groupPermissionAll = bol;
@@ -713,6 +786,7 @@ export default {
     },
     // 复选框状态切换
     checkChange (item, str) {
+      if (!this.data.switch_flag) return;
       let bol = !item.checked;
       item.checked = bol;
       if (str === 'group') {
@@ -740,7 +814,9 @@ export default {
           }
         }
       }
-      this.submitGroup(0)
+      this.submitGroup(0).then(() => {
+        this.getPermission('user');
+      })
     },
     closeDialog () {
       this.show = false;
@@ -774,7 +850,7 @@ export default {
           .nav_content_1{
             text-align: center;padding: 26px 0;max-height: 772px;overflow: auto;
             .name_box{margin-top: 14px;}
-            .lab{font-size: 18px;color: #999;vertical-align: top;display: inline-block;width: 120px;text-align: right;margin-right: 10px;line-height: 34px;}
+            .lab{font-size: 18px;color: #999;vertical-align: top;display: inline-block;width: 170px;text-align: right;margin-right: 10px;line-height: 34px;}
             .lab.long_text{width: 185px;}
             .name_value{
               display: inline-block;width: 350px;position: relative;text-align: left;
@@ -789,6 +865,9 @@ export default {
               .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox]{display: none;}
               .checkbox label{padding-left: 0;display: block;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
               .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;right: -24px;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;top: 50%;transform: translateY(-50%);}
+              .checkbox label.allCheck{padding-left: 25px;color: #333;}
+              .checkbox label.allCheck:before{content: "";left: 0;background: url('../images/icon_checkbox_unchecked.png') 50% 45% / auto auto no-repeat;}
+              .checkbox label.allCheck.checked:before{content: "";background: url('../images/icon_checkbox_checked.png') 50% 45% / auto auto no-repeat;}
               .checkbox .checked:before{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
               .checkbox .app_app_bg{display: inline-block;width: 30px;height: 30px;background: url('../images/icon_members_disabled.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;border-radius: 50%;}
               .checkbox .app_app_bg.defaultIcon{background: url('../images/icon_default.png') 0 0 / 100% 100% no-repeat !important;}
@@ -798,6 +877,18 @@ export default {
               .icon{width: 25px;height: 25px;display: inline-block;vertical-align: middle;margin-right: 5px;}
               .icon_members{left: 10px;background: url('../images/icon_members_disabled.png') 0 0 / 100% 100% no-repeat;position: absolute;top: 50%;transform: translateY(-50%);}
               .enable .icon_members{left: 10px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;position: absolute;top: 50%;transform: translateY(-50%);}
+              .lj_switch{width: 70px;height: 30px;position: relative;border-radius: 4px;}
+              .icon_switch{width: 24px;height: 24px;background: url('../images/icon_switch.png') 0 0 / 100% 100% no-repeat;position: absolute;}
+              .lj_switch.on{
+                background: #4E81BD;
+                &:after{content: 'Yes';color: #fff;line-height: 31px;display: block;text-align: center;text-indent: -30px;}
+                .icon_switch{top: 3px;right: 3px;transition: all .3s;}
+              }
+              .lj_switch.off{
+                background: #aaa;
+                &:after{content: 'No';color: #fff;line-height: 31px;display: block;text-align: center;text-indent: 30px;}
+                .icon_switch{top: 3px;left: 3px;transition: all .3s;}
+              }
             }
             .name_value.show_border{border-radius: 2px;border: 1px solid #ccc;max-height: 560px;background: #fff;overflow: auto;}
             .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);cursor: pointer;}
