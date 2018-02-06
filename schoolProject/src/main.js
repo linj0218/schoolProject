@@ -3,7 +3,7 @@
 // 项目架构没做好，没时间重构，代码很乱
 import Vue from 'vue'
 import Moment from 'moment'
-import { Table, TableColumn, Tooltip, Upload, Select, Option } from 'element-ui'
+import { Table, TableColumn, Tooltip, Upload, Select, Option, TimePicker } from 'element-ui'
 import router from '@/router'
 import Axios from '@/http'
 import App from '@/App'
@@ -26,6 +26,7 @@ Vue.use(Tooltip)
 Vue.use(Upload)
 Vue.use(Select)
 Vue.use(Option)
+Vue.use(TimePicker)
 
 /* eslint-disable no-new */
 new Vue({

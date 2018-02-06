@@ -20,7 +20,7 @@
                     @syncDataFunc='syncDataFunc'>
           </calendar>
 
-          <div class="title bg_color">Campus</div>
+          <div class="title bg_color">Places</div>
           <div class="places">
             <button type="button" class="btn btn-block"
                     v-for='place in placesList'

@@ -63,12 +63,22 @@
                              :show-icon='false'
                              @dataChange='startDateChange'>
                 </date-select>
-                <drapdown :input-value='data.start_time'
+                <!-- <drapdown :input-value='data.start_time'
                           :input-name='data.start_time'
                           :input-select='data.startTimeList'
                           :input-disabled='data.day_flag'
                           @inputChange='startTimeChanged'>
-                </drapdown>
+                </drapdown> -->
+                <div class="lj_time_select">
+                  <el-time-picker v-model="data.start_time"
+                                  :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
+                                  :disabled='data.day_flag'
+                                  @change='startTimeChanged'
+                                  format="HH:mm"
+                                  value-format="HH:mm"
+                                  placeholder="Select">
+                  </el-time-picker>
+                </div>
               </div>
             </div>
             <div>
@@ -78,12 +88,22 @@
                              :show-icon='false'
                              @dataChange='endDateChange'>
                 </date-select>
-                <drapdown :input-value='data.end_time'
+                <!-- <drapdown :input-value='data.end_time'
                           :input-name='data.end_time'
                           :input-select='data.endTimeList'
                           :input-disabled='data.day_flag'
                           @inputChange='endTimeChanged'>
-                </drapdown>
+                </drapdown> -->
+                <div class="lj_time_select">
+                  <el-time-picker v-model="data.end_time"
+                                  :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
+                                  :disabled='data.day_flag'
+                                  @change='endTimeChanged'
+                                  format="HH:mm"
+                                  value-format="HH:mm"
+                                  placeholder="Select">
+                  </el-time-picker>
+                </div>
               </div>
             </div>
             <div>
@@ -234,7 +254,7 @@ export default {
     this.data.start_date = this.$moment().format('DD/MM/YYYY')
     this.data.end_date = this.$moment().format('DD/MM/YYYY')
 
-    this.data.start_time = '8:00'
+    this.data.start_time = '08:00'
     this.data.end_time = '18:00'
 
     let timeList = [];
@@ -576,26 +596,30 @@ export default {
     },
     // 检验开始、结束日期
     checkDateChange (startDateStr, endDateStr) {
-      let startDate = this.$moment(startDateStr + ' ' + this.data.start_time, 'DD/MM/YYYY H:m A');
-      let endDate = this.$moment(endDateStr + ' ' + this.data.end_time, 'DD/MM/YYYY H:m A');
+      let startDate = this.$moment(startDateStr + ' ' + this.data.start_time, 'DD/MM/YYYY HH:mm');
+      let endDate = this.$moment(endDateStr + ' ' + this.data.end_time, 'DD/MM/YYYY HH:mm');
       if (startDate > endDate) {
         this.$refs.alert.showDialog('The end time cannot be earlier than the start time', true);
         return false
       }
       return true
     },
-    startTimeChanged (item) {
-      this.data.start_time = item.value
-      this.data.end_time = item.value
+    startTimeChanged (value) {
+      if (!value) return;
+      this.data.end_time = value;
     },
-    endTimeChanged (item) {
-      if (!this.checkTimeChange(this.data.start_time, item.value)) return false;
-      this.data.end_time = item.value
+    endTimeChanged (value) {
+      if (!value) return;
+      if (!this.checkTimeChange(this.data.start_time, value)) {
+        this.data.end_time = this.data.start_time;
+        return false;
+      }
+      this.data.end_time = value;
     },
     // 校验开始、结束时间
     checkTimeChange (start, end) {
-      let startTime = this.$moment(this.data.start_date + ' ' + start, 'DD/MM/YYYY H:m A');
-      let endTime = this.$moment(this.data.end_date + ' ' + end, 'DD/MM/YYYY H:m A');
+      let startTime = this.$moment(this.data.start_date + ' ' + start, 'DD/MM/YYYY HH:mm');
+      let endTime = this.$moment(this.data.end_date + ' ' + end, 'DD/MM/YYYY HH:mm');
       if (startTime > endTime) {
         this.$refs.alert.showDialog('The end time cannot be earlier than the start time', true);
         return false;
@@ -767,4 +791,6 @@ export default {
   .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;margin-left: -24px;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;}
   .checkbox .checked:before{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
   .upload-demo{padding: 10px;}
+  .lj_time_select{margin-left: 20px;flex: 1;}
+  .el-date-editor.el-input{width: 100%;}
 </style>

@@ -301,6 +301,30 @@ export default {
   watch: {
     show () {
       if (this.show) {
+        // $.fn.scrollUnique = function () {
+        //   return $(this).each(function () {
+        //     var eventType = 'mousewheel';
+        //     // 火狐是DOMMouseScroll事件
+        //     if (document.mozHidden !== undefined) {
+        //       eventType = 'DOMMouseScroll';
+        //     }
+        //     $(this).on(eventType, function (event) {
+        //       // 一些数据
+        //       var scrollTop = this.scrollTop;
+        //       var scrollHeight = this.scrollHeight;
+        //       var height = this.clientHeight;
+        //
+        //       var delta = (event.originalEvent.wheelDelta) ? event.originalEvent.wheelDelta : -(event.originalEvent.detail || 0);
+        //
+        //       if ((delta > 0 && scrollTop <= delta) || (delta < 0 && scrollHeight - height - scrollTop <= -1 * delta)) {
+        //         // IE浏览器下滚动会跨越边界直接影响父级滚动，因此，临界时候手动边界滚动定位
+        //         this.scrollTop = delta > 0 ? 0 : scrollHeight;
+        //         // 向上滚 || 向下滚
+        //         event.preventDefault();
+        //       }
+        //     });
+        //   });
+        // };
         this.getGroups().then(() => {
           this.getAppList();
         })
@@ -454,7 +478,7 @@ export default {
         if (!this.data.userId) return;
         params = {user_id: this.data.userId, role_flag: 1}
       }
-      params.user_flag = this.switch_flag;
+      params.user_flag = this.data.switch_flag ? 1 : 0;
       return this.$http.post('/sharedcalendarSettingCtl/event/searchAppRole', params).then((ret) => {
         let list = [];
         if (role === 'group') {
@@ -739,7 +763,6 @@ export default {
     },
     // 用户改变
     userChanged (id) {
-      this.getPermission('user')
       for (let i = 0, len = this.data.userList.length; i < len; i++) {
         let item = this.data.userList[i];
         // TODO 设置所属组和user_flag
@@ -753,6 +776,7 @@ export default {
           break;
         }
       }
+      this.getPermission('user')
     },
     // 用户自定义过滤条件改变事件
     userPermissionChanged () {
@@ -762,7 +786,23 @@ export default {
     switchChanged () {
       if (!this.data.userId) return;
       this.data.switch_flag = !this.data.switch_flag;
-      this.submitGroup(0).then(() => {
+
+      var params = {
+        user_flag: this.data.switch_flag ? 1 : 0,
+        user_id: this.data.userId
+      }
+      return this.$http.post('/sharedcalendarSettingCtl/event/updUserFlagByUserId', params).then((res) => {
+        if (res.result === 'SUCCESS') {
+          let banner = {
+            status: 'SUCCESS',
+            msg: 'Succeeded!'
+          }
+          this.$emit('openBanner', banner);
+        }
+        return res;
+      }).then(() => {
+        return this.getUsers();
+      }).then(() => {
         this.getPermission('user');
       })
     },
