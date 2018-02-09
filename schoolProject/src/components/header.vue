@@ -76,16 +76,18 @@
       },
       profileToggle () {
         this.$emit('profileToggle', true)
-        this.$emit('configToggle', false)
-        this.$emit('appSettingToggle', false)
+        // this.$emit('configToggle', false)
+        // this.$emit('appSettingToggle', false)
       },
       appSettingToggle () {
-        this.$emit('appSettingToggle', true)
+        // this.$emit('appSettingToggle', true)
         this.$emit('profileToggle', false)
+        this.$router.push({ path: '/setting', query: {tabflg: 0} });
       },
       configToggle () {
-        this.$emit('configToggle', true)
+        // this.$emit('configToggle', true)
         this.$emit('profileToggle', false)
+        this.$router.push({ path: '/setting', query: {tabflg: 1} });
       },
       // 登出
       logout () {
