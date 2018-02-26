@@ -14,6 +14,7 @@
                     :data="groupsData.groupList"
                     style="width: 680px;"
                     tooltip-effect="dark"
+                    empty-text="No Data"
                     @selection-change="">
             </el-table-column>
             <el-table-column prop="group_name"

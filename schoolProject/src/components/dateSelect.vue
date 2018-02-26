@@ -1,6 +1,6 @@
 <template>
   <div class="dropdown" :class='{"opening": isOpen}'>
-    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" :class='{"noInput": inputRequired}'
             :disabled="isDisabled"
             @blur='buttonBlur()'
             @click='openDropdown()'>
@@ -35,6 +35,11 @@
         type: Boolean,
         required: false,
         default: true
+      },
+      inputRequired: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
     components: {
@@ -107,4 +112,5 @@
   .dropdown-menu-box{position: absolute;width: 100%;top: 100%;left: 0;z-index: 1000;display: none;float: left;min-width: 160px;padding: 5px 0;margin: 2px 0 0;font-size: 14px;text-align: left;list-style: none;background-color: #fff;-webkit-background-clip: padding-box;background-clip: padding-box;border: 1px solid #ccc;border: 1px solid rgba(0,0,0,.15);border-radius: 4px;-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);box-shadow: 0 6px 12px rgba(0,0,0,.175);min-width: 340px;}
   .btn-default{width: 100%;position: relative;text-align: left;}
   .open>.dropdown-menu{width: 100%;}
+  .btn.btn-default.dropdown-toggle.noInput{border: 1px solid #f56c6c;}
 </style>

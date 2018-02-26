@@ -3,7 +3,8 @@
     <div class="config_bg" @click='closeConfig()'></div>
     <div class="config_body">
       <div class="title">
-        <span class="icon_back" @click='closeConfig()'></span>{{eventType=="new"?"News":"Edit"}} event
+        <span class="icon_back" @click='closeConfig()'></span>{{eventType=="new"?"New":"Edit"}} event
+        <span v-if="data.requiredFlg" style="color:#f56c6c;font-size:18px;margin-left: 20px;">Please enter the required fields</span>
       </div>
       <div class="content">
 
@@ -19,7 +20,7 @@
             <div>
               <span class="lab">Title</span>
               <div class="name_value">
-                <input class="form-control" type="text" name="" v-model='data.title'>
+                <input class="form-control" type="text" name="" v-model='data.title' :class='{"noInput": !!data.titleRequired}'>
               </div>
             </div>
             <div class="all_day">
@@ -37,6 +38,7 @@
                           :input-color-type='"circle"'
                           :input-color='data.categoryColor'
                           :input-select='data.categorys'
+                          :input-required='data.categoryRequired'
                           @inputChange='categoryChanged'>
                 </drapdown>
               </div>
@@ -47,11 +49,13 @@
                 <drapdown :input-value='data.place_id'
                           :input-name='data.placeName'
                           :input-select='data.places'
+                          :input-required='data.placeRequired'
                           @inputChange='placeChanged'>
                 </drapdown>
                 <drapdown :input-value='data.roomId'
                           :input-name='data.roomName'
                           :input-select='data.rooms'
+                          :input-required='data.placeRequired'
                           @inputChange='roomChanged'>
                 </drapdown>
               </div>
@@ -61,6 +65,7 @@
               <div class="name_value flex">
                 <date-select :input-value='data.start_date'
                              :show-icon='false'
+                             :input-required='data.startDateRequired'
                              @dataChange='startDateChange'>
                 </date-select>
                 <!-- <drapdown :input-value='data.start_time'
@@ -69,11 +74,12 @@
                           :input-disabled='data.day_flag'
                           @inputChange='startTimeChanged'>
                 </drapdown> -->
-                <div class="lj_time_select">
+                <div class="lj_time_select" :class='{"noInput": data.startTimeRequired}'>
                   <el-time-picker v-model="data.start_time"
                                   :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
                                   :disabled='data.day_flag'
                                   @change='startTimeChanged'
+                                  @focus='timeFocus'
                                   format="HH:mm"
                                   value-format="HH:mm"
                                   placeholder="Select">
@@ -86,6 +92,7 @@
               <div class="name_value flex">
                 <date-select :input-value='data.end_date'
                              :show-icon='false'
+                             :input-required='data.endDateRequired'
                              @dataChange='endDateChange'>
                 </date-select>
                 <!-- <drapdown :input-value='data.end_time'
@@ -94,11 +101,12 @@
                           :input-disabled='data.day_flag'
                           @inputChange='endTimeChanged'>
                 </drapdown> -->
-                <div class="lj_time_select">
+                <div class="lj_time_select" :class='{"noInput": data.endTimeRequired}'>
                   <el-time-picker v-model="data.end_time"
                                   :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
                                   :disabled='data.day_flag'
                                   @change='endTimeChanged'
+                                  @focus='timeFocus'
                                   format="HH:mm"
                                   value-format="HH:mm"
                                   placeholder="Select">
@@ -114,7 +122,7 @@
             </div>
             <div>
               <span class="lab">Attachment</span>
-              <div class="name_value">
+              <div class="name_value" style="background: #f5f5f5;border: 1px solid #ccc;border-radius: 4px;height: 150px;position: relative;">
                 <el-upload class="upload-demo"
                           :action="actionUrl"
                           :limit="3"
@@ -123,9 +131,7 @@
                           :on-success="handleAvatarSuccess"
                           :on-remove='handleRemove'
                           :file-list="data.fileList">
-                  <button class="btn btn-primary" v-show='data.fileList.length < 3'>
-                    <span class="icon_btn_add"></span>Upload
-                  </button>
+                  <a class="upload_a" v-show='data.fileList.length < 3'><i class="iconfont iconfont-shangchuan"></i>Upload</a>
                 </el-upload>
               </div>
             </div>
@@ -211,6 +217,7 @@ export default {
     return {
       actionUrl: this.$config.api_path.file_upload,
       data: {
+        requiredFlg: false,
         // part_left ------------------------------------------------------
         title: '',
         // All day
@@ -245,7 +252,14 @@ export default {
         // Viewed by
         viewedAll: false,
         viewedList: [],
-        fileList: []
+        fileList: [],
+        titleRequired: false,
+        categoryRequired: false,
+        placeRequired: false,
+        startDateRequired: false,
+        startTimeRequired: false,
+        endDateRequired: false,
+        endTimeRequired: false
       },
       copyData: {}
     }
@@ -254,8 +268,8 @@ export default {
     this.data.start_date = this.$moment().format('DD/MM/YYYY')
     this.data.end_date = this.$moment().format('DD/MM/YYYY')
 
-    this.data.start_time = '08:00'
-    this.data.end_time = '18:00'
+    this.data.start_time =
+    this.data.end_time = this.$moment().format('HH:mm')
 
     let timeList = [];
     let stime = this.$moment('2000-01-01 00:00:00');
@@ -525,7 +539,29 @@ export default {
       if (this.eventType === 'new') {
         reqData.createUserId = getSStorage('userinfo').id;
       }
+
       // console.log(reqData)
+      // 必填校验
+      let passflg = true
+      if (!reqData.title || !reqData.category_id || !reqData.place_id ||
+          !reqData.start_date || !reqData.end_date || !reqData.start_time || !reqData.end_time) passflg = false;
+
+      this.data.titleRequired = !reqData.title;
+      this.data.categoryRequired = !reqData.category_id;
+      this.data.placeRequired = !reqData.place_id;
+      this.data.startDateRequired = !reqData.start_date;
+      this.data.endDateRequired = !reqData.end_date;
+      this.data.startTimeRequired = !reqData.start_time;
+      this.data.endTimeRequired = !reqData.end_time;
+
+      if (!passflg) {
+        // console.log(this.data.titleRequired, this.data.categoryRequired, this.data.placeRequired, this.data.startDateRequired, this.data.endDateRequired, this.data.startTimeRequired, this.data.endTimeRequired)
+        // this.$refs.alert.showDialog('Please fill in the required fields.', true);
+        this.data.requiredFlg = true;
+        return new Promise((resolve, reject) => {
+          resolve({success: false})
+        });
+      }
 
       return this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
         data: JSON.stringify(reqData)
@@ -543,16 +579,18 @@ export default {
     // 保存并关闭
     saveAndClose () {
       this.save().then((res) => {
-        this.closeConfig()
+        if (res.success) this.closeConfig()
       })
     },
     // 保存并继续
     saveAndContinue () {
       this.save().then((res) => {
-        this.data = JSON.parse(JSON.stringify(this.copyData))
-        this.findEvent().then(() => {
-          this.getUsers()
-        })
+        if (res.success) {
+          this.data = JSON.parse(JSON.stringify(this.copyData))
+          this.findEvent().then(() => {
+            this.getUsers()
+          })
+        }
       })
     },
     checkAllDayChange () {
@@ -713,6 +751,16 @@ export default {
     // 关闭弹窗
     closeConfig () {
       this.$emit('closeEventModal')
+    },
+    timeFocus () {
+      setTimeout(() => {
+        document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('cancel')[0].innerHTML = 'cancel'
+        document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('confirm')[0].innerHTML = 'confirm'
+        if (document.getElementsByClassName('el-time-panel__footer')[1]) {
+          document.getElementsByClassName('el-time-panel__footer')[1].getElementsByClassName('cancel')[0].innerHTML = 'cancel'
+          document.getElementsByClassName('el-time-panel__footer')[1].getElementsByClassName('confirm')[0].innerHTML = 'confirm'
+        }
+      }, 100)
     }
   }
 }
@@ -737,7 +785,7 @@ export default {
           .all_day{text-align: right;}
           .lab{color: #999;font-size: 16px;line-height: 34px;display: block;}
           .name_value{
-            .textarea{height: 200px;}
+            .textarea{height: 140px;;}
             .form-control{background: #f5f5f5;}
           }
           .name_value .dropdown{
@@ -791,6 +839,8 @@ export default {
   .checkbox label:before{content: "";position: absolute;width: 20px;height: 20px;margin-left: -24px;background: url('../images/icon_checkbox_unchecked.png') 50% 50% / auto auto no-repeat;}
   .checkbox .checked:before{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
   .upload-demo{padding: 10px;}
+  .upload-demo .upload_a{}
   .lj_time_select{margin-left: 20px;flex: 1;}
   .el-date-editor.el-input{width: 100%;}
+  .form-control.noInput{border: 1px solid #f56c6c;}
 </style>

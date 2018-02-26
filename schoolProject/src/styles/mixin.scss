@@ -38,3 +38,18 @@ $color_11: #5ACE6D;
 ::-webkit-scrollbar {width: 5px;height: auto;}
 ::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
 ::-webkit-scrollbar-track-piece {background-color: #F9F9F9;}
+
+// @keyframes flicker {
+//   from { border: 1px solid #ccc; }
+//   50% { border: 1px solid #f56c6c; }
+//   to { border: 1px solid #ccc; }
+// }
+@-webkit-keyframes flicker { 0% { border: 1px solid #f56c6c; } 50% { border: 1px solid #ccc; } 100% { border: 1px solid #f56c6c; } }
+@-moz-keyframes flicker { 0% { border: 1px solid #f56c6c; } 50% { border: 1px solid #ccc; } 100% { border: 1px solid #f56c6c; } }
+@-ms-keyframes flicker { 0% { border: 1px solid #f56c6c; } 50% { border: 1px solid #ccc; } 100% { border: 1px solid #f56c6c; } }
+@-o-keyframes flicker { 0% { border: 1px solid #f56c6c; } 50% { border: 1px solid #ccc; } 100% { border: 1px solid #f56c6c; } }
+@keyframes flicker { 0% { border: 1px solid #f56c6c; } 50% { border: 1px solid #ccc; } 100% { border: 1px solid #f56c6c; } }
+.noInput{
+  -webkit-animation-name:flicker;-webkit-animation-duration: 500ms;-webkit-animation-iteration-count: 2;
+  animation-name:flicker;animation-duration: 500ms;animation-iteration-count: 2;
+}

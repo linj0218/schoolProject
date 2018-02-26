@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-            :class='[{"circle": inputColorType=="circle"}, {"background": inputColorType=="background"}]'
+            :class='[{"circle": inputColorType=="circle"}, {"background": inputColorType=="background"}, {"noInput": inputRequired}]'
             :disabled='inputDisabled'>
       <span class="button_bg" :class='inputColorType=="background" && inputColor'>
         {{inputName}}
@@ -76,6 +76,11 @@
         type: String,
         required: false,
         default: ''
+      },
+      inputRequired: {
+        type: Boolean,
+        required: false,
+        default: false
       }
     },
     data () {
@@ -116,4 +121,5 @@
   .open > .dropdown-menu::-webkit-scrollbar {width: 5px;height: auto;}
   .open > .dropdown-menu::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
   .open > .dropdown-menu::-webkit-scrollbar-track-piece {background-color: #fff;}
+  .btn.btn-default.dropdown-toggle.noInput{border: 1px solid #f56c6c;}
 </style>

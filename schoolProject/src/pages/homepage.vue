@@ -860,7 +860,7 @@
       .week_calendar{
         text-align: center;
         .table_head{
-          height: 60px;border-bottom: 1px solid #eee;display: flex;
+          height: 60px;border-bottom: 1px solid #eee;display: flex;margin-right: 5px;
           .th{
             flex: 1;height: 100%;border-right: 1px solid #eee;color: #969DBA;padding: 12px;
             .week_name{font-size: 18px;line-height: 18px;}
@@ -870,8 +870,7 @@
           .th:last-child{border-right: 0;}
         }
         .table_body{
-          height: 229px;position: relative;padding: 4px 0;z-index: 0;overflow: auto;
-          &::-webkit-scrollbar {width: 0;height: 0;}
+          height: 229px;position: relative;padding: 4px 0;z-index: 0;overflow-y: scroll;
           .table_body_bg{
             position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: -1;
             div{flex: 1;border-right: 1px solid #eee;}
