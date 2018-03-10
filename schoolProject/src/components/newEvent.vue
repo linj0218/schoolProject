@@ -16,7 +16,7 @@
 
         <!-- event弹窗 -->
         <div>
-          <div class="left">
+          <div class="left" :class="{'request_check': data.check}">
             <div>
               <span class="lab">Title</span>
               <div class="name_value">
@@ -259,7 +259,8 @@ export default {
         startDateRequired: false,
         startTimeRequired: false,
         endDateRequired: false,
-        endTimeRequired: false
+        endTimeRequired: false,
+        check: false
       },
       copyData: {}
     }
@@ -541,6 +542,11 @@ export default {
       }
 
       // console.log(reqData)
+
+      this.data.check = true;
+      setTimeout(() => {
+        this.data.check = false;
+      }, 500)
       // 必填校验
       let passflg = true
       if (!reqData.title || !reqData.category_id || !reqData.place_id ||

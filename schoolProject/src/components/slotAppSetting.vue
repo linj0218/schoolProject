@@ -6,7 +6,10 @@
       <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
       <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
     </div>
-    <div class="nav_body">
+    <div v-show='data.tab==3' class="syncBtn">
+      <span>These groups will synchronize with AD at 23:00 every day</span><button class="btn btn-primary" @click="syncAdData()">Manual sync</button>
+    </div>
+    <div class="nav_body" :style='{paddingTop: data.tab==3 ? "150px" : "100px"}'>
       <div class="_body">
         <!-- Groups -->
         <div class="nav_content_1" v-show='data.tab==3' style="padding: 0;text-align: left;">
@@ -140,6 +143,8 @@
                            v-model="data.userId"
                            :name="data.userName"
                            :filter-method="userFilter"
+                           no-match-text="No Data"
+                           no-data-text="No Data"
                            @visible-change="visibleChanged"
                            @change="userChanged(data.userId)">
                   <el-option v-for="user in data.userList"
@@ -293,7 +298,7 @@
       this.data.levels = levels;
 
       this.tableHeight = document.getElementsByClassName('content')[0].offsetHeight
-      console.log(this.tableHeight);
+      // console.log(this.tableHeight);
 
       this.getGroups().then(() => {
         this.getAppList();
@@ -830,6 +835,25 @@
           this.getPermission('user');
         })
       },
+      syncAdData () {
+        return this.$http.get('/adSynchronizeCtl/sys/toSynchronize', {}).then((res) => {
+          // console.log(res);
+          if (res.result === 'SUCCESS') {
+            let banner = {
+              status: 'SUCCESS',
+              msg: 'Succeeded!'
+            }
+            this.$emit('openBanner', banner);
+            // 刷新页面数据
+            this.getGroups().then(() => {
+              this.getAppList();
+            })
+            this.getUsers().then(() => {
+              this.getPermission('user');
+            })
+          }
+        })
+      },
       closeDialog () {
         this.show = false;
         this.$emit('close')
@@ -914,4 +938,6 @@
   .button_box .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
   table .checkbox{width: 20px;height: 20px;background: url('../images/icon_checkbox_unchecked.png') 50% 50%/auto auto no-repeat;cursor: pointer;}
   table .checkbox.checked{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
+  .syncBtn{position: absolute;top: 100px;left: 0;width: 680px;color: #999;line-height: 50px;border-bottom: 1px solid #eee;height: 50px;}
+  .syncBtn .btn{position: absolute;right: 0;top: 50%;transform: translateY(-50%);}
 </style>

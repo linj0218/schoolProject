@@ -7,6 +7,7 @@ const Login = r => require.ensure([], () => r(require('@/pages/login')), 'main')
 const Index = r => require.ensure([], () => r(require('@/pages/index')), 'main')
 const Homepage = r => require.ensure([], () => r(require('@/pages/homepage')), 'main')
 const Setting = r => require.ensure([], () => r(require('@/pages/setting')), 'main')
+const Contacts = r => require.ensure([], () => r(require('@/pages/contacts')), 'main')
 
 Vue.use(Router)
 
@@ -16,7 +17,8 @@ const router = new Router({
     { path: '/login', name: 'login', title: '登录', component: Login },
     { path: '/', name: 'index', title: '首页', component: Index },
     { path: '/homepage', name: 'homepage', title: '日历', component: Homepage },
-    { path: '/setting', name: 'setting', title: '设置', component: Setting }
+    { path: '/setting', name: 'setting', title: '设置', component: Setting },
+    { path: '/contacts', name: 'contacts', title: '通讯录', component: Contacts }
   ]
 })
 

@@ -302,7 +302,7 @@
         let weekStr = index % 2 === 0 ? 'A' : 'B';
         // 从学年开始日期计算A、B周，遇到H周跳过
         let firstWeekDate = this.$moment({y: row[0].yearValue, M: row[0].monthValue - 1, d: row[0].day});
-        let scount = getWeekFromTarget(firstWeekDate, this.data.schoolYearInfo.start_date);
+        let scount = this.data.schoolYearInfo ? getWeekFromTarget(firstWeekDate, this.data.schoolYearInfo.start_date) : -1;
         let quantity = 0; // 活动日期之前的holiday数量
         // console.log(this.data.schoolYearInfo);
         if (this.data.schoolYearInfo && this.data.schoolYearInfo.hoildayList) {

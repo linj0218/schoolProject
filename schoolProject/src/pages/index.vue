@@ -7,6 +7,7 @@
     </headerr>
 
     <div class="page_body">
+      <extend-search></extend-search>
       <div class="page_body_box clearfix">
         <div class="part_1">
           <div class="apps container-fluid">
@@ -89,6 +90,7 @@
 
 <script>
   import headerr from '@/components/header'
+  import extendSearch from '@/components/extendSearch'
   import banner from '@/components/banner'
   import calendar from '@/components/calendar'
   import profile from '@/components/profile'
@@ -96,7 +98,7 @@
   import {weekMap, monthMap, forEach, formatDate} from '@/plugins/util'
   export default {
     components: {
-      headerr, banner, calendar, profile, appSetting
+      headerr, banner, calendar, profile, appSetting, extendSearch
     },
     data () {
       return {
@@ -251,7 +253,7 @@
   @import '../styles/mixin';
   #body{height: 100%;background: #f5f5f5;overflow: auto;}
   .page_body{
-    padding: 30px 180px;position: relative;
+    padding: 20px 180px 30px;position: relative;
     .part_1, .part_3{float: left;width: 63%;background: #fff;box-shadow: 0 0 1px #ddd;margin-right: 20px;margin-bottom: 20px;}
     .part_1{
       padding: 12px;

@@ -16,6 +16,9 @@
           @click='chooseItem(item)'>
         <a href="javascript:void(0)" :title='item.name'
            :class='[{"background": inputColorType=="background"}, inputColorType=="background" && item.color]'>
+           <!-- <el-tooltip class="item" effect="dark" :content="item.name" placement="left">
+             <span>{{item.name}}</span>
+           </el-tooltip> -->
          {{item.name}}
          <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle" && item.color'></span>
         </a>
