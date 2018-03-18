@@ -5,6 +5,7 @@
       <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>School years</div></div>
       <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>Places</div></div>
       <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>Categories</div></div>
+      <div><div @click='()=>{this.tab=4}' :class='{"act": tab==4}'>Power Users</div></div>
     </div>
     <div class="nav_body">
       <div class="_body">
@@ -187,12 +188,38 @@
             </div>
           </div>
         </div>
+        <!-- Power Users -->
+        <div class="nav_content" v-show='tab==4'>
+          <div class="member_box">
+            <span class="lab">Power Users:</span>
+            <div class="member_value">
+              <div class="li" v-for='(item, index) in data.users'>
+                {{item.name}}
+                <span class="action_icon icon_delete" @click='removeUser(item, index)'></span>
+              </div>
+            </div>
+          </div>
+          <div class="member_box">
+            <span class="lab">Power Users:</span>
+            <div class="name_value" style="text-align: right;">
+              <button type="button" class="btn btn-primary" @click='openAddParticipantModal()'>
+                <i class="iconfont iconfont-jia"></i> New Users
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
 
     <alert ref='alert'></alert>
     <prompt ref='prompt'></prompt>
+
+    <!-- 选择成员弹窗 -->
+    <add-participant-modal :show-popup='data.showAddParticipantPopup'
+                           :data-list='data.copyAllUsers'
+                           @closePopup='closeAddParticipantModal'>
+    </add-participant-modal>
 
   </div>
 </template>
@@ -204,11 +231,12 @@ import weekSelectModal from '@/components/weekSelectModal'
 import alert from '@/components/alert'
 import prompt from '@/components/prompt'
 import banner from '@/components/banner'
+import addParticipantModal from '@/components/addParticipantModal'
 import {forEach, formatDate, monthMap} from '@/plugins/util'
 import {mapMutations} from 'vuex'
 export default {
   components: {
-    drapdown, dateSelect, weekSelectModal, alert, prompt, banner
+    drapdown, dateSelect, weekSelectModal, alert, prompt, banner, addParticipantModal
   },
   data () {
     return {
@@ -249,13 +277,20 @@ export default {
         nameList: [],
         colorList: []
       },
-      showWeekSelectModal: false
+      showWeekSelectModal: false,
+      data: {
+        users: [],
+        showAddParticipantPopup: false,
+        allUsers: [],
+        copyAllUsers: []
+      }
     }
   },
   mounted () {
     this.init().then(() => {
       this.getHoliday()
     })
+    this.getUsers();
   },
   methods: {
     ...mapMutations(['SET_HOLIDAY']),
@@ -732,6 +767,52 @@ export default {
           this.$emit('openBanner', banner);
         }
       })
+    },
+    // Power Users functions
+    removeUser (user, index) {
+      for (let i = 0; i < this.data.allUsers.length; i++) {
+        let item = this.data.allUsers[i];
+        if (item.id === user.id) {
+          item.selected = false;
+          this.data.users.splice(index, 1);
+          break;
+        }
+      }
+    },
+    // 开启Participant弹窗
+    openAddParticipantModal () {
+      this.data.copyAllUsers = JSON.parse(JSON.stringify(this.data.allUsers));
+      this.data.showAddParticipantPopup = true;
+    },
+    // 关闭Participant弹窗
+    closeAddParticipantModal (resData) {
+      this.data.showAddParticipantPopup = false;
+      if (resData && resData.status === 'ok') {
+        this.data.allUsers = this.data.copyAllUsers;
+        this.data.users = this.data.users.concat(resData.data);
+      }
+    },
+    // 获取所有用户
+    getUsers () {
+      console.log(1);
+      let self = this;
+      return this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
+        data: {flag: 1}
+      }).then((res) => {
+        let resData = res.data
+        let userList = []
+        forEach(resData, (i, item) => {
+          userList.push({
+            id: item.id,
+            name: item.nom,
+            type: 'icon_member',
+            selected: false,
+            show: true
+          })
+        })
+        self.data.allUsers = userList;
+        return res
+      })
     }
   }
 }
@@ -785,6 +866,9 @@ export default {
       text-align: center;
       .btn{width: 150px;margin-top: 50px;}
       .cancel{background: #ccc;color: #fff;}
+    }
+    .nav_content{
+      .name_value{display: inline-block;width: 350px;position: relative;}
     }
   }
 </style>

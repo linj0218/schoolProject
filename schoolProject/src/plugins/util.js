@@ -148,7 +148,12 @@ export const browser = {
 export const getShortName = (str) => {
   if (!str || typeof str !== 'string') return '-';
   let name = str.split(' ');
-  let shortName = [name[0].substr(0, 1).toUpperCase(), name[1].substr(0, 1).toUpperCase()].join('')
+  let shortName = '';
+  if (name.length > 1) {
+    shortName = [name[0].substr(0, 1).toUpperCase(), name[1].substr(0, 1).toUpperCase()].join('')
+  } else {
+    shortName = name[0].substr(0, 1).toUpperCase()
+  }
   return shortName;
 }
 

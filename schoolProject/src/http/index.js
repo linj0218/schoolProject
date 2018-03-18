@@ -21,7 +21,7 @@ axios.interceptors.request.use((config) => {
   if (config.method === 'post') {
     let param = null;
     if (config.data.data) {
-      param = JSON.parse(config.data.data);
+      param = typeof config.data.data === 'object' ? config.data.data : JSON.parse(config.data.data);
     } else {
       param = config.data;
     }

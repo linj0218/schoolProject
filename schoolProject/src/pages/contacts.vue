@@ -21,14 +21,22 @@
               <div class="fullname">
                 <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
               </div>
-              <div class="form_label">Position</div>
+              <div class="form_label">Position(Job Title)</div>
+              <el-tooltip class="item" effect="dark" :content="item.title || '-'" placement="top-start">
+                <div class="form_value">{{item.title || '-'}}</div>
+              </el-tooltip>
+              <div class="form_label">Department</div>
               <el-tooltip class="item" effect="dark" :content="item.department || '-'" placement="top-start">
                 <div class="form_value">{{item.department || '-'}}</div>
               </el-tooltip>
-              <div class="form_label">Extension No</div>
+              <div class="form_label">Office No</div>
+              <el-tooltip class="item" effect="dark" :content="item.ext || '-'" placement="top-start">
+                <div class="form_value">{{item.ext || '-'}}</div>
+              </el-tooltip>
+              <!-- <div class="form_label">Extension No</div>
               <el-tooltip class="item" effect="dark" :content="item.extensionNo || '-'" placement="top-start">
                 <div class="form_value">{{item.extensionNo || '-'}}</div>
-              </el-tooltip>
+              </el-tooltip> -->
               <div class="form_label">Telephone No</div>
               <el-tooltip class="item" effect="dark" :content="item.mobile || '-'" placement="top-start">
                 <div class="form_value">{{item.mobile || '-'}}</div>
@@ -37,10 +45,10 @@
               <el-tooltip class="item" effect="dark" :content="item.email || '-'" placement="top-start">
                 <div class="form_value">{{item.email || '-'}}</div>
               </el-tooltip>
-              <div class="form_label">System Role</div>
+              <!-- <div class="form_label">System Role</div>
               <el-tooltip class="item" effect="dark" :content="item.role || '-'" placement="top-start">
                 <div class="form_value">{{item.role || '-'}}</div>
-              </el-tooltip>
+              </el-tooltip> -->
             </div>
           </div>
         </div>
@@ -92,8 +100,9 @@
         this.$router.go(-1)
       },
       searchEvent () {
-        return this.$http.post('/adSynchronizeCtl/sys/getUserAddressBook', {}).then((res) => {
+        return this.$http.post('/adSynchronizeCtl/sys/getUserAddressBook', { 'search': this.data.searchText }).then((res) => {
           if (res.result === 'SUCCESS') {
+            // console.log(res.data);
             let searchText = this.data.searchText.toLowerCase();
             let dataList = [];
             for (let i = 0; i < res.data.length; i++) {

@@ -15,6 +15,9 @@
             <button type="button" class="btn" :class="{act: data.tab == 1}" @click='()=>{this.data.tab=1}'>
               <i class="iconfont iconfont-rili"></i><span>Calendar</span>
             </button>
+            <button type="button" class="btn" :class="{act: data.tab == 2}" @click='()=>{this.data.tab=2}'>
+              <i class="iconfont iconfont-gongjuxiang"></i><span>Toolbar</span>
+            </button>
           </div>
         </div>
         <div class="content">
@@ -23,6 +26,9 @@
           </div>
           <div class="tab_content" v-show='data.tab==1'>
             <calendar @openBanner='openBanner'></calendar>
+          </div>
+          <div class="tab_content" v-show='data.tab==2'>
+            <toolbar @openBanner='openBanner'></toolbar>
           </div>
         </div>
       </div>
@@ -43,10 +49,11 @@
 
   import appSetting from '@/components/slotAppSetting'
   import calendar from '@/components/slotCalendar'
+  import toolbar from '@/components/slotToolbar'
 
   export default {
     components: {
-      headerr, banner, profile, appSetting, calendar
+      headerr, banner, profile, appSetting, calendar, toolbar
     },
     data () {
       return {
@@ -86,15 +93,16 @@
         height: 80px;line-height: 80px;position: absolute;width: 100%;top: 0;left: 0;background: #f5f5f5;
         .iconfont-fanhui{width: 100px;height: 42px;border-radius: 42px;border: 0;outline: none;font-size: 24px;background: #4E81BD;color: #fff;}
         .tab{
-          width: 360px;display: inline-block;height: 42px;line-height: 42px;vertical-align: middle;border: 1px solid #ddd;border-radius: 3px;margin-left: 20px;position: relative;overflow: hidden;
+          display: inline-block;height: 42px;line-height: 42px;vertical-align: middle;border: 1px solid #ddd;border-radius: 3px;margin-left: 20px;position: relative;overflow: hidden;
           .btn{
-            float: left;width: 50%;height: 100%;background: transparent;color: #ccc;padding: 0;border: 0;outline: none;border-radius: 0;
+            position: relative;float: left;width: 180px;height: 100%;background: transparent;color: #ccc;padding: 0;border: 0;outline: none;border-radius: 0;
             .iconfont{font-size: 22px;margin-right: 10px;vertical-align: middle;}
             span{font-size: 18px;vertical-align: middle;display: inline-block;}
           }
           .btn.act{color: #4E81BD;background: #fff;}
         }
-        .tab:after{content: '';position: absolute;left: 50%;height: 100%;top: 0;width: 1px;background: #ddd;}
+        .tab .btn:after{content: '';position: absolute;right: 0;height: 100%;top: 0;width: 1px;background: #ddd;}
+        .tab .btn:last-child:after{content: '';width: 0;}
       }
       .content{height: 100%;border: 1px solid #ddd;overflow: hidden;}
       .content .tab_content{padding: 0 40px;height: 100%;}

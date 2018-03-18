@@ -20,25 +20,37 @@
           </el-upload> -->
         </div>
         <div class="user_info">
-          <span class="label_key">Position:</span>
-          <div class="label_value">{{data.position}}</div>
+          <span class="label_key">Name:</span>
+          <div class="label_value">{{data.nom||'-'}}</div>
         </div>
         <div class="user_info">
+          <span class="label_key">Position(Job Title):</span>
+          <div class="label_value">{{data.title||'-'}}</div>
+        </div>
+        <div class="user_info">
+          <span class="label_key">department:</span>
+          <div class="label_value">{{data.department||'-'}}</div>
+        </div>
+        <div class="user_info">
+          <span class="label_key">Office No:</span>
+          <div class="label_value">{{data.extension||'-'}}</div>
+        </div>
+        <!-- <div class="user_info">
           <span class="label_key">Extension No:</span>
           <div class="label_value">{{data.extension}}</div>
-        </div>
+        </div> -->
         <div class="user_info">
           <span class="label_key">Telephone No:</span>
-          <div class="label_value">{{data.tel}}</div>
+          <div class="label_value">{{data.tel||'-'}}</div>
         </div>
         <div class="user_info">
           <span class="label_key">E-mail:</span>
-          <div class="label_value">{{data.email}}</div>
+          <div class="label_value">{{data.email||'-'}}</div>
         </div>
-        <div class="user_info">
+        <!-- <div class="user_info">
           <span class="label_key">System Role:</span>
           <div class="label_value">{{data.role}}</div>
-        </div>
+        </div> -->
         <!-- <div class="save_btn">
           <button type="button" class="btn btn-primary" @click="submit()">Save</button>
         </div> -->
@@ -88,18 +100,20 @@ export default {
   methods: {
     // 初始化
     initData () {
-      let user = getSStorage('userinfo')
-      this.data = {
-        name: user.nom,
-        shortName: '-',
-        role: user.permission_title,
-        sex: user.sex || 'male',
-        position: user.title,
-        extension: user.fax || '-',
-        tel: user.mobile || '-',
-        email: user.email
-      }
-      this.data.shortName = getShortName(this.data.name)
+      let user = getSStorage('userinfo');
+      console.log(user);
+      this.data = user;
+      // this.data = {
+      //   name: user.nom,
+      //   shortName: '-',
+      //   role: user.permission_title,
+      //   sex: user.sex || 'male',
+      //   position: user.title,
+      //   extension: user.fax || '-',
+      //   tel: user.mobile || '-',
+      //   email: user.email
+      // }
+      this.data.shortName = getShortName(this.data.nom)
     },
     // 图标上传成功
     handleAvatarSuccess (res, file) {
@@ -164,7 +178,7 @@ export default {
         }
         .user_info{
           text-align: center;
-          .label_key{display: inline-block;width: 120px;line-height: 78px;color: #999;text-align: left;}
+          .label_key{display: inline-block;width: 150px;line-height: 78px;color: #999;text-align: left;}
           .label_value{display: inline-block;line-height: 78px;vertical-align: middle;width: 450px;text-align: left;border-bottom: 1px solid #eee;padding: 0 30px;color: #333;}
         }
         .save_btn{

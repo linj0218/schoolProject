@@ -5,6 +5,7 @@
       <div><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>Groups</div></div>
       <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
       <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
+      <div><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>Ad sync</div></div>
     </div>
     <div v-show='data.tab==3' class="syncBtn">
       <span>These groups will synchronize with AD at 23:00 every day</span><button class="btn btn-primary" @click="syncAdData()">Manual sync</button>
@@ -19,7 +20,6 @@
                     tooltip-effect="dark"
                     empty-text="No Data"
                     @selection-change="">
-            </el-table-column>
             <el-table-column prop="group_name"
                              label="Ad group"
                              show-overflow-tooltip>
@@ -208,6 +208,35 @@
             </div>
           </div>
         </div>
+        <!-- Ad Sync -->
+        <div class="nav_content_1" v-show='data.tab==2'>
+          <div class="name_box">
+            <span class="lab" style="width: 220px;">Daily synchronization time:</span>
+            <div class="name_value" style="width: 500px;">
+              <input class="form-control" type="text" style="width: 180px;height: 42px;display: inline-block;margin-right: 20px;">
+              <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">Manual sync</button>
+            </div>
+          </div>
+          <div class="name_box">
+            <span class="lab" style="width: 220px;">Last sync statistics:</span>
+            <div class="name_value" style="width: 1000px;">
+              <div class="sync_nav_tab">
+                <div><div @click='()=>{this.data.sync_tab=0}' :class='{"act": data.sync_tab==0}'>Unchanged<span class="_badge">123</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>Adds<span class="_badge">3</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=2}' :class='{"act": data.sync_tab==2}'>Updates<span class="_badge">3</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=3}' :class='{"act": data.sync_tab==3}'>Renames<span class="_badge">3</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=4}' :class='{"act": data.sync_tab==4}'>Deletes<span class="_badge">3</span></div></div>
+              </div>
+              <div class="sync_list">
+                <div class="sync_field" v-for="item in data.syncDataList">
+                  <el-tooltip class="item" effect="dark" :content="item.name" placement="top">
+                    <span>{{item.name}}</span>
+                  </el-tooltip>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -276,7 +305,10 @@
             {value: '16', name: '16'}, {value: '17', name: '17'}, {value: '18', name: '18'}, {value: '19', name: '19'}, {value: '20', name: '20'}
           ],
           groupsInAppChecked: false,
-          groupsInApp: []
+          groupsInApp: [],
+          // Ad Sync
+          syncDataList: [{name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}],
+          sync_tab: 0
         },
         actionUrl: this.$config.api_path.img_upload,
         // Groups data
@@ -940,4 +972,16 @@
   table .checkbox.checked{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
   .syncBtn{position: absolute;top: 100px;left: 0;width: 680px;color: #999;line-height: 50px;border-bottom: 1px solid #eee;height: 50px;}
   .syncBtn .btn{position: absolute;right: 0;top: 50%;transform: translateY(-50%);}
+  // Ad sync
+  .sync_nav_tab{height: 48px;background: #f9f9f9;border: 1px solid #eee;border-radius: 2px 2px 0 0;}
+  .sync_nav_tab > div{height: 100%;line-height: 48px;text-align: center;display: inline-block;margin: 0 10px;}
+  .sync_nav_tab > div > div{height: 100%;display: inline-block;border-bottom: 4px solid transparent;font-size: 20px;color: #ccc;line-height: 48px;cursor: pointer;padding: 0 10px;}
+  .sync_nav_tab > div > div.act{border-bottom: 4px solid #4F81BE;color: #333;}
+  .sync_nav_tab ._badge{position: relative;background: #ccc;color: #fff;font-size: 12px;display: inline-block;width: 34px;height: 18px;line-height: 18px;border-radius: 2px;text-align: center;vertical-align: middle;margin-left: 10px;}
+  .sync_nav_tab ._badge:before{content: '';width: 6px;height: 6px;transform: translateX(0) translateY(6px) rotate(45deg);top: 0;left: -3px;position: absolute;background: inherit;z-index: 2;}
+  .sync_nav_tab .act ._badge{background: #FF3B30;}
+  .sync_list{padding: 0 20px;}
+  .sync_list .sync_field{border-bottom: 1px solid #eee;height: 60px;line-height: 60px;display: inline-block;width: 25%;font-size: 16px;padding: 0 20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;text-align: center;}
+  .sync_list .sync_field:nth-child(4n+1){text-align: left;}
+  .sync_list .sync_field:nth-child(4n+4){text-align: right;}
 </style>
