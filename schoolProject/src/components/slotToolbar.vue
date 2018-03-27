@@ -18,7 +18,7 @@
             </div>
           </div>
           <div class="member_box">
-            <span class="lab">Power Users:</span>
+            <span class="lab"></span>
             <div class="name_value" style="text-align: right;">
               <button type="button" class="btn btn-primary" @click='openAddParticipantModal()'>
                 <i class="iconfont iconfont-jia"></i> New Users
@@ -68,7 +68,9 @@
     computed: {
     },
     mounted () {
-      this.getUsers();
+      this.getUsers().then(() => {
+        this.getPowerUsers();
+      });
     },
     methods: {
       removeUser (user, index) {
@@ -77,6 +79,7 @@
           if (item.id === user.id) {
             item.selected = false;
             this.data.users.splice(index, 1);
+            this.editPowerUsers(0, [item])
             break;
           }
         }
@@ -92,6 +95,7 @@
         if (resData && resData.status === 'ok') {
           this.data.allUsers = this.data.copyAllUsers;
           this.data.users = this.data.users.concat(resData.data);
+          this.editPowerUsers(1, resData.data);
         }
       },
       // 获取所有用户
@@ -113,6 +117,39 @@
           })
           self.data.allUsers = userList;
           return res
+        })
+      },
+      // 获取所有Power Users
+      getPowerUsers () {
+        // type:页面类型 0-toolbar 1-calendar
+        return this.$http.post('/sharedcalendarSettingCtl/event/findPowerUser', {
+          data: {type: 0}
+        }).then((res) => {
+          let userIdList = res.data.length && res.data;
+          let users = [];
+          for (let i = 0; i < userIdList.length; i++) {
+            let item = userIdList[i];
+            for (let i2 = 0; i2 < this.data.allUsers.length; i2++) {
+              let item2 = this.data.allUsers[i2];
+              if (item.id === item2.id) {
+                users.push(item2);
+                break;
+              }
+            }
+          }
+          this.data.users = users;
+        })
+      },
+      // 修改Power Users
+      editPowerUsers (flagValue, users) {
+        let postData = [];
+        for (let i = 0; i < users.length; i++) {
+          postData.push(users[i].id);
+        }
+        // type:页面类型 0-toolbar 1-calendar
+        // flag_value:0-删除 1-新增
+        return this.$http.post('/sharedcalendarSettingCtl/event/editPowerUser', {
+          data: { userIdList: postData, type: 0, flag_value: flagValue }
         })
       }
     }

@@ -17,7 +17,19 @@
         <div class="content">
           <div class="content_main">
             <div class="card" v-for='item in data.dataList'>
-              <div class="_header">{{item.shortName || '-'}}</div>
+              <div class="_header">
+                {{item.shortName || '-'}}
+                <el-upload class="logo_box"
+                           name="file"
+                           :data="{userId: item.id}"
+                           :action="actionUrl"
+                           :show-file-list="false"
+                           :on-success="handleAvatarSuccess"
+                           :before-upload="beforeAvatarUpload">
+                  <img v-if="item.avatar" :src="item.avatar">
+                  <i class="iconfont iconfont-bianji"></i>
+                </el-upload>
+              </div>
               <div class="fullname">
                 <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
               </div>
@@ -79,13 +91,14 @@
         data: {
           searchText: '',
           dataList: []
-        }
+        },
+        actionUrl: this.$config.api_path.user_img_upload
       }
     },
     computed: {
     },
     mounted () {
-      this.data.searchText = this.$route.query.searchText;
+      this.data.searchText = this.$route.query.searchText || '';
       this.searchEvent();
     },
     methods: {
@@ -108,6 +121,7 @@
             for (let i = 0; i < res.data.length; i++) {
               let item = res.data[i];
               let name = item.nom.toLowerCase();
+              item.avatar = !item.avatar ? '' : (this.$config.api_path.img_path + item.avatar);
               if (!name) continue;
 
               // 字符切割
@@ -125,6 +139,32 @@
             this.data.dataList = dataList;
           }
         })
+      },
+      // 图标上传成功
+      handleAvatarSuccess (res, file) {
+        if (res.success) {
+          // this.data.appLogo = this.$config.api_path.img_path + res.data[0].picUrl;
+          this.searchEvent();
+        } else {
+          let banner = {
+            status: 'ERROR',
+            msg: res.msg
+          }
+          this.openBanner(banner);
+        }
+      },
+      // 图标上传前校验
+      beforeAvatarUpload (file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$refs.alert.showDialog('Uploading image images can only be JPG format!', true);
+        }
+        if (!isLt2M) {
+          this.$refs.alert.showDialog('Upload profile picture size can\'t exceed 2MB!');
+        }
+        return isJPG && isLt2M;
       }
     }
   }
@@ -156,7 +196,14 @@
           height: 100%;overflow: auto;
           .card{
             width: 300px;background: #fff;border: 1px solid #ddd;padding: 0 30px 20px 30px;float: left;margin: 0 13px 13px 0;
-            ._header{width: 90px;height: 90px;border: 2px solid #F2BF27;border-radius: 50%;background: #FFCA28;color: #fff;text-align: center;line-height: 90px;font-size: 36px;margin: 20px auto;}
+            ._header{
+              width: 90px;height: 90px;border: 2px solid #F2BF27;border-radius: 50%;background: #FFCA28;color: #fff;text-align: center;line-height: 90px;font-size: 36px;margin: 20px auto;position: relative;
+              .logo_box{
+                width: 90px;height: 90px;position: absolute;top: -2px;left: -2px;
+                img{width: 100%;height: 100%;position: absolute;top: 0;left: 0;border-radius: 50%;}
+                .iconfont{position: absolute;width: 25px;height: 25px;right: 0;bottom: 0;background: #999;border-radius: 50%;color: #fff;line-height: 25px;font-size: 12px;cursor: pointer;}
+              }
+            }
             .fullname{text-align: center;color: #333;}
             .form_label{font-size: 12px;color: #999;}
             .form_value{color: #333;margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
