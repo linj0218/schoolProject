@@ -11,9 +11,9 @@
       <div class="page_body_box clearfix">
         <div class="part_1">
           <div class="apps container-fluid">
-            <!-- <div class="app col-lg-4" v-for='app in applicationList'> -->
+            <!-- <div class="app col-lg-3" v-for='app in applicationList'> -->
             <template v-for='app in applicationList'>
-              <a class="app col-xs-4 col-sm-4 col-md-4 col-lg-4" target="_blank" :href='app.baseaddress' :title='app.nom' :class='{small_font: app.small_font}'>
+              <a class="app col-xs-3 col-sm-3 col-md-3 col-lg-3" target="_blank" :href='app.baseaddress' :title='app.nom' :class='{small_font: app.small_font}'>
                 <div class="icon">
                   <img v-if='app.picUrl' :src='$config.api_path.img_path + app.picUrl'>
                   <img v-if='!app.picUrl' src="../images/icon_default.png">
@@ -52,18 +52,32 @@
 
             <div class="week_cal">
               <div v-for='(li, index) in weekList'>
-                <div class="drawer_title" @click='changeDrawerActIndex(index, li)' :class='drawerActIndex==index?"act":""'>{{li.week}}, {{li.date}} {{li.month}}</div>
+                <div class="drawer_title" @click='changeDrawerActIndex(index, li)' :class='{"act": li.openFlg}'>{{li.week}}, {{li.date}} {{li.month}}</div>
                 <div class="drawer_list">
                   <div>
 
-                    <router-link tag='div' class="flex drawer_li"
+                    <router-link tag='div' class="drawer_li"
                                  :to='{path: "/homepage", query: {year: actDateInfo.thisYear, month: actDateInfo.thisMonth, date: actDateInfo.thisDate}}'
                                  v-for='task in li.taskList'
                                  :key='task.id'>
-                      <div><span class="point_icon" :class='task.color'></span></div>
-                      <div>{{task.time}}</div>
-                      <div>{{task.name}}</div>
-                      <div><span class="icon_right"></span></div>
+                      <div class="li_1">
+                        <el-tooltip effect="dark" :content="task.category" placement="top-start">
+                          <span class="point_icon" :class='task.color'></span>
+                        </el-tooltip>
+                      </div>
+                      <div>
+                        <el-tooltip effect="dark" :content="task.time" placement="top-start">
+                          <span class="info">{{task.time}}</span>
+                        </el-tooltip>
+                        <el-tooltip effect="dark" :content="task.name" placement="top-start">
+                          <span class="info">{{task.name}}</span>
+                        </el-tooltip>
+                      </div>
+                      <div>
+                        <el-tooltip effect="dark" :content="task.classRoom" placement="top-start">
+                          <span>{{task.classRoom}}</span>
+                        </el-tooltip>
+                      </div>
                     </router-link>
 
                   </div>
@@ -161,6 +175,8 @@
                   id: resData[i2].id,
                   time: resData[i2].day_flag === 1 ? 'All day' : resData[i2].start_time + '-' + resData[i2].end_time,
                   name: resData[i2].title,
+                  classRoom: resData[i2].campus_name + ' - ' + resData[i2].place_name,
+                  category: resData[i2].category_no,
                   color: resData[i2].category_remark
                 })
               }
@@ -182,16 +198,18 @@
             week: weekMap[Number(i) + 1].substr(0, 3),
             date: item.day,
             month: monthMap[item.monthValue].substr(0, 3),
+            openFlg: this.$moment().add(-1, 'day') < this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}),
             taskList: []
           }
           tempList.push(tempObj)
         })
 
-        this.weekList = tempList
+        this.weekList = tempList;
       },
       // 切换周视图抽屉
       changeDrawerActIndex (i, item) {
-        this.drawerActIndex = i
+        this.drawerActIndex = i;
+        item.openFlg = !item.openFlg;
 
         for (let i = 0, len = this.actWeekList.length; i < len; i++) {
           let field = this.actWeekList[i]
@@ -260,7 +278,7 @@
       .apps{
         height: 100%;padding: 0;
         .app{
-          background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 22px;height: 140px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;text-decoration: none;overflow: hidden;position: relative;display: table;
+          background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 20px;height: 120px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;text-decoration: none;overflow: hidden;position: relative;display: table;
           .icon{
             position: absolute;width: 80px;height: 80px;background: #fff;border-radius: 50%;overflow: hidden;vertical-align: middle;margin-right: 15px;top: 50%;transform: translateY(-50%);
             img{width: 100%;height: 100%;position: absolute;left: 0;top: 0;}
@@ -268,7 +286,7 @@
           }
           .text{display: table-cell;vertical-align: middle;padding-left: 90px;}
         }
-        .app.small_font{font-size: 19px;}
+        .app.small_font{font-size: 18px;}
         .app:hover{
           color: #fff;background: #4E81BD;
           img.icon_on{z-index: 1;}
@@ -291,18 +309,14 @@
             padding: 0 10px;font-size: 16px;color: #003;height: 0;overflow: hidden;
             & > div{padding: 5px 0;}
             & > div:empty:after{content: 'no event';padding: 10px;display: block;font-size: 18px;color: #333;}
-            .point_icon{display: inline-block;width: 12px;height: 12px;border-radius: 50%;}
-            // .drawer_li:nth-child(3n+1) .point_icon{background: #FFAC00;}
-            // .drawer_li:nth-child(3n+2) .point_icon{background: #7873CF;}
-            // .drawer_li:nth-child(3n+3) .point_icon{background: #00C1DF;}
-            .drawer_li{line-height: 24px;padding: 7px 10px;}
+            .li_1{float: right;line-height: 44px;}
+            .point_icon{display: inline-block;width: 14px;height: 14px;border-radius: 50%;}
+            .drawer_li{line-height: 22px;padding: 7px 10px;height: 58px;}
             .drawer_li:hover{background: #eee;}
             .drawer_li div{
-              flex: 5;text-align: left;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;
-              .icon_right{display: inline-block;width: 24px;height: 24px;background: url('../images/icon_right.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
+              text-align: left;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;color: #666;font-size: 14px;
+              .info{display: inline-block;width: 50%;color: #333;font-size: 16px;}
             }
-            .drawer_li div:first-child, .drawer_li div:last-child{flex: 1;}
-            .drawer_li div:last-child{color: #999;text-align: right;}
           }
           .drawer_title.act + .drawer_list{height: auto;}
         }

@@ -68,18 +68,13 @@
                              :input-required='data.startDateRequired'
                              @dataChange='startDateChange'>
                 </date-select>
-                <!-- <drapdown :input-value='data.start_time'
-                          :input-name='data.start_time'
-                          :input-select='data.startTimeList'
-                          :input-disabled='data.day_flag'
-                          @inputChange='startTimeChanged'>
-                </drapdown> -->
                 <div class="lj_time_select" :class='{"noInput": data.startTimeRequired}'>
                   <el-time-picker v-model="data.start_time"
                                   :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
                                   :disabled='data.day_flag'
                                   @change='startTimeChanged'
                                   @focus='timeFocus'
+                                  @blur="timeBlur"
                                   format="HH:mm"
                                   value-format="HH:mm"
                                   placeholder="Select">
@@ -95,18 +90,13 @@
                              :input-required='data.endDateRequired'
                              @dataChange='endDateChange'>
                 </date-select>
-                <!-- <drapdown :input-value='data.end_time'
-                          :input-name='data.end_time'
-                          :input-select='data.endTimeList'
-                          :input-disabled='data.day_flag'
-                          @inputChange='endTimeChanged'>
-                </drapdown> -->
                 <div class="lj_time_select" :class='{"noInput": data.endTimeRequired}'>
                   <el-time-picker v-model="data.end_time"
                                   :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
                                   :disabled='data.day_flag'
                                   @change='endTimeChanged'
                                   @focus='timeFocus'
+                                  @blur="timeBlur"
                                   format="HH:mm"
                                   value-format="HH:mm"
                                   placeholder="Select">
@@ -548,17 +538,17 @@ export default {
         this.data.check = false;
       }, 500)
       // 必填校验
-      let passflg = true
-      if (!reqData.title || !reqData.category_id || !reqData.place_id ||
-          !reqData.start_date || !reqData.end_date || !reqData.start_time || !reqData.end_time) passflg = false;
+      let passflg = true;
+      if (!reqData.title || !reqData.category_id || !reqData.place_id || !reqData.start_date || !reqData.end_date) passflg = false;
+      if (!this.data.day_flag && (!reqData.start_time || !reqData.end_time)) passflg = false;
 
       this.data.titleRequired = !reqData.title;
       this.data.categoryRequired = !reqData.category_id;
       this.data.placeRequired = !reqData.place_id;
       this.data.startDateRequired = !reqData.start_date;
       this.data.endDateRequired = !reqData.end_date;
-      this.data.startTimeRequired = !reqData.start_time;
-      this.data.endTimeRequired = !reqData.end_time;
+      this.data.startTimeRequired = !this.data.day_flag && !reqData.start_time;
+      this.data.endTimeRequired = !this.data.day_flag && !reqData.end_time;
 
       if (!passflg) {
         // console.log(this.data.titleRequired, this.data.categoryRequired, this.data.placeRequired, this.data.startDateRequired, this.data.endDateRequired, this.data.startTimeRequired, this.data.endTimeRequired)
@@ -767,6 +757,20 @@ export default {
           document.getElementsByClassName('el-time-panel__footer')[1].getElementsByClassName('confirm')[0].innerHTML = 'confirm'
         }
       }, 100)
+    },
+    timeBlur (obj) {
+      if (parseInt(obj.userInput) === 'NaN') return false;
+      let time = parseInt(obj.userInput);
+      if (time > 0 && time < 10) {
+        time = '0' + time + ':00';
+      } else if (time > 0 && time < 24) {
+        time = time + ':00';
+      } else if (time === 0 || time === 24) {
+        time = '00:00';
+      } else {
+        time = this.$moment().format('HH:mm');
+      }
+      this.data.start_time = this.data.end_time = obj.userInput = time;
     }
   }
 }

@@ -54,7 +54,7 @@
                 </drapdown>
 
               </div>
-              <span v-if='data.role==0 || data.role==1'>See the category as:</span>
+              <span v-if='data.role==0 || data.role==1'>See as:</span>
               <div class="select" v-if='data.role==0 || data.role==1'>
 
                 <!-- 下拉组件 -->
@@ -113,8 +113,13 @@
                    :class='{"act": td.id==weekTaskListActId}'
                    @click='weekTaskListActIndexChanged(td)'>
                 <div class="label_line"></span>{{td.time}}</div>
-                <div class="label_line"><span :class='td.color'></span>{{td.place}} - {{td.room}}</div>
-                <div class="label_line">{{td.title}}</div>
+                <div class="label_line">
+                  <el-tooltip effect="dark" :content="td.category" placement="top-start">
+                    <span :class='td.color'></span>
+                  </el-tooltip>
+                  {{td.title}}
+                </div>
+                <div class="label_line class_room">{{td.place}} - {{td.room}}</div>
               </div>
             </template>
           </div>
@@ -536,7 +541,8 @@
                     endTime: field.end_time,
                     thisYear: item.thisYear,
                     thisMonth: item.thisMonth,
-                    thisDate: item.thisDate
+                    thisDate: item.thisDate,
+                    category: field.category_no
                   }
                   tempObj.source = field
 
@@ -577,7 +583,7 @@
               tempList.push(tempObj)
             }
             list.push(tempList)
-            self.weekTaskList = list
+            self.weekTaskList = list;
 
             for (let i = 0, len = resData.length; i < len; i++) {
               if (resData[i] != null) {
@@ -854,7 +860,7 @@
         }
         .filter_condition{
           text-align: right;line-height: 76px;padding: 0 30px;
-          .select{width: 180px;display: inline-block;height: 36px;vertical-align: middle;line-height: 36px;margin: 10px;}
+          .select{width: 200px;display: inline-block;height: 36px;vertical-align: middle;line-height: 36px;margin: 10px;}
         }
       }
       .week_calendar{
@@ -929,9 +935,10 @@
         &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
         .act_date_info{text-align: center;padding: 10px 0;font-size: 16px;}
         .li{
-          line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 10px;color: #333;font-size: 14px;
-          .label_line{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;padding-left: 20px;position: relative;}
-          span{width: 12px;height: 12px;border-radius: 50%;position: absolute;left: 0;top: 50%;transform: translateY(-50%);}
+          line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #333;font-size: 14px;
+          .label_line{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;color: #333;font-size: 16px;}
+          .label_line.class_room{color: #666;font-size: 14px;}
+          span{width: 14px;height: 14px;border-radius: 50%;position: absolute;right: 0;top: 50%;transform: translateY(-50%);}
         }
         .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
         .li:hover{cursor: default;}

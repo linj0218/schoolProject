@@ -3,7 +3,7 @@
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
             :class='[{"circle": inputColorType=="circle"}, {"background": inputColorType=="background"}, {"noInput": inputRequired}]'
             :disabled='inputDisabled'>
-      <span class="button_bg" :class='inputColorType=="background" && inputColor'>
+      <span class="button_bg" :class='inputColorType=="background" && inputColor' :title="inputName">
         {{inputName}}
       </span>
       <span v-show='inputColorType=="circle"' class="icon_circle" :class='inputColor'></span>
@@ -14,12 +14,11 @@
       <li v-for='item in inputSelect'
           :class='{"isSelected": item.value == inputValue}'
           @click='chooseItem(item)'>
-        <a href="javascript:void(0)" :title='item.name'
-           :class='[{"background": inputColorType=="background"}, inputColorType=="background" && item.color]'>
-           <!-- <el-tooltip class="item" effect="dark" :content="item.name" placement="left">
+        <a href="javascript:void(0)" :class='[{"background": inputColorType=="background"}, inputColorType=="background" && item.color]'>
+           <el-tooltip class="item" effect="dark" :content="item.name" placement="left">
              <span>{{item.name}}</span>
-           </el-tooltip> -->
-         {{item.name}}
+           </el-tooltip>
+         <!-- {{item.name}} -->
          <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle" && item.color'></span>
         </a>
       </li>
@@ -108,7 +107,7 @@
   .dropdown{position: relative;}
   .dropdown-menu > .isSelected > a{color: #337ab7;}
   .dropdown-menu a.background {color: #fff !important;}
-  .dropdown-menu > li > a{height: 34px;line-height: 28px;position: relative;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
+  .dropdown-menu > li > a{height: 34px;line-height: 28px;position: relative;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;font-size: 12px;}
   .dropdown-menu li:nth-child(odd) a{background: #f9f9f9;}
   .li_add{position: absolute;width: 32px;height: 32px;background: url('../images/icon_li_add.png') 0 0 / 100% 100% no-repeat;right: -45px;top: 0;border: 0;}
   .btn-default{

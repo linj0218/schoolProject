@@ -12,23 +12,29 @@
             <button type="button" class="btn" :class="{act: data.tab == 0}" @click='()=>{this.data.tab=0}'>
               <i class="iconfont iconfont-shezhi"></i><span>General</span>
             </button>
+            <button type="button" class="btn" :class="{act: data.tab == 2}" @click='()=>{this.data.tab=2}'>
+              <i class="iconfont iconfont-gongjuxiang"></i><span>Toolbox</span>
+            </button>
+            <button type="button" class="btn" :class="{act: data.tab == 3}" @click='()=>{this.data.tab=3}'>
+              <i class="iconfont iconfont-gongneng"></i><span>Launcher</span>
+            </button>
             <button type="button" class="btn" :class="{act: data.tab == 1}" @click='()=>{this.data.tab=1}'>
               <i class="iconfont iconfont-rili"></i><span>Calendar</span>
-            </button>
-            <button type="button" class="btn" :class="{act: data.tab == 2}" @click='()=>{this.data.tab=2}'>
-              <i class="iconfont iconfont-gongjuxiang"></i><span>Toolbar</span>
             </button>
           </div>
         </div>
         <div class="content">
           <div class="tab_content" v-show='data.tab==0'>
-            <app-setting @openBanner='openBanner'></app-setting>
+            <app-setting @openBanner='openBanner' @switchTab="switchTab"></app-setting>
           </div>
           <div class="tab_content" v-show='data.tab==1'>
             <calendar @openBanner='openBanner'></calendar>
           </div>
           <div class="tab_content" v-show='data.tab==2'>
             <toolbar @openBanner='openBanner'></toolbar>
+          </div>
+          <div class="tab_content" v-show='data.tab==3'>
+            <launcher @openBanner='openBanner' ref='launcher'></launcher>
           </div>
         </div>
       </div>
@@ -50,10 +56,11 @@
   import appSetting from '@/components/slotAppSetting'
   import calendar from '@/components/slotCalendar'
   import toolbar from '@/components/slotToolbar'
+  import launcher from '@/components/slotLauncher'
 
   export default {
     components: {
-      headerr, banner, profile, appSetting, calendar, toolbar
+      headerr, banner, profile, appSetting, calendar, toolbar, launcher
     },
     data () {
       return {
@@ -77,6 +84,12 @@
       },
       back () {
         this.$router.go(-1)
+      },
+      switchTab (tab, data) {
+        this.data.tab = tab;
+        this.$refs.launcher.data.tab = data.subTab;
+        this.$refs.launcher.data.userId = data.userId;
+        this.$refs.launcher.userChanged(data.userId);
       }
     }
   }

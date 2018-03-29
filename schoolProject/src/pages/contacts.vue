@@ -30,37 +30,41 @@
                   <i class="iconfont iconfont-bianji"></i>
                 </el-upload>
               </div>
-              <div class="fullname">
-                <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
-              </div>
+              <el-tooltip effect="dark" :content="item.nom || '-'" placement="top-start">
+                <div class="fullname">
+                  <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
+                </div>
+              </el-tooltip>
               <div class="form_label">Position(Job Title)</div>
               <el-tooltip class="item" effect="dark" :content="item.title || '-'" placement="top-start">
-                <div class="form_value">{{item.title || '-'}}</div>
+                <div class="form_value">
+                  <span v-for='(title, index) in item.titleList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.title ? '-' : title}}</span>
+                </div>
               </el-tooltip>
               <div class="form_label">Department</div>
               <el-tooltip class="item" effect="dark" :content="item.department || '-'" placement="top-start">
-                <div class="form_value">{{item.department || '-'}}</div>
+                <div class="form_value">
+                  <span v-for='(department, index) in item.departmentList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.department ? '-' : department}}</span>
+                </div>
               </el-tooltip>
               <div class="form_label">Office No</div>
               <el-tooltip class="item" effect="dark" :content="item.ext || '-'" placement="top-start">
-                <div class="form_value">{{item.ext || '-'}}</div>
+                <div class="form_value">
+                  <span v-for='(ext, index) in item.extList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.ext ? '-' : ext}}</span>
+                </div>
               </el-tooltip>
-              <!-- <div class="form_label">Extension No</div>
-              <el-tooltip class="item" effect="dark" :content="item.extensionNo || '-'" placement="top-start">
-                <div class="form_value">{{item.extensionNo || '-'}}</div>
-              </el-tooltip> -->
               <div class="form_label">Telephone No</div>
               <el-tooltip class="item" effect="dark" :content="item.mobile || '-'" placement="top-start">
-                <div class="form_value">{{item.mobile || '-'}}</div>
+                <div class="form_value">
+                  <span v-for='(mobile, index) in item.mobileList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.mobile ? '-' : mobile}}</span>
+                </div>
               </el-tooltip>
               <div class="form_label">E-mail</div>
               <el-tooltip class="item" effect="dark" :content="item.email || '-'" placement="top-start">
-                <div class="form_value">{{item.email || '-'}}</div>
+                <div class="form_value">
+                  <span v-for='(email, index) in item.emailList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.email ? '-' : email}}</span>
+                </div>
               </el-tooltip>
-              <!-- <div class="form_label">System Role</div>
-              <el-tooltip class="item" effect="dark" :content="item.role || '-'" placement="top-start">
-                <div class="form_value">{{item.role || '-'}}</div>
-              </el-tooltip> -->
             </div>
           </div>
         </div>
@@ -98,7 +102,7 @@
     computed: {
     },
     mounted () {
-      this.data.searchText = this.$route.query.searchText || '';
+      this.data.searchText = this.$route.query.searchText == undefined ? '' : this.$route.query.searchText;
       this.searchEvent();
     },
     methods: {
@@ -116,29 +120,40 @@
         return this.$http.post('/adSynchronizeCtl/sys/getUserAddressBook', { 'search': this.data.searchText }).then((res) => {
           if (res.result === 'SUCCESS') {
             // console.log(res.data);
-            let searchText = this.data.searchText.toLowerCase();
             let dataList = [];
             for (let i = 0; i < res.data.length; i++) {
               let item = res.data[i];
-              let name = item.nom.toLowerCase();
+              item.shortName = getShortName(item.nom);
               item.avatar = !item.avatar ? '' : (this.$config.api_path.img_path + item.avatar);
-              if (!name) continue;
 
-              // 字符切割
-              let startIndex = name.indexOf(searchText);
-              let strLength = searchText.length;
-              if (startIndex > -1) {
-                item.shortName = getShortName(item.nom);
-                let strPart1 = item.nom.substr(0, startIndex);
-                let strPart2 = item.nom.substr(startIndex, strLength);
-                let strPart3 = item.nom.substr(startIndex + strLength, name.length);
-                item.nameList = [strPart1, strPart2, strPart3];
-                dataList.push(item);
-              }
+              item.nameList = this.str2list(item.nom);
+              item.titleList = this.str2list(item.title);
+              item.departmentList = this.str2list(item.department);
+              item.extList = this.str2list(item.ext);
+              item.mobileList = this.str2list(item.mobile);
+              item.emailList = this.str2list(item.email);
+
+              dataList.push(item);
             }
             this.data.dataList = dataList;
           }
         })
+      },
+      // 字符切割
+      str2list (str) {
+        let searchText = this.data.searchText.toLowerCase();
+        let list = [str, '', ''];
+        if (!str) return list;
+        let string = str.toLowerCase();
+        let startIndex = string.indexOf(searchText);
+        let strLength = searchText.length;
+        if (startIndex > -1) {
+          let strPart1 = str.substr(0, startIndex);
+          let strPart2 = str.substr(startIndex, strLength);
+          let strPart3 = str.substr(startIndex + strLength, str.length);
+          list = [strPart1, strPart2, strPart3];
+        }
+        return list;
       },
       // 图标上传成功
       handleAvatarSuccess (res, file) {
@@ -204,7 +219,7 @@
                 .iconfont{position: absolute;width: 25px;height: 25px;right: 0;bottom: 0;background: #999;border-radius: 50%;color: #fff;line-height: 25px;font-size: 12px;cursor: pointer;}
               }
             }
-            .fullname{text-align: center;color: #333;}
+            .fullname{text-align: center;color: #333;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;}
             .form_label{font-size: 12px;color: #999;}
             .form_value{color: #333;margin-bottom: 5px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
           }

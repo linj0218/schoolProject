@@ -2,13 +2,13 @@
   <div class="body" v-cloak>
 
     <div class="nav_tab">
-      <div><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>Groups</div></div>
-      <div v-if="false"><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
-      <div v-if="false"><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
-      <div><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>Ad sync</div></div>
+      <div v-if="false"><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>Groups</div></div>
+      <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
+      <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
+      <div v-if="false"><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>Ad sync</div></div>
     </div>
     <div v-show='data.tab==3' class="syncBtn">
-      <span>These groups will synchronize with AD at {{data.taskTime}} every day</span><button class="btn btn-primary" @click="syncAdData()">Manual sync</button>
+      <span>These groups will synchronize with AD at 23:00 every day</span><button class="btn btn-primary" @click="syncAdData()">Manual sync</button>
     </div>
     <div class="nav_body" :style='{paddingTop: data.tab==3 ? "150px" : "100px"}'>
       <div class="_body">
@@ -213,66 +213,25 @@
           <div class="name_box">
             <span class="lab" style="width: 220px;">Daily synchronization time:</span>
             <div class="name_value" style="width: 500px;">
-              <el-time-picker v-model="data.taskTime"
-                              :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
-                              style="width: 350px;margin-bottom: 10px;"
-                              @change='changeSyncTime'
-                              @focus='timeFocus'
-                              format="HH:mm"
-                              value-format="HH:mm"
-                              placeholder="Select">
-              </el-time-picker>
-              <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">Manual Sync</button>
+              <input class="form-control" type="text" style="width: 180px;height: 42px;display: inline-block;margin-right: 20px;">
+              <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">Manual sync</button>
             </div>
           </div>
           <div class="name_box">
             <span class="lab" style="width: 220px;">Last sync statistics:</span>
             <div class="name_value" style="width: 1000px;">
               <div class="sync_nav_tab">
-                <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>Adds<span class="_badge">{{data.syncData.addsNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=2}' :class='{"act": data.sync_tab==2}'>Updates<span class="_badge">{{data.syncData.updatesNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=3}' :class='{"act": data.sync_tab==3}'>Renames<span class="_badge">{{data.syncData.renameNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=4}' :class='{"act": data.sync_tab==4}'>Deletes<span class="_badge">{{data.syncData.deleteNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=0}' :class='{"act": data.sync_tab==0}'>Unchanged<span class="_badge">{{data.syncData.unchangedNum}}</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=0}' :class='{"act": data.sync_tab==0}'>Unchanged<span class="_badge">123</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>Adds<span class="_badge">3</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=2}' :class='{"act": data.sync_tab==2}'>Updates<span class="_badge">3</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=3}' :class='{"act": data.sync_tab==3}'>Renames<span class="_badge">3</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=4}' :class='{"act": data.sync_tab==4}'>Deletes<span class="_badge">3</span></div></div>
               </div>
-              <div class="sync_list" v-show="data.sync_tab==1">
-                <div class="sync_field" v-for="item in data.syncData.addsList" @click="userPermission(item)">
-                  <el-tooltip class="item" effect="dark" :content="item.user_name" placement="top">
-                    <span>{{item.user_name}}</span>
+              <div class="sync_list">
+                <div class="sync_field" v-for="item in data.syncDataList">
+                  <el-tooltip class="item" effect="dark" :content="item.name" placement="top">
+                    <span>{{item.name}}</span>
                   </el-tooltip>
-                  <i class="iconfont iconfont-xiugailianxiren"></i>
-                </div>
-              </div>
-              <div class="sync_list" v-show="data.sync_tab==2">
-                <div class="sync_field" v-for="item in data.syncData.updatesList" @click="userPermission(item)">
-                  <el-tooltip class="item" effect="dark" :content="item.user_name" placement="top">
-                    <span>{{item.user_name}}</span>
-                  </el-tooltip>
-                  <i class="iconfont iconfont-xiugailianxiren"></i>
-                </div>
-              </div>
-              <div class="sync_list" v-show="data.sync_tab==3">
-                <div class="sync_field" v-for="item in data.syncData.renameList" @click="userPermission(item)">
-                  <el-tooltip class="item" effect="dark" :content="item.user_name" placement="top">
-                    <span>{{item.user_name}}</span>
-                  </el-tooltip>
-                  <i class="iconfont iconfont-xiugailianxiren"></i>
-                </div>
-              </div>
-              <div class="sync_list" v-show="data.sync_tab==4">
-                <div class="sync_field" v-for="item in data.syncData.deleteList" @click="userPermission(item)">
-                  <el-tooltip class="item" effect="dark" :content="item.user_name" placement="top">
-                    <span>{{item.user_name}}</span>
-                  </el-tooltip>
-                  <i class="iconfont iconfont-xiugailianxiren"></i>
-                </div>
-              </div>
-              <div class="sync_list" v-show="data.sync_tab==0">
-                <div class="sync_field" v-for="item in data.syncData.unchangedList" @click="userPermission(item)">
-                  <el-tooltip class="item" effect="dark" :content="item.user_name" placement="top">
-                    <span>{{item.user_name}}</span>
-                  </el-tooltip>
-                  <i class="iconfont iconfont-xiugailianxiren"></i>
                 </div>
               </div>
             </div>
@@ -301,7 +260,7 @@
     data () {
       return {
         data: {
-          tab: 3,
+          tab: 0,
           subtab: 1,
           // App management
           appList: [
@@ -327,8 +286,8 @@
             {value: 2, name: 'App name 2', checked: false}
           ],
           userList: [],
-          userId: '',
-          userName: '',
+          userId: '1161',
+          userName: 'william',
           user_flag: false,
           switch_flag: false,
           userGroupedIn: [],
@@ -349,9 +308,7 @@
           groupsInApp: [],
           // Ad Sync
           syncDataList: [{name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}],
-          sync_tab: 1,
-          syncData: {},
-          taskTime: ''
+          sync_tab: 0
         },
         actionUrl: this.$config.api_path.img_upload,
         // Groups data
@@ -378,11 +335,9 @@
       this.getGroups().then(() => {
         this.getAppList();
       })
-      // this.getUsers().then(() => {
-      //   this.getPermission('user');
-      // })
-      this.getSyncLog();
-      this.getSyncTime();
+      this.getUsers().then(() => {
+        this.getPermission('user');
+      })
     },
     methods: {
       profileToggle (bol) {
@@ -471,7 +426,7 @@
             })
           })
 
-          // this.data.userList = userList;
+          this.data.userList = userList;
           this.data.copyUserList = JSON.parse(JSON.stringify(userList));
           return res;
         })
@@ -820,8 +775,8 @@
         for (let i = 0, len = this.data.userList.length; i < len; i++) {
           let item = this.data.userList[i];
           // TODO 设置所属组和user_flag
-          if (item.value === id) {
-            console.log(item);
+          if (item.value == id) {
+            // console.log(item);
             this.data.switch_flag = !!item.user_flag;
             this.data.userGroupedIn = [];
             forEach(item.source.userGroupList, (i2, field) => {
@@ -934,57 +889,6 @@
       closeDialog () {
         this.show = false;
         this.$emit('close')
-      },
-      // 获取同步日志
-      getSyncLog () {
-        return this.$http.get('/adSynchronizeCtl/sys/findAdSyncLogAll', {}).then((res) => {
-          // console.log(res);
-          if (res.result === 'SUCCESS') {
-            this.data.syncData = res.data;
-          }
-        })
-      },
-      timeFocus () {
-        setTimeout(() => {
-          document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('cancel')[0].innerHTML = 'cancel'
-          document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('confirm')[0].innerHTML = 'confirm'
-        }, 100)
-      },
-      userPermission (item) {
-        let data = {
-          subTab: 1,
-          userId: item.user_id,
-          userName: item.user_name
-        }
-        this.$emit('switchTab', 3, data);
-      },
-      // 查询同步时间
-      getSyncTime () {
-        return this.$http.post('/adSynchronizeCtl/sys/findAdSyncTaskTime', {}).then((res) => {
-          if (res.result === 'SUCCESS' && res.data[0]) {
-            let taskTime = res.data[0].task_time;
-            this.data.taskId = res.data[0].id;
-            this.data.taskTime = this.$moment('2000/01/01 ' + taskTime, 'YYYY/MM/DD HH:mm:ss').format('HH:mm');
-          }
-        })
-      },
-      // 更新同步时间
-      changeSyncTime (value) {
-        if (!value) return;
-        this.data.taskTime = value;
-        let params = {
-          id: this.data.taskId,
-          task_time: value + ':00'
-        };
-        return this.$http.post('/adSynchronizeCtl/sys/updAdSyncTaskTime', params).then((res) => {
-          if (res.result === 'SUCCESS') {
-            let banner = {
-              status: 'SUCCESS',
-              msg: 'Succeeded!'
-            }
-            this.$emit('openBanner', banner);
-          }
-        })
       }
     }
   }
@@ -1072,15 +976,12 @@
   .sync_nav_tab{height: 48px;background: #f9f9f9;border: 1px solid #eee;border-radius: 2px 2px 0 0;}
   .sync_nav_tab > div{height: 100%;line-height: 48px;text-align: center;display: inline-block;margin: 0 10px;}
   .sync_nav_tab > div > div{height: 100%;display: inline-block;border-bottom: 4px solid transparent;font-size: 20px;color: #ccc;line-height: 48px;cursor: pointer;padding: 0 10px;}
-  .sync_nav_tab > div > div.act{border-bottom: 4px solid #4F81BE;color: #4E81BD;}
+  .sync_nav_tab > div > div.act{border-bottom: 4px solid #4F81BE;color: #333;}
   .sync_nav_tab ._badge{position: relative;background: #ccc;color: #fff;font-size: 12px;display: inline-block;width: 34px;height: 18px;line-height: 18px;border-radius: 2px;text-align: center;vertical-align: middle;margin-left: 10px;}
   .sync_nav_tab ._badge:before{content: '';width: 6px;height: 6px;transform: translateX(0) translateY(6px) rotate(45deg);top: 0;left: -3px;position: absolute;background: inherit;z-index: 2;}
   .sync_nav_tab .act ._badge{background: #FF3B30;}
   .sync_list{padding: 0 20px;}
-  .sync_list .sync_field{
-    border-bottom: 1px solid #eee;height: 60px;line-height: 60px;display: inline-block;width: 25%;font-size: 16px;padding: 0 20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;text-align: center;cursor: pointer;
-    .iconfont{color: #4E81BD;}
-  }
+  .sync_list .sync_field{border-bottom: 1px solid #eee;height: 60px;line-height: 60px;display: inline-block;width: 25%;font-size: 16px;padding: 0 20px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;text-align: center;}
   .sync_list .sync_field:nth-child(4n+1){text-align: left;}
   .sync_list .sync_field:nth-child(4n+4){text-align: right;}
 </style>
