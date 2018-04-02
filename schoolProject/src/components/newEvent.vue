@@ -759,18 +759,18 @@ export default {
       }, 100)
     },
     timeBlur (obj) {
-      if (parseInt(obj.userInput) === 'NaN') return false;
-      let time = parseInt(obj.userInput);
-      if (time > 0 && time < 10) {
-        time = '0' + time + ':00';
-      } else if (time > 0 && time < 24) {
-        time = time + ':00';
-      } else if (time === 0 || time === 24) {
-        time = '00:00';
-      } else {
-        time = this.$moment().format('HH:mm');
-      }
-      this.data.start_time = this.data.end_time = obj.userInput = time;
+      // if (parseInt(obj.userInput) === 'NaN') return false;
+      // let time = parseInt(obj.userInput);
+      // if (time > 0 && time < 10) {
+      //   time = '0' + time + ':00';
+      // } else if (time > 0 && time < 24) {
+      //   time = time + ':00';
+      // } else if (time === 0 || time === 24) {
+      //   time = '00:00';
+      // } else {
+      //   time = this.$moment().format('HH:mm');
+      // }
+      // this.data.start_time = this.data.end_time = obj.userInput = time;
     }
   }
 }
