@@ -37,7 +37,7 @@
                         {'this_day': thisDateInfo.thisMonth==day.monthValue&&thisDateInfo.thisDate==day.day},
                         {'act': day.monthInfo=='this_month'&&day.day==actDateInfo.thisDate}]"
                 @click='changeActDate(day, selectModel)'>
-              <div>{{day.day}}</div>
+              <div :class="{'hasEvent': day.hasEvent}">{{day.day}}</div>
             </div>
             <div class="icon_check" v-if='selectModel==="week"'></div>
           </div>
@@ -179,8 +179,10 @@
           calendarList[0].push({
             monthInfo: 'last_month',
             day: lastMonthLastDate.getDate() - (len - i),
+            dateValue: i,
             monthValue: lastMonth,
-            yearValue: lastMonthLastDate.getFullYear()
+            yearValue: lastMonthLastDate.getFullYear(),
+            hasEvent: false
           })
         }
 
@@ -193,8 +195,10 @@
           calendarList[calendarListIndex].push({
             monthInfo: 'this_month',
             day: i,
+            dateValue: i,
             monthValue: thisMonth,
-            yearValue: thisYear
+            yearValue: thisYear,
+            hasEvent: false
           })
         }
 
@@ -203,8 +207,10 @@
           calendarList[calendarListIndex].push({
             monthInfo: 'next_month',
             day: i,
+            dateValue: i,
             monthValue: nextMonth,
-            yearValue: nextMonthFirstDate.getFullYear()
+            yearValue: nextMonthFirstDate.getFullYear(),
+            hasEvent: false
           })
         }
 
@@ -214,7 +220,49 @@
           this.actDateInfo.thisDate = 1
         }
 
-        this.afterInit()
+        this.afterInit();
+      },
+      // 向日历中添加事件标识
+      initCalendarFlg () {
+        // 查询日历首尾日期，查询已有事件的日期
+        let calendarLength = this.calendarList.length;
+        let startDateObj = this.calendarList[0][0];
+        let endDateObj = this.calendarList[calendarLength - 1][6];
+        let startDate = this.$moment({y: startDateObj.yearValue, M: startDateObj.monthValue - 1, d: startDateObj.day}).format('YYYY-MM-DD')
+        let endDate = this.$moment({y: endDateObj.yearValue, M: endDateObj.monthValue - 1, d: endDateObj.day}).format('YYYY-MM-DD')
+        let params = {
+          dayFlag: 0,
+          place: '',
+          indexFlag: '0',
+          category_id: 0,
+          group_id: 0,
+          startDate: startDate,
+          endDate: endDate
+        }
+        return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
+          data: params
+        }).then((res) => {
+          if (res.result === 'SUCCESS') {
+            for (let i2 = 0; i2 < this.calendarList.length; i2++) {
+              let calendarRow = this.calendarList[i2];
+              for (let i3 = 0; i3 < calendarRow.length; i3++) {
+                let date = calendarRow[i3];
+                date.hasEvent = false;
+                let tempDate = this.$moment({y: date.yearValue, M: date.monthValue - 1, d: date.day});
+                for (let i = 0; i < res.data.length; i++) {
+                  let item = res.data[i];
+                  let startDate = this.$moment(item.start_date);
+                  let endDate = this.$moment(item.end_date);
+                  if (startDate <= tempDate && endDate >= tempDate) {
+                    date.hasEvent = true;
+                  }
+                }
+              }
+            }
+            this.calendarList = JSON.parse(JSON.stringify(this.calendarList));
+            return res;
+          }
+        })
       },
       // 切换月份
       changeActMonth (navStr, actDate) {
@@ -376,11 +424,14 @@
       },
       // 日历构建完毕
       afterInit () {
-        this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek())
+        this.initCalendarFlg().then(() => {
+          this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek());
+        });
       },
       // 返回数据：日历数据，今日数据，当前日期数据，当前日期所属周数据
       syncData () {
-        this.$emit('syncDataFunc', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek())
+        this.$emit('syncDataFunc', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek());
+        // this.initCalendarFlg();
       }
     },
     filters: {
@@ -426,8 +477,9 @@
           .this_day div{background: #ddd;}
           .act div{background: #4E81BD !important;color: #fff;}
           div{text-align: center;}
-          & > div > div{width: 38px;margin: auto;}
-          & > div > div:hover{border: 2px solid #4E81BD;line-height: 34px;}
+          & > div > div{width: 38px;margin: auto;position: relative;border: 2px solid transparent;line-height: 34px;}
+          & > div > div.hasEvent:after{content: "";position: absolute;width: 5px;height: 5px;border-radius: 50%;background: #CC3C39;right: 2px;top: 4px;}
+          & > div > div:hover{border: 2px solid #4E81BD;}
         }
         .li_cont.week .act div{background: inherit !important;color: #333;}
         .li_cont.week.act{background: rgba(79,129,190,0.3) !important;}

@@ -341,7 +341,7 @@
       }
     }
     .part_3:after{
-      content: 'Under Construction ...'; position: absolute;width: 100%; height: 100%;background: rgba(144,144,144, 1);top: 0;left: 0;color: #fff;text-align: center;line-height: 540px;font-size: 42px;
+      content: ''; position: absolute;width: 100%; height: 100%;background: url('../images/under_construction.jpg') 0 0 / 100% 100% no-repeat;top: 0;left: 0;color: #fff;text-align: center;line-height: 540px;font-size: 42px;
     }
   }
 </style>

@@ -71,7 +71,8 @@ export default {
             resData.role = 2;
           }
           localStorage.setItem('USERNAME', this.userName)
-          setSStorage('userinfo', resData)
+          setSStorage('userinfo', resData);
+          this.$config.userinfo = resData;
           self.$router.push({ path: '/' })
         } else {
           this.errorText = this.errorType[1]

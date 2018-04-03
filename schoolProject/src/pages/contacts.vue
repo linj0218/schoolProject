@@ -19,7 +19,11 @@
             <div class="card" v-for='item in data.dataList'>
               <div class="_header">
                 {{item.shortName || '-'}}
+                <div class="logo_box" v-if="!data.canUpload">
+                  <img v-if="item.avatar" :src="item.avatar">
+                </div>
                 <el-upload class="logo_box"
+                           v-if="data.canUpload"
                            name="file"
                            :data="{userId: item.id}"
                            :action="actionUrl"
@@ -94,7 +98,8 @@
       return {
         data: {
           searchText: '',
-          dataList: []
+          dataList: [],
+          canUpload: false
         },
         actionUrl: this.$config.api_path.user_img_upload
       }
@@ -103,6 +108,7 @@
     },
     mounted () {
       this.data.searchText = this.$route.query.searchText == undefined ? '' : this.$route.query.searchText;
+      this.data.canUpload = this.$config.userinfo.role === 0 || this.$config.userinfo.toolbar_flag === 1; // 上传图标权限
       this.searchEvent();
     },
     methods: {

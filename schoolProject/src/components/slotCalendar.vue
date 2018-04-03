@@ -125,7 +125,7 @@
             <span class="lab">Name:</span>
             <div class="name_value">
 
-              <drapdown :input-value='placesData.name'
+              <drapdown :input-value='placesData.value'
                         :input-name='placesData.name'
                         :input-select='placesData.places'
                         :input-add='true'
@@ -265,6 +265,7 @@ export default {
       },
       // Places
       placesData: {
+        value: '',
         name: '',
         places: [],
         rooms: []
@@ -310,6 +311,7 @@ export default {
         let placesList = []
         forEach(resData.campusList, (i, item) => {
           if (i === '0') {
+            self.placesData.value = item.id
             self.placesData.name = item.campus_name
             self.getRoomsById(item.id)
           }
@@ -599,7 +601,17 @@ export default {
       this.$refs.prompt.showDialog(this.placesData.name).then((text) => {
         this.placesData.name = text
 
-        return this.submitPlace(0)
+        return this.submitPlace(0).then((res) => {
+          if (res.result === 'SUCCESS') {
+            for (let i = 0; i < this.placesData.places.length; i++) {
+              let item = this.placesData.places[i];
+              if (item.value === this.placesData.value) {
+                item.name = this.placesData.name;
+                break;
+              }
+            }
+          }
+        })
       })
     },
     delPlace () {

@@ -69,7 +69,13 @@
                              @dataChange='startDateChange'>
                 </date-select>
                 <div class="lj_time_select" :class='{"noInput": data.startTimeRequired}'>
-                  <el-time-picker v-model="data.start_time"
+                  <el-time-select
+                    v-model="data.start_time"
+                    :picker-options="{ start: '00:00', step: '00:30', end: '23:30' }"
+                    @change='startTimeChanged'
+                    placeholder="Select">
+                  </el-time-select>
+                  <!-- <el-time-picker v-model="data.start_time"
                                   :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
                                   :disabled='data.day_flag'
                                   @change='startTimeChanged'
@@ -78,7 +84,7 @@
                                   format="HH:mm"
                                   value-format="HH:mm"
                                   placeholder="Select">
-                  </el-time-picker>
+                  </el-time-picker> -->
                 </div>
               </div>
             </div>
@@ -91,7 +97,13 @@
                              @dataChange='endDateChange'>
                 </date-select>
                 <div class="lj_time_select" :class='{"noInput": data.endTimeRequired}'>
-                  <el-time-picker v-model="data.end_time"
+                  <el-time-select
+                    v-model="data.end_time"
+                    :picker-options="{ start: '00:00', step: '00:30', end: '23:30' }"
+                    @change='endTimeChanged'
+                    placeholder="Select">
+                  </el-time-select>
+                  <!-- <el-time-picker v-model="data.end_time"
                                   :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
                                   :disabled='data.day_flag'
                                   @change='endTimeChanged'
@@ -100,7 +112,7 @@
                                   format="HH:mm"
                                   value-format="HH:mm"
                                   placeholder="Select">
-                  </el-time-picker>
+                  </el-time-picker> -->
                 </div>
               </div>
             </div>
@@ -259,8 +271,21 @@ export default {
     this.data.start_date = this.$moment().format('DD/MM/YYYY')
     this.data.end_date = this.$moment().format('DD/MM/YYYY')
 
-    this.data.start_time =
-    this.data.end_time = this.$moment().format('HH:mm')
+    // 默认开始时间更改为当前时间的下一个30分或整点
+    // 默认结束时间更改为开始时间之后的半小时
+    // 譬如现在是11:15分，则默认开始时间为11:30，结束时间为12:00
+    let now = this.$moment();
+    let minute = now.minute();
+    let dateStr = now.format('YYYY-MM-DD');
+    let hour = now.hour();
+    if (minute > 30) {
+      dateStr = dateStr + ' ' + (hour + 1) + ':00:00';
+    } else {
+      dateStr = dateStr + ' ' + hour + ':30:00';
+    }
+    // console.log(this.$moment(dateStr).format('YYYY-MM-DD HH:mm:ss'));
+    this.data.start_time = this.$moment(dateStr).format('HH:mm');
+    this.data.end_time = this.$moment(dateStr).add(30, 'm').format('HH:mm');
 
     let timeList = [];
     let stime = this.$moment('2000-01-01 00:00:00');
@@ -568,6 +593,7 @@ export default {
             msg: 'Save Succeeded'
           }
           this.$emit('openBanner', result)
+          this.$emit('freshCalendar')
           return res
         }
       })

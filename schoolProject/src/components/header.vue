@@ -67,7 +67,7 @@
         let pageName = this.$route.name
         if (pageName === 'homepage' && this.userRole === 0) {
           this.showConfig = true
-        } else if (pageName === 'index' && this.userRole === 0) {
+        } else if ((pageName === 'index' || pageName === 'contacts') && this.userRole === 0) {
           this.showAppSetting = true
         }
       },
@@ -76,16 +76,12 @@
       },
       profileToggle () {
         this.$emit('profileToggle', true)
-        // this.$emit('configToggle', false)
-        // this.$emit('appSettingToggle', false)
       },
       appSettingToggle () {
-        // this.$emit('appSettingToggle', true)
         this.$emit('profileToggle', false)
         this.$router.push({ path: '/setting', query: {tabflg: 0} });
       },
       configToggle () {
-        // this.$emit('configToggle', true)
         this.$emit('profileToggle', false)
         this.$router.push({ path: '/setting', query: {tabflg: 1} });
       },

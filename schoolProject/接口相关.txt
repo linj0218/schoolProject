@@ -1,0 +1,9 @@
+权限：
+Poweruser权限控制
+1.toolbbox：poweruser可以在search页面中上传头像
+2.Calendar：poweruser可以在calendar中新建event,按组查看筛选event，以及查看具体event下的viewed by列表
+
+login:
+permission_title/role: 'Admin'-0 'Super User'-1 'User'-2
+toolbar_flag: 0-默认 1-power user
+calendar_flag: 0-默认 1-power user

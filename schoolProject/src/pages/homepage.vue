@@ -16,6 +16,7 @@
           <!-- 日历组件 -->
           <calendar :inputActDateInfo='actDateInfo'
                     :showMonthInfo='false'
+                    ref="calendar"
                     @afterInit='afterInit'
                     @syncDataFunc='syncDataFunc'>
           </calendar>
@@ -54,8 +55,8 @@
                 </drapdown>
 
               </div>
-              <span v-if='data.role==0 || data.role==1'>See as:</span>
-              <div class="select" v-if='data.role==0 || data.role==1'>
+              <span v-if='data.canEdit'>See as:</span>
+              <div class="select" v-if='data.canEdit'>
 
                 <!-- 下拉组件 -->
                 <drapdown :input-value='seeCategoryId'
@@ -65,7 +66,7 @@
                 </drapdown>
 
               </div>
-              <button type="button" class="btn btn-primary" @click='newEvent()' v-if='data.role==0 || data.role==1'>
+              <button type="button" class="btn btn-primary" @click='newEvent()' v-if='data.canEdit'>
                 <span class="icon_btn_add"></span> New Event
               </button>
             </div>
@@ -73,7 +74,7 @@
           <div class="week_calendar">
             <div class="table_head">
               <div class="th" v-for='th in weekTableHead'
-                              :class='{"act": th.isActDate}'
+                              :class='{"act": th.isActDate, "hasEvent": th.hasEvent}'
                               @click='changeActDateFromWeekview(th)'>
                 <div class="week_name">{{th.week}}</div>
                 <div class="month_num">{{th.date}}</div>
@@ -112,14 +113,14 @@
                    v-if='showTask(td)'
                    :class='{"act": td.id==weekTaskListActId}'
                    @click='weekTaskListActIndexChanged(td)'>
+                <span :class='td.color'></span>
                 <div class="label_line"></span>{{td.time}}</div>
                 <div class="label_line">
                   <el-tooltip effect="dark" :content="td.category" placement="top-start">
-                    <span :class='td.color'></span>
                   </el-tooltip>
                   {{td.title}}
                 </div>
-                <div class="label_line class_room">{{td.place}} - {{td.room}}</div>
+                <!-- <div class="label_line class_room">{{td.place}} - {{td.room}}</div> -->
               </div>
             </template>
           </div>
@@ -147,8 +148,8 @@
                     </button>
                   </template>
                 </div>
-                <div class="title margin_top">Viewed by</div>
-                <div class="scroll_box">
+                <div class="title margin_top" v-if='data.canEdit'>Viewed by</div>
+                <div class="scroll_box" v-if='data.canEdit'>
                   <template v-for='(item, index) in eventsGroupList'>
                     <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
                       <span class="icon icon_members"></span>
@@ -168,6 +169,12 @@
                   <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
                 </div>
                 <div class="item">
+                  <span>Time:</span><div>{{taskDetailInfo.start}} - {{taskDetailInfo.end}}</div>
+                </div>
+                <div class="item">
+                  <span>Place:</span><div>{{taskDetailInfo.place}} - {{taskDetailInfo.room}}</div>
+                </div>
+                <div class="item">
                   <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
                 </div>
                 <div class="item" v-if='taskDetailInfo.fileList.length'>
@@ -180,10 +187,10 @@
                 </div>
               </div>
               <div class="edit_btn">
-                <button type="button" class="btn btn-primary" @click='editEvent()' v-if='data.role==0 || data.role==1'>
+                <button type="button" class="btn btn-primary" @click='editEvent()' v-if='data.canEdit'>
                   <span class="icon icon_btn_edit"></span> Edit
                 </button>
-                <button type="button" class="btn btn-danger" @click='deleteEvent()' v-if='data.role==0 || data.role==1'>
+                <button type="button" class="btn btn-danger" @click='deleteEvent()' v-if='data.canEdit'>
                   <span class="icon icon_btn_del"></span> Delete
                 </button>
                 <div class="creater_info">
@@ -206,6 +213,7 @@
       <new-event :show-config='showEvent'
                  :event-type='eventType'
                  :event-id='weekTaskListActId'
+                 @freshCalendar="freshCalendar"
                  @closeEventModal='closeEventModal'
                  @openBanner='openBanner'>
       </new-event>
@@ -241,6 +249,7 @@
           initOver: false,
           actDateInfoLabel: '',
           role: 0,
+          canEdit: false,
           checkActEventId: null,
           schoolYearInfo: []
         },
@@ -303,6 +312,7 @@
         this.actDateInfo.thisDate = Number(this.$route.query.date)
       }
       this.data.role = getSStorage('userinfo').role;
+      this.data.canEdit = getSStorage('userinfo').role !== 2 || getSStorage('userinfo').calendar_flag === 1;
     },
     mounted () {
       if (!this.data.schoolYearInfo.length && this.schoolYearInfo) {
@@ -432,6 +442,7 @@
                   thisYear: item3.yearValue,
                   thisMonth: item3.monthValue,
                   thisDate: item3.day,
+                  hasEvent: item3.hasEvent,
                   week: weekMap[Number(i3) + 1].substr(0, 3),
                   date: item3.day,
                   isActDate: item2.day === item3.day
@@ -441,7 +452,7 @@
             }
           })
         })
-        this.weekTableHead = tempList
+        this.weekTableHead = tempList;
 
         // 获取周视图数据
         if (this.data.initOver) {
@@ -676,6 +687,10 @@
         })
         this.showEvent = false
       },
+      // 刷新日历的Event flag
+      freshCalendar () {
+        this.$refs.calendar.afterInit();
+      },
       categoryChanged (item) {
         this.categoryId = item.value
         this.categoryName = item.name
@@ -868,12 +883,13 @@
         .table_head{
           height: 60px;border-bottom: 1px solid #eee;display: flex;margin-right: 5px;
           .th{
-            flex: 1;height: 100%;border-right: 1px solid #eee;color: #969DBA;padding: 12px;
+            flex: 1;height: 100%;border-right: 1px solid #eee;color: #969DBA;padding: 12px;position: relative;
             .week_name{font-size: 18px;line-height: 18px;}
             .month_num{font-size: 14px;line-height: 18px;}
           }
           .th.act{background: rgba(74,144,226,0.1);}
           .th:last-child{border-right: 0;}
+          .th.hasEvent:after{content: "";width: 0;height: 0;border-top: 10px solid #CC3C39;border-left: 10px solid transparent;position: absolute;right: 0;top: 0;}
         }
         .table_body{
           height: 229px;position: relative;padding: 4px 0;z-index: 0;overflow-y: scroll;
@@ -935,10 +951,10 @@
         &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
         .act_date_info{text-align: center;padding: 10px 0;font-size: 16px;}
         .li{
-          line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #333;font-size: 14px;
+          line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #333;font-size: 14px;position: relative;
           .label_line{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;color: #333;font-size: 16px;}
           .label_line.class_room{color: #666;font-size: 14px;}
-          span{width: 14px;height: 14px;border-radius: 50%;position: absolute;right: 0;top: 50%;transform: translateY(-50%);}
+          span{width: 14px;height: 14px;border-radius: 50%;position: absolute;right: 20px;top: 50%;transform: translateY(-50%);float: right;}
         }
         .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
         .li:hover{cursor: default;}
