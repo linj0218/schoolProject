@@ -14,7 +14,7 @@ axios.defaults.baseURL = 'http://116.228.73.106:8111/HTMS_WeChat/'
 // request
 axios.interceptors.request.use((config) => {
   // 只Event的保存、删除开启loading
-  if (config.url.indexOf('editEvent') > -1) {
+  if (config.url.indexOf('editEvent') > -1 || config.url.indexOf('toSynchronize') > -1) {
     document.getElementById('loading').className = 'on'
   }
   // console.log('request: ', config)

@@ -25,8 +25,8 @@
         data: {
           sysList: [ {icon: 'iconfont-QPDirectory', sys: 'QP Directory', url: 'http://auth.lfshanghai.com/files/Phone%20QP.pdf?'},
                      {icon: 'iconfont-PGDirectory', sys: 'PG Directory', url: 'http://auth.lfshanghai.com/files/Phone%20PG.pdf?c=pudong'},
-                     {icon: 'iconfont-OneDrive', sys: 'OneDrive', url: ''},
-                     {icon: 'iconfont-PPT', sys: 'PPT', url: ''},
+                     {icon: 'iconfont-OneDrive', sys: 'OneDrive', url: 'https://lfs-my.sharepoint.cn/'},
+                     {icon: 'iconfont-Trombinoscope', sys: 'Trombinoscope', url: ''},
                      {icon: 'iconfont-E-mail', sys: 'E-mail', url: 'https://partner.outlook.cn'} ],
           searchText: ''
         }
@@ -53,7 +53,7 @@
   .extendIcons .iconfont-QPDirectory{background: #4DB7BD;}
   .extendIcons .iconfont-PGDirectory{background: #65BD4D;}
   .extendIcons .iconfont-OneDrive{background: #BD9B4D;}
-  .extendIcons .iconfont-PPT{background: #BD644D;}
+  .extendIcons .iconfont-Trombinoscope{background: #BD644D;}
   .extendIcons .iconfont-E-mail{background: #4D51BD;}
   .extendIcons .line{display: inline-block;width: 1.3px;height: 20px;background: #ccc;margin: 13px 20px;vertical-align: middle;margin-top: 0px;}
   .extendIconsText{height: 10px;line-height: 10px;margin-top: 4px;}

@@ -223,7 +223,7 @@
         this.afterInit();
       },
       // 向日历中添加事件标识
-      initCalendarFlg () {
+      initCalendarFlg (reqData) {
         // 查询日历首尾日期，查询已有事件的日期
         let calendarLength = this.calendarList.length;
         let startDateObj = this.calendarList[0][0];
@@ -238,6 +238,11 @@
           group_id: 0,
           startDate: startDate,
           endDate: endDate
+        }
+        if (reqData) {
+          params.category_id = reqData.category_id;
+          params.group_id = reqData.group_id;
+          params.place = reqData.place;
         }
         return this.$http.post('/sharedcalendarCtl/event/searchOneDayEvents', {
           data: params
@@ -262,6 +267,8 @@
             this.calendarList = JSON.parse(JSON.stringify(this.calendarList));
             return res;
           }
+        }).then(() => {
+          this.syncData()
         })
       },
       // 切换月份
@@ -424,14 +431,11 @@
       },
       // 日历构建完毕
       afterInit () {
-        this.initCalendarFlg().then(() => {
-          this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek());
-        });
+        this.$emit('afterInit', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek());
       },
       // 返回数据：日历数据，今日数据，当前日期数据，当前日期所属周数据
       syncData () {
         this.$emit('syncDataFunc', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek());
-        // this.initCalendarFlg();
       }
     },
     filters: {

@@ -46,7 +46,8 @@
 
             <!-- 日历组件 -->
             <calendar :inputActDateInfo='actDateInfo'
-                      @afterInit='syncDataFunc'
+                      ref="calendar"
+                      @afterInit='afterInit'
                       @syncDataFunc='syncDataFunc'>
             </calendar>
 
@@ -187,7 +188,7 @@
       },
       // 创建日历下周任务视图
       createWeekInfo () {
-        let tempList = []
+        let tempList = [];
         forEach(this.actWeekList, (i, item) => {
           if (item.monthValue === this.actDateInfo.thisMonth && item.day === this.actDateInfo.thisDate) {
             this.drawerActIndex = i
@@ -198,7 +199,7 @@
             week: weekMap[Number(i) + 1].substr(0, 3),
             date: item.day,
             month: monthMap[item.monthValue].substr(0, 3),
-            openFlg: this.$moment().add(-1, 'day') < this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}),
+            openFlg: this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate}).add(-1, 'day') < this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}),
             taskList: []
           }
           tempList.push(tempObj)
@@ -220,6 +221,13 @@
             return true
           }
         }
+      },
+      afterInit (calendarList, thisDateInfo, actDateInfo) {
+        let actWeekList = arguments[3] || {}
+        this.syncDataFunc(calendarList, thisDateInfo, actDateInfo, actWeekList);
+        this.$nextTick(() => {
+          this.$refs.calendar.initCalendarFlg();
+        })
       },
       syncDataFunc (calendarList, thisDateInfo, actDateInfo) {
         this.calendarList = calendarList

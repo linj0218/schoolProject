@@ -413,7 +413,9 @@
       placeSelectedChanged (place) {
         place.isSelected = !place.isSelected
         this.getWeekInfoData().then(() => {
-          this.getViews()
+          return this.getViews()
+        }).then(() => {
+          this.freshCalendar();
         })
       },
       // 周视图切换上下周
@@ -669,6 +671,9 @@
         this.thisDateInfo = thisDateInfo
         this.actDateInfo = actDateInfo
         this.actWeekList = arguments[3] || {}
+        this.$nextTick(() => {
+          this.freshCalendar();
+        })
         this.createWeekInfo()
       },
       profileToggle (bol) {
@@ -689,14 +694,27 @@
       },
       // 刷新日历的Event flag
       freshCalendar () {
-        this.$refs.calendar.afterInit();
+        let reqData = {
+          category_id: this.categoryId,
+          group_id: this.seeCategoryId,
+          place: []
+        }
+        this.placesList.map((o) => { if (o.isSelected) { reqData.place.push('\'' + o.name + '\'') } })
+        if (reqData.place.length > 0) {
+          reqData.place = reqData.place.join(',')
+        } else {
+          reqData.place = '';
+        }
+        return this.$refs.calendar.initCalendarFlg(reqData);
       },
       categoryChanged (item) {
         this.categoryId = item.value
         this.categoryName = item.name
         this.categoryColor = item.color
         this.getWeekInfoData().then(() => {
-          this.getViews()
+          return this.getViews()
+        }).then(() => {
+          this.freshCalendar();
         })
       },
       seeCategoryChanged (item) {
@@ -704,7 +722,9 @@
         this.seeCategoryName = item.name
         this.seeCategoryColor = item.color
         this.getWeekInfoData().then(() => {
-          this.getViews()
+          return this.getViews()
+        }).then(() => {
+          this.freshCalendar();
         })
       },
       // 点击任务列表同步Event详情
@@ -736,7 +756,7 @@
           return false
         }
         let self = this
-        this.$http.post('/sharedcalendarSettingCtl/event/getEventsDetailByEventId', {
+        return this.$http.post('/sharedcalendarSettingCtl/event/getEventsDetailByEventId', {
           data: JSON.stringify({event_id: this.weekTaskListActId})
         }).then((res) => {
           if (res.success) {
@@ -746,6 +766,7 @@
             self.eventsUserList = resData.eventsUserList
             self.eventsGroupList = resData.eventsGroupList
           }
+          return res;
         })
       },
       // 新建Event

@@ -7,10 +7,7 @@
       <div v-if="false"><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
       <div><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>Ad sync</div></div>
     </div>
-    <div v-show='data.tab==3' class="syncBtn">
-      <span>These groups will synchronize with AD at {{data.taskTime}} every day</span><button class="btn btn-primary" @click="syncAdData()">Manual sync</button>
-    </div>
-    <div class="nav_body" :style='{paddingTop: data.tab==3 ? "150px" : "100px"}'>
+    <div class="nav_body">
       <div class="_body">
         <!-- Groups -->
         <div class="nav_content_1" v-show='data.tab==3' style="padding: 0;text-align: left;">
@@ -223,6 +220,12 @@
                               placeholder="Select">
               </el-time-picker>
               <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">Manual Sync</button>
+            </div>
+          </div>
+          <div class="name_box">
+            <span class="lab" style="width: 220px;">Last sync time:</span>
+            <div class="name_value" style="line-height: 34px;font-size: 18px;color: #333;">
+              {{data.lastSyncTime}}
             </div>
           </div>
           <div class="name_box">
@@ -821,7 +824,7 @@
           let item = this.data.userList[i];
           // TODO 设置所属组和user_flag
           if (item.value === id) {
-            console.log(item);
+            // console.log(item);
             this.data.switch_flag = !!item.user_flag;
             this.data.userGroupedIn = [];
             forEach(item.source.userGroupList, (i2, field) => {
@@ -928,6 +931,7 @@
             this.getUsers().then(() => {
               this.getPermission('user');
             })
+            this.getSyncLog();
           }
         })
       },
@@ -941,6 +945,7 @@
           // console.log(res);
           if (res.result === 'SUCCESS') {
             this.data.syncData = res.data;
+            this.data.lastSyncTime = this.$moment(res.data.unchangedList[0].sync_time).format('HH:mm:ss DD/MM/YYYY');
           }
         })
       },
