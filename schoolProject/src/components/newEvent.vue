@@ -312,10 +312,10 @@ export default {
       }
       if (this.showConfig) {
         this.findEvent().then(() => {
-          this.getUsers().then(() => {
-            if (this.eventType === 'new') return
+          this.getUsers();
+          if (this.eventType !== 'new') {
             this.getViews()
-          })
+          }
         })
       }
     }

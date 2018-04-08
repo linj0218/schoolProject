@@ -8,7 +8,9 @@
     </div>
     <div class="extendIconsText">
       <template v-for="sys in data.sysList">
-        <span>{{sys.sys}}</span>
+        <el-tooltip effect="dark" :content="sys.sys" placement="bottom">
+          <span>{{sys.sys}}</span>
+        </el-tooltip>
       </template>
     </div>
     <div class="search_box">
@@ -56,8 +58,8 @@
   .extendIcons .iconfont-Trombinoscope{background: #BD644D;}
   .extendIcons .iconfont-E-mail{background: #4D51BD;}
   .extendIcons .line{display: inline-block;width: 1.3px;height: 20px;background: #ccc;margin: 13px 20px;vertical-align: middle;margin-top: 0px;}
-  .extendIconsText{height: 10px;line-height: 10px;margin-top: 4px;}
-  .extendIconsText span{display: inline-block;width: 87px;font-size: 10px;color: #666;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;text-align: center;}
+  // .extendIconsText{height: 10px;line-height: 10px;margin-top: 4px;}
+  .extendIconsText span{display: inline-block;width: 87px;font-size: 12px;color: #666;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;text-align: center;}
   .search_box{width: 360px;height: 46px;position: absolute;right: 0;top: 0;}
   .search_box .iconfont-fangdajing{position: absolute;width: 46px;height: 46px;font-size: 34px;color: #999;left: 10px;}
   .search_box .form-control{height: 100%;border-radius: 46px;padding-left: 56px;color: #999;}

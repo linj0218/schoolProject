@@ -312,7 +312,7 @@
         this.actDateInfo.thisDate = Number(this.$route.query.date)
       }
       this.data.role = getSStorage('userinfo').role;
-      this.data.canEdit = getSStorage('userinfo').role !== 2 || getSStorage('userinfo').calendar_flag === 1;
+      this.data.canEdit = getSStorage('userinfo').role === 0 || getSStorage('userinfo').calendar_flag === 1;
     },
     mounted () {
       if (!this.data.schoolYearInfo.length && this.schoolYearInfo) {
