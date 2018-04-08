@@ -138,11 +138,12 @@
           {imgUrl: '', title: 'Doctor', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'}
         ],
         // 配置弹窗
-        showDialog: false
+        showDialog: false,
+        isFirst: true // 首次加载页面展开当前日期后的所有时间
       }
     },
     mounted () {
-      this.initAppList()
+      this.initAppList();
     },
     methods: {
       init () {
@@ -193,17 +194,25 @@
           if (item.monthValue === this.actDateInfo.thisMonth && item.day === this.actDateInfo.thisDate) {
             this.drawerActIndex = i
           }
-          let tempObj = {}
+          let tempObj = {};
+          // 首次加载数据，展开当前日期往后的所有日期，往后只展开选中日期
+          let openFlg = false;
+          if (this.isFirst) {
+            openFlg = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate}).add(-1, 'day') < this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day});
+          } else {
+            openFlg = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate}).format('YYYY-MM-DD') == this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}).format('YYYY-MM-DD');
+          }
           tempObj = {
             dateStr: this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}).format('YYYY-MM-DD'),
             week: weekMap[Number(i) + 1].substr(0, 3),
             date: item.day,
             month: monthMap[item.monthValue].substr(0, 3),
-            openFlg: this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate}).add(-1, 'day') < this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}),
+            openFlg: openFlg,
             taskList: []
           }
           tempList.push(tempObj)
         })
+        this.isFirst = false; // 首次加载完毕
 
         this.weekList = tempList;
       },
@@ -223,8 +232,15 @@
         }
       },
       afterInit (calendarList, thisDateInfo, actDateInfo) {
-        let actWeekList = arguments[3] || {}
-        this.syncDataFunc(calendarList, thisDateInfo, actDateInfo, actWeekList);
+        // this.calendarList = calendarList
+        // this.thisDateInfo = thisDateInfo
+        // this.actDateInfo = actDateInfo
+        // if (arguments[3]) {
+        //   this.actWeekList = arguments[3]
+        // }
+        // this.createWeekInfo(true); // 传入boolearn：true表示第一次加载
+        // this.init();
+        // this.syncDataFunc(calendarList, thisDateInfo, actDateInfo, actWeekList);
         this.$nextTick(() => {
           this.$refs.calendar.initCalendarFlg();
         })
