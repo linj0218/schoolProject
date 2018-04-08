@@ -645,11 +645,11 @@
       },
       // 图标上传前校验
       beforeAvatarUpload (file) {
-        const isJPG = file.type === 'image/jpeg';
+        const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
 
         if (!isJPG) {
-          this.$refs.alert.showDialog('Uploading image images can only be JPG format!', true);
+          this.$refs.alert.showDialog('Uploading image images can only be JPG or PNG format!', true);
         }
         if (!isLt2M) {
           this.$refs.alert.showDialog('Upload profile picture size can\'t exceed 2MB!');

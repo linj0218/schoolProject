@@ -79,6 +79,8 @@
 
       <banner ref='banner'></banner>
 
+      <alert ref='alert'></alert>
+
     </div>
   </div>
 </template>
@@ -87,12 +89,13 @@
   import headerr from '@/components/header'
   import banner from '@/components/banner'
   import profile from '@/components/profile'
+  import alert from '@/components/alert'
 
-  import {getShortName} from '@/plugins/util'
+  import {getShortName, getSStorage} from '@/plugins/util'
 
   export default {
     components: {
-      headerr, banner, profile
+      headerr, banner, profile, alert
     },
     data () {
       return {
@@ -108,7 +111,7 @@
     },
     mounted () {
       this.data.searchText = this.$route.query.searchText == undefined ? '' : this.$route.query.searchText;
-      this.data.canUpload = this.$config.userinfo.role === 0 || this.$config.userinfo.toolbar_flag === 1; // 上传图标权限
+      this.data.canUpload = getSStorage('userinfo').role === 0 || this.$config.userinfo.toolbar_flag === 1; // 上传图标权限
       this.searchEvent();
     },
     methods: {
@@ -176,11 +179,11 @@
       },
       // 图标上传前校验
       beforeAvatarUpload (file) {
-        const isJPG = file.type === 'image/jpeg';
+        const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
         const isLt2M = file.size / 1024 / 1024 < 2;
 
         if (!isJPG) {
-          this.$refs.alert.showDialog('Uploading image images can only be JPG format!', true);
+          this.$refs.alert.showDialog('Uploading image images can only be JPG or PNG format!', true);
         }
         if (!isLt2M) {
           this.$refs.alert.showDialog('Upload profile picture size can\'t exceed 2MB!');
