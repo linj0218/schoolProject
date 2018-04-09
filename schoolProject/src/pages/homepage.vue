@@ -730,7 +730,7 @@
       // 点击任务列表同步Event详情
       weekTaskListActIndexChanged (o) {
         let item = o.source
-        this.weekTaskListActId = item.id
+        this.weekTaskListActId = this.data.checkActEventId = item.id
         let createTime = item.create_time.split(' ')
         this.taskDetailInfo = {
           title: item.title,
