@@ -1,6 +1,5 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
-// 项目架构没做好，没时间重构，代码很乱
 import Vue from 'vue'
 import Moment from 'moment'
 import { Table, TableColumn, Tooltip, Upload, Select, Option, TimePicker, TimeSelect } from 'element-ui'
@@ -9,9 +8,9 @@ import Axios from '@/http'
 import App from '@/App'
 import store from '@/store/'
 import config from '@/script/config'
+import '@/styles/custom-element-ui.scss' // 覆盖element-ui样式
 
-// 向IE兼容promise
-import 'babel-polyfill'
+import 'babel-polyfill' // 向IE兼容promise
 import 'jquery/dist/jquery.min.js'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'

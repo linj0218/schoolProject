@@ -19,7 +19,7 @@
             <div class="card" v-for='item in data.dataList'>
               <div class="_header">
                 {{item.shortName || '-'}}
-                <div class="logo_box" v-if="!data.canUpload">
+                <div class="logo_box">
                   <img v-if="item.avatar" :src="item.avatar">
                 </div>
                 <el-upload class="logo_box"
@@ -30,7 +30,7 @@
                            :show-file-list="false"
                            :on-success="handleAvatarSuccess"
                            :before-upload="beforeAvatarUpload">
-                  <img v-if="item.avatar" :src="item.avatar">
+                  <!-- <img v-if="item.avatar" :src="item.avatar"> -->
                   <i class="iconfont iconfont-bianji"></i>
                 </el-upload>
               </div>
