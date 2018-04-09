@@ -193,7 +193,7 @@ import drapdown from '@/components/drapdown'
 import alert from '@/components/alert'
 import dateSelect from '@/components/dateSelect'
 import addParticipantModal from '@/components/addParticipantModal'
-import {forEach, formatDate, getSStorage} from '@/plugins/util'
+import {forEach, formatDate, getSStorage} from '@/script/util'
 export default {
   props: {
     showConfig: {

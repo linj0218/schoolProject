@@ -1,17 +1,18 @@
-import {
-  SET_TEST,
-  SET_INITHOLIDAY,
-  SET_SCHOOLYEARINFO
-} from '@/store/mutation-types'
+import * as types from '@/store/mutation-types'
 
 export default {
-  [SET_TEST] (state, str) {
+  [types.SET_TEST] (state, str) {
     state.test = str;
   },
-  [SET_INITHOLIDAY] (state, flg) {
+  [types.SET_INITHOLIDAY] (state, flg) {
     state.initHoliday = flg;
   },
-  [SET_SCHOOLYEARINFO] (state, list) {
+  [types.SET_SCHOOLYEARINFO] (state, list) {
     state.schoolYearInfo = list;
+  },
+
+  // 获取用户信息
+  [types.GET_USERINFO] (state, { userInfo }) {
+    state.userInfo = userInfo;
   }
 }

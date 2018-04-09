@@ -67,7 +67,7 @@
 <script>
 import prompt from '@/components/prompt'
 import alert from '@/components/alert'
-import {getShortName, getSStorage} from '@/plugins/util'
+import {getShortName, getSStorage} from '@/script/util'
 export default {
   props: {
   },

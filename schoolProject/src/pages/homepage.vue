@@ -236,7 +236,7 @@
   import newEvent from '@/components/newEvent'
   import drapdown from '@/components/drapdown'
   import alert from '@/components/alert'
-  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate, getSStorage, getWeekFromTarget} from '@/plugins/util'
+  import {weekMap, forEach, getMonthWeek, getYearWeek, formatDate, getSStorage, getWeekFromTarget} from '@/script/util'
   import {mapState, mapMutations} from 'vuex'
 
   export default {

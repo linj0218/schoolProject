@@ -31,7 +31,7 @@
 
 <script>
   import alert from '@/components/alert'
-  import {getShortName, getSStorage, removeSStorage} from '@/plugins/util'
+  import {getShortName, getSStorage, removeSStorage} from '@/script/util'
   export default {
     components: {
       alert

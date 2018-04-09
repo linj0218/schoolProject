@@ -224,7 +224,7 @@
 import drapdown from '@/components/drapdown'
 import alert from '@/components/alert'
 import prompt from '@/components/prompt'
-import {forEach} from '@/plugins/util'
+import {forEach} from '@/script/util'
 export default {
   props: {
   },

@@ -14,6 +14,12 @@ npm run dev
 ## 指定端口
 PORT=9090 npm run dev
 
+## 升级测试环境
+npm run update_dev.sh
+
+## 升级正式环境
+npm run update_pro.sh
+
 # build for production with minification
 npm run build
 

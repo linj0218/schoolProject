@@ -48,7 +48,7 @@
   import alert from '@/components/alert'
   import prompt from '@/components/prompt'
   import addParticipantModal from '@/components/addParticipantModal'
-  import {forEach} from '@/plugins/util'
+  import {forEach} from '@/script/util'
 
   export default {
     components: {

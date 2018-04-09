@@ -8,7 +8,8 @@
 <script>
   // import $ from 'jquery/dist/jquery.min.js'
   import loading from '@/components/loading'
-  import {browser} from '@/plugins/util'
+  import {browser} from '@/script/util'
+  import { mapGetters } from 'vuex';
   export default{
     components: {
       loading
@@ -19,6 +20,14 @@
           browserVersion: ''
         }
       }
+    },
+    computed: {
+      ...mapGetters({
+        userInfo: 'userInfo'
+      })
+    },
+    created () {
+      this.$store.dispatch('getUserInfo');
     },
     mounted () {
       this.data.browserVersion = browser.versions.gecko ? 'gecko' : ''

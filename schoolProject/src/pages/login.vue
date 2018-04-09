@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {setSStorage} from '@/plugins/util'
+import {setSStorage} from '@/script/util'
 export default {
   components: {
   },

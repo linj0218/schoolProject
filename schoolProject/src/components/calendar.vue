@@ -53,7 +53,7 @@
 </template>
 
 <script>
-  import {monthMap, getMonthWeek, getYearWeek, getWeekFromTarget} from '@/plugins/util'
+  import {monthMap, getMonthWeek, getYearWeek, getWeekFromTarget} from '@/script/util'
   import {mapState, mapMutations} from 'vuex'
   export default {
     props: {

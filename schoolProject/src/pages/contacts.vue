@@ -91,7 +91,8 @@
   import profile from '@/components/profile'
   import alert from '@/components/alert'
 
-  import {getShortName, getSStorage} from '@/plugins/util'
+  import {getShortName, getSStorage} from '@/script/util'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -108,6 +109,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        userInfo: 'userInfo'
+      })
     },
     mounted () {
       this.data.searchText = this.$route.query.searchText == undefined ? '' : this.$route.query.searchText;

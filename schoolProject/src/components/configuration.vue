@@ -234,7 +234,7 @@ import weekSelectModal from '@/components/weekSelectModal'
 import alert from '@/components/alert'
 import prompt from '@/components/prompt'
 import banner from '@/components/banner'
-import {forEach, formatDate, monthMap} from '@/plugins/util'
+import {forEach, formatDate, monthMap} from '@/script/util'
 import {mapMutations} from 'vuex'
 export default {
   props: {

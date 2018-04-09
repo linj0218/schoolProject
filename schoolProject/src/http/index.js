@@ -1,15 +1,13 @@
-import axios from 'axios'
-import qs from 'qs'
-import {getSStorage} from '@/plugins/util'
+import axios from 'axios';
+import qs from 'qs';
+import { getSStorage } from '@/script/util';
+import config from '@/script/config';
 
 // default
-axios.defaults.timeout = 20000
-axios.defaults.withCredentials = true
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
-// axios.defaults.baseURL = 'http://13.75.92.183:8121/HTMS_WeChat/'
-axios.defaults.baseURL = 'http://116.228.73.106:8111/HTMS_WeChat/'
-// axios.defaults.baseURL = 'http://192.168.8.125:8081/HTMS_WeChat/' // 周勇
-// axios.defaults.baseURL = 'http://192.168.8.119:8080/HTMS_WeChat/' // 王俊
+axios.defaults.timeout = 20000; // 超时时间
+axios.defaults.withCredentials = true;
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+axios.defaults.baseURL = config.api_path.base_path;
 
 // request
 axios.interceptors.request.use((config) => {

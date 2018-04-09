@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import {forEach} from '@/plugins/util'
+  import {forEach} from '@/script/util'
   export default {
     props: {
       showPopup: {

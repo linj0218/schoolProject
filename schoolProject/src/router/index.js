@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import {getSStorage} from '@/plugins/util'
+import {getSStorage} from '@/script/util'
 
 const Test = r => require.ensure([], () => r(require('@/pages/test')), 'main')
 const Login = r => require.ensure([], () => r(require('@/pages/login')), 'main')
@@ -16,7 +16,6 @@ const router = new Router({
     {
       path: '/test',
       name: 'test',
-      title: '测试',
       component: Test,
       meta: {
         pageTitle: '测试',
@@ -26,7 +25,6 @@ const router = new Router({
     {
       path: '/login',
       name: 'login',
-      title: '登录',
       component: Login,
       meta: {
         pageTitle: '登录',
@@ -36,7 +34,6 @@ const router = new Router({
     {
       path: '/',
       name: 'index',
-      title: '首页',
       component: Index,
       meta: {
         pageTitle: '首页',
@@ -46,7 +43,6 @@ const router = new Router({
     {
       path: '/homepage',
       name: 'homepage',
-      title: '日历',
       component: Homepage,
       meta: {
         pageTitle: '日历',
@@ -56,7 +52,6 @@ const router = new Router({
     {
       path: '/setting',
       name: 'setting',
-      title: '设置',
       component: Setting,
       meta: {
         pageTitle: '设置',
@@ -66,7 +61,6 @@ const router = new Router({
     {
       path: '/contacts',
       name: 'contacts',
-      title: '通讯录',
       component: Contacts,
       meta: {
         pageTitle: '通讯录',

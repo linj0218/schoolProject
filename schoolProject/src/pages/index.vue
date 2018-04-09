@@ -110,7 +110,7 @@
   import calendar from '@/components/calendar'
   import profile from '@/components/profile'
   import appSetting from '@/components/appSetting'
-  import {weekMap, monthMap, forEach, formatDate} from '@/plugins/util'
+  import {weekMap, monthMap, forEach, formatDate} from '@/script/util'
   export default {
     components: {
       headerr, banner, calendar, profile, appSetting, extendSearch
