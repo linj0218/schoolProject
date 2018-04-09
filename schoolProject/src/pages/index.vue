@@ -67,15 +67,15 @@
                         </el-tooltip>
                       </div>
                       <div>
-                        <el-tooltip effect="dark" :content="task.time" placement="top-start">
+                        <el-tooltip effect="dark" :content="task.time" placement="top-start" :open-delay="1000">
                           <span class="info">{{task.time}}</span>
                         </el-tooltip>
-                        <el-tooltip effect="dark" :content="task.name" placement="top-start">
+                        <el-tooltip effect="dark" :content="task.name" placement="top-start" :open-delay="1000">
                           <span class="info">{{task.name}}</span>
                         </el-tooltip>
                       </div>
                       <div>
-                        <el-tooltip effect="dark" :content="task.classRoom" placement="top-start">
+                        <el-tooltip effect="dark" :content="task.classRoom" placement="top-start" :open-delay="1000">
                           <span>{{task.classRoom}}</span>
                         </el-tooltip>
                       </div>

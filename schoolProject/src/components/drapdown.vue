@@ -15,7 +15,7 @@
           :class='{"isSelected": item.value == inputValue}'
           @click='chooseItem(item)'>
         <a href="javascript:void(0)" :class='[{"background": inputColorType=="background"}, inputColorType=="background" && item.color]'>
-           <el-tooltip class="item" effect="dark" :content="item.name" placement="left">
+           <el-tooltip class="item" effect="dark" :content="item.name" placement="left" :open-delay="1000">
              <span>{{item.name}}</span>
            </el-tooltip>
          <!-- {{item.name}} -->

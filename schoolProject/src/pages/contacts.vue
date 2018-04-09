@@ -34,37 +34,37 @@
                   <i class="iconfont iconfont-bianji"></i>
                 </el-upload>
               </div>
-              <el-tooltip effect="dark" :content="item.nom || '-'" placement="top-start">
+              <el-tooltip effect="dark" :content="item.nom || '-'" placement="top-start" :open-delay="1000">
                 <div class="fullname">
                   <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
                 </div>
               </el-tooltip>
               <div class="form_label">Position(Job Title)</div>
-              <el-tooltip class="item" effect="dark" :content="item.title || '-'" placement="top-start">
+              <el-tooltip class="item" effect="dark" :content="item.title || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(title, index) in item.titleList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.title ? '-' : title}}</span>
                 </div>
               </el-tooltip>
               <div class="form_label">Department</div>
-              <el-tooltip class="item" effect="dark" :content="item.department || '-'" placement="top-start">
+              <el-tooltip class="item" effect="dark" :content="item.department || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(department, index) in item.departmentList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.department ? '-' : department}}</span>
                 </div>
               </el-tooltip>
               <div class="form_label">Office No</div>
-              <el-tooltip class="item" effect="dark" :content="item.ext || '-'" placement="top-start">
+              <el-tooltip class="item" effect="dark" :content="item.ext || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(ext, index) in item.extList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.ext ? '-' : ext}}</span>
                 </div>
               </el-tooltip>
               <div class="form_label">Telephone No</div>
-              <el-tooltip class="item" effect="dark" :content="item.mobile || '-'" placement="top-start">
+              <el-tooltip class="item" effect="dark" :content="item.mobile || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(mobile, index) in item.mobileList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.mobile ? '-' : mobile}}</span>
                 </div>
               </el-tooltip>
               <div class="form_label">E-mail</div>
-              <el-tooltip class="item" effect="dark" :content="item.email || '-'" placement="top-start">
+              <el-tooltip class="item" effect="dark" :content="item.email || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(email, index) in item.emailList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.email ? '-' : email}}</span>
                 </div>

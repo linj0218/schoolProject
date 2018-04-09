@@ -133,7 +133,7 @@
                     <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
                       <span class="icon icon_members"></span>
 
-                      <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="top">
+                      <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="top" :open-delay="1000">
                         <span>{{item.group_alias_name || item.group_name}}</span>
                       </el-tooltip>
                     </button>
@@ -142,7 +142,7 @@
                     <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 0}'>
                       <span class="icon icon_member"></span>
 
-                      <el-tooltip class="item" effect="dark" :content="item.nom" placement="top">
+                      <el-tooltip class="item" effect="dark" :content="item.nom" placement="top" :open-delay="1000">
                         <span>{{item.nom}}</span>
                       </el-tooltip>
                     </button>
@@ -154,7 +154,7 @@
                     <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
                       <span class="icon icon_members"></span>
 
-                      <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="top">
+                      <el-tooltip class="item" effect="dark" :content="item.group_alias_name || item.group_name" placement="top" :open-delay="1000">
                         <span>{{item.group_alias_name || item.group_name}}</span>
                       </el-tooltip>
                     </button>
