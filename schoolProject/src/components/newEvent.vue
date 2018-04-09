@@ -149,7 +149,7 @@
                     <span class="action_icon icon_delete" @click='deleteParticipant(item, index)'></span>
                   </div>
                 </div>
-                <button type="button" class="btn btn-primary" @click='()=>{this.data.showAddParticipantPopup=true}'>
+                <button type="button" class="btn btn-primary" @click='()=>{this.data.showAddParticipantPopup=true}' :disabled="!loadOver">
                   <span class="icon_btn_add"></span> Participants
                 </button>
               </div>
@@ -264,6 +264,7 @@ export default {
         endTimeRequired: false,
         check: false
       },
+      loadOver: false,
       copyData: {}
     }
   },
@@ -494,6 +495,7 @@ export default {
     },
     // 获取users
     getUsers () {
+      this.loadOver = false;
       let self = this
       return this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
         data: JSON.stringify({flag: 1})
@@ -509,7 +511,8 @@ export default {
             show: true
           })
         })
-        self.data.allParticipants = self.data.allParticipants.concat(userList)
+        self.data.allParticipants = self.data.allParticipants.concat(userList);
+        this.loadOver = true;
         // console.log(self.data.allParticipants.length)
         return res
       })
