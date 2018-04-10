@@ -4,7 +4,7 @@ import { getSStorage } from '@/script/util';
 import config from '@/script/config';
 
 // default
-axios.defaults.timeout = 20000; // 超时时间
+axios.defaults.timeout = 120000; // 超时时间
 axios.defaults.withCredentials = true;
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
 axios.defaults.baseURL = config.api_path.base_path;

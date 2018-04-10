@@ -28,7 +28,7 @@
           sysList: [ {icon: 'iconfont-QPDirectory', sys: 'QP Directory', url: 'http://auth.lfshanghai.com/files/Phone%20QP.pdf?'},
                      {icon: 'iconfont-PGDirectory', sys: 'PG Directory', url: 'http://auth.lfshanghai.com/files/Phone%20PG.pdf?c=pudong'},
                      {icon: 'iconfont-OneDrive', sys: 'OneDrive', url: 'https://lfs-my.sharepoint.cn/'},
-                     {icon: 'iconfont-Trombinoscope', sys: 'Trombinoscope', url: ''},
+                     // {icon: 'iconfont-Trombinoscope', sys: 'Trombinoscope', url: ''},
                      {icon: 'iconfont-E-mail', sys: 'E-mail', url: 'https://partner.outlook.cn'} ],
           searchText: ''
         }
