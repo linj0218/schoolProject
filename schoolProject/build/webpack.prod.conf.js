@@ -10,9 +10,11 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
-const env = process.env.NODE_ENV === 'testing'
+// 自定义环境变量
+var env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : config.build.env
+env['PROJECT_BUILD_ENV'] = `"${process.env.PROJECT_BUILD_ENV}"`;
 
 const webpackConfig = merge(baseWebpackConfig, {
   module: {

@@ -61,7 +61,7 @@ export default {
       this.$http.post('/loginCtl/user/login', {
         data: JSON.stringify(params)
       }).then((res) => {
-        if (res.success) {
+        if (res.result === 'SUCCESS') {
           let resData = res.data;
           if (resData.permission_title === 'Admin') {
             resData.role = 0;
@@ -72,7 +72,7 @@ export default {
           }
           localStorage.setItem('USERNAME', this.userName)
           setSStorage('userinfo', resData);
-          this.$config.userinfo = resData;
+          this.$store.dispatch('getUserInfo');
           self.$router.push({ path: '/' })
         } else {
           this.errorText = this.errorType[1]

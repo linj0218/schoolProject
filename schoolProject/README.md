@@ -11,17 +11,20 @@ npm install
 # serve with hot reload at localhost:8080
 npm run dev
 
-## 指定端口
+## 指定端口启动
 PORT=9090 npm run dev
 
 ## 升级测试环境
 npm run update_dev.sh
 
 ## 升级正式环境
-npm run update_pro.sh
+npm run update_prod.sh
 
-# build for production with minification
+# 打包测试环境
 npm run build
+
+# 打包生产环境
+npm run build-prod
 
 # build for production and view the bundle analyzer report
 npm run build --report

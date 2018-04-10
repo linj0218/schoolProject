@@ -115,7 +115,7 @@
     },
     mounted () {
       this.data.searchText = this.$route.query.searchText == undefined ? '' : this.$route.query.searchText;
-      this.data.canUpload = getSStorage('userinfo').role === 0 || this.$config.userinfo.toolbar_flag === 1; // 上传图标权限
+      this.data.canUpload = getSStorage('userinfo').role === 0 || getSStorage('userinfo').toolbar_flag === 1; // 上传图标权限
       this.searchEvent();
     },
     methods: {

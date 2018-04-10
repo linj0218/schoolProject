@@ -110,6 +110,8 @@
   import calendar from '@/components/calendar'
   import profile from '@/components/profile'
   import appSetting from '@/components/appSetting'
+
+  import { mapGetters } from 'vuex'
   import {weekMap, monthMap, forEach, formatDate} from '@/script/util'
   export default {
     components: {
@@ -141,6 +143,11 @@
         showDialog: false,
         isFirst: true // 首次加载页面展开当前日期后的所有时间
       }
+    },
+    computed: {
+      ...mapGetters({
+        userInfo: 'userInfo'
+      })
     },
     mounted () {
       this.initAppList();

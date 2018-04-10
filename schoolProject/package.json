@@ -7,12 +7,13 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "npm run dev",
-    "build": "node build/build.js",
+    "build": "cross-env PROJECT_BUILD_ENV=test node build/build.js",
+    "build-prod": "cross-env PROJECT_BUILD_ENV=production node build/build.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "e2e": "node test/e2e/runner.js",
     "test": "npm run unit && npm run e2e",
     "update_dev.sh": "sh update_dev.sh",
-    "update_pro.sh": "sh update_pro.sh",
+    "update_prod.sh": "sh update_prod.sh",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
