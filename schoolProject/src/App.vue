@@ -23,11 +23,13 @@
     },
     computed: {
       ...mapGetters({
-        userInfo: 'userInfo'
+        userInfo: 'userInfo',
+        lang: 'lang'
       })
     },
     created () {
       this.$store.dispatch('getUserInfo');
+      this.$store.dispatch('getLanguage');
     },
     mounted () {
       this.data.browserVersion = browser.versions.gecko ? 'gecko' : ''

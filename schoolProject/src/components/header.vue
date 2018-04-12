@@ -14,12 +14,12 @@
           <li @click='logout()'><span class="icon3"></span>Log out</li>
         </ul>
       </div>
-      <div class="icon language" :class="language">
+      <div class="icon language" :class="lang">
         <ul class="drop_down">
           <div class="icon_other2"></div>
-          <li class="english" :class="language=='english'?'act':''" @click="changeLanguage('english')"><i></i></span>English</li>
-          <li class="french" :class="language=='french'?'act':''" @click="changeLanguage('french')"><i></i>French</li>
-          <li class="china" :class="language=='china'?'act':''" @click="changeLanguage('china')"><i></i>简体中文</li>
+          <li class="english" :class="lang=='en-US'?'act':''" @click="changeLanguage('en-US')"><i></i></span>English</li>
+          <li class="french" :class="lang=='fr-FR'?'act':''" @click="changeLanguage('fr-FR')"><i></i>French</li>
+          <li class="china" :class="lang=='zh-CH'?'act':''" @click="changeLanguage('zh-CH')"><i></i>简体中文</li>
         </ul>
       </div>
     </div>
@@ -32,6 +32,7 @@
 <script>
   import alert from '@/components/alert'
   import {getShortName, getSStorage, removeSStorage} from '@/script/util'
+  import { mapGetters } from 'vuex';
   export default {
     components: {
       alert
@@ -40,7 +41,6 @@
     },
     data () {
       return {
-        language: 'english',
         userName: '',
         userRole: 0, // 用户角色
         permission: '',
@@ -48,6 +48,11 @@
         showConfig: false,
         showAppSetting: false
       }
+    },
+    computed: {
+      ...mapGetters({
+        lang: 'lang'
+      })
     },
     mounted () {
       this.initUserInfo()
@@ -72,7 +77,9 @@
         }
       },
       changeLanguage (lang) {
-        this.language = lang
+        localStorage.setItem('LANGUAGE', lang);
+        this.$store.dispatch('getLanguage');
+        this.$i18n.locale = lang;
       },
       profileToggle () {
         this.$emit('profileToggle', true)
@@ -130,9 +137,9 @@
       .icon.head_portrait{width: 60px;height: 60px;color: #4E81BD;text-align: center;line-height: 60px;font-size: 28px;}
       .icon.head_portrait:hover .drop_down{left: -60px;top: 60px;}
       .icon.language{width: 50px;height: 50px;}
-      .icon.language.english{background: #fff url('../images/english1.png') 0 0 / 100% 100% no-repeat;}
-      .icon.language.french{background: #fff url('../images/french1.png') 0 0 / 100% 100% no-repeat;}
-      .icon.language.china{background: #fff url('../images/china1.png') 0 0 / 100% 100% no-repeat;}
+      .icon.language.en-US{background: #fff url('../images/english1.png') 0 0 / 100% 100% no-repeat;}
+      .icon.language.fr-FR{background: #fff url('../images/french1.png') 0 0 / 100% 100% no-repeat;}
+      .icon.language.zh-CH{background: #fff url('../images/china1.png') 0 0 / 100% 100% no-repeat;}
       .icon.language:hover .drop_down{right: 10px;top: 50px;}
     }
   }

@@ -7,6 +7,8 @@ import router from '@/router'
 import Axios from '@/http'
 import App from '@/App'
 import store from '@/store/'
+import i18n from '@/lang'
+
 import config from '@/script/config'
 import '@/styles/custom-element-ui.scss' // 覆盖element-ui样式
 
@@ -33,6 +35,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   template: '<App/>',
   components: { App }
 })

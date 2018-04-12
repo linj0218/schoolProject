@@ -9,6 +9,7 @@ Vue.use(Vuex)
 const state = {
   test: null,
   userInfo: {}, // 用户信息
+  lang: '', // 多语言
   profileStatus: 0, // Profile状态 0 关闭 1 开启
   appSettingStatus: 0, // App Setting状态 0 关闭 1 开启
   configStatus: 0, // Config状态 0 关闭 1 开启

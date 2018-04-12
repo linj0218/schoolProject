@@ -85,7 +85,7 @@
                 </div>
               </div>
             </div>
-            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink"><i></i>Show Details</router-link>
+            <router-link :to='{path: "/homepage"}' tag='a' class="homePageLink"><i></i>{{ $t("Show Details") }}</router-link>
           </div>
         </div>
       </div>

@@ -6,3 +6,9 @@ export const getUserInfo = ({ commit }) => {
   const userInfo = getSStorage('userinfo');
   commit(types.GET_USERINFO, { userInfo });
 }
+
+// 多语言
+export const getLanguage = ({ commit }) => {
+  const lang = localStorage.getItem('LANGUAGE') || 'fr-FR';
+  commit(types.GET_LANGUAGE, { lang });
+}
