@@ -4,10 +4,12 @@ export default {
   [types.SET_TEST] (state, str) {
     state.test = str;
   },
-  [types.SET_INITHOLIDAY] (state, flg) {
+  // 节假日初始化标识
+  [types.GET_INITHOLIDAY] (state, flg) {
     state.initHoliday = flg;
   },
-  [types.SET_SCHOOLYEARINFO] (state, list) {
+  // 学期信息list
+  [types.GET_SCHOOLYEARINFO] (state, list) {
     state.schoolYearInfo = list;
   },
 

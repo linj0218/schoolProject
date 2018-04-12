@@ -54,7 +54,7 @@
 
 <script>
   import {monthMap, getMonthWeek, getYearWeek, getWeekFromTarget} from '@/script/util'
-  import {mapState, mapMutations} from 'vuex'
+  import { mapGetters } from 'vuex'
   export default {
     props: {
       showMonthInfo: {
@@ -94,15 +94,19 @@
       }
     },
     computed: {
-      ...mapState(['initHoliday', 'schoolYearInfo'])
+      ...mapGetters({
+        initHoliday: 'initHoliday',
+        schoolYearInfo: 'schoolYearInfo'
+      })
     },
     created () {
       this.actDateInfo = this.inputActDateInfo
       if (!this.initHoliday) {
-        this.SET_INITHOLIDAY(true);
-        this.getHoliday()
+        this.$store.dispatch('getInitHoliday');
+        this.getHoliday().then(() => {
+          this.createCalendar();
+        })
       } else if (!this.data.schoolYearInfo && this.schoolYearInfo) {
-        // this.data.schoolYearInfo = this.schoolYearInfo;
         let actDate = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate})
         for (let i = 0; i < this.schoolYearInfo.length; i++) {
           let item = this.schoolYearInfo[i];
@@ -144,11 +148,10 @@
       }
     },
     methods: {
-      ...mapMutations(['SET_INITHOLIDAY', 'SET_SCHOOLYEARINFO']),
       getHoliday () {
         let params = {event_id: 0};
         return this.$http.post('/sharedcalendarSettingCtl/event/initDatas', params).then((res) => {
-          this.SET_SCHOOLYEARINFO(res.data.schoolYearList);
+          this.$store.dispatch('getSchoolYearInfo', res.data.schoolYearList)
           return res;
         })
       },

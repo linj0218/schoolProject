@@ -10,12 +10,8 @@ const state = {
   test: null,
   userInfo: {}, // 用户信息
   lang: '', // 多语言
-  profileStatus: 0, // Profile状态 0 关闭 1 开启
-  appSettingStatus: 0, // App Setting状态 0 关闭 1 开启
-  configStatus: 0, // Config状态 0 关闭 1 开启
-  eventStatus: 0, // Event状态 0 关闭 1 开启
-  initHoliday: false, // 是否初始化
-  schoolYearInfo: null // 学期信息
+  initHoliday: false, // 节假日是否初始化
+  schoolYearInfo: [] // 学期信息list
 }
 
 const store = new Vuex.Store({
