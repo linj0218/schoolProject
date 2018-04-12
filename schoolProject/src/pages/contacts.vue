@@ -91,7 +91,7 @@
   import profile from '@/components/profile'
   import alert from '@/components/alert'
 
-  import {getShortName, getSStorage} from '@/script/util'
+  import {getShortName} from '@/script/util'
   import { mapGetters } from 'vuex'
 
   export default {
@@ -115,7 +115,7 @@
     },
     mounted () {
       this.data.searchText = this.$route.query.searchText == undefined ? '' : this.$route.query.searchText;
-      this.data.canUpload = getSStorage('userinfo').role === 0 || getSStorage('userinfo').toolbar_flag === 1; // 上传图标权限
+      this.data.canUpload = this.userInfo.role === 0 || this.userInfo.toolbar_flag === 1; // 上传图标权限
       this.searchEvent();
     },
     methods: {
