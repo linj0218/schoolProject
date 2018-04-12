@@ -1,7 +1,7 @@
 <template>
   <div class="crumbs">
     <template v-for='nav in data.crumbs'>
-      <router-link class="nav" :to="{ path: nav.path }" tag='a'><i class="icon_home" v-if='nav.isHome'></i>{{nav.name}}</router-link>
+      <router-link class="nav" :to="{ path: nav.path }" tag='a'><i class="icon_home" v-if='nav.isHome'></i>{{ $t(nav.name) }}</router-link>
     </template>
   </div>
 </template>

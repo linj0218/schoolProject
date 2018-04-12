@@ -25,9 +25,8 @@ axios.interceptors.request.use((config) => {
     }
     if (config.url.indexOf('/login') === -1) {
       let userinfo = getSStorage('userinfo')
-      if (userinfo !== null) {
-        param.userId = userinfo.id
-      }
+      param.userId = !userinfo ? 0 : userinfo.id;
+      param.lang = localStorage.getItem('LANGUAGE') || 'en-US'; // 多语言
     }
     config.data = qs.stringify({data: JSON.stringify(param)})
   }

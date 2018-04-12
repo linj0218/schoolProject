@@ -7,7 +7,7 @@
               @blur='()=>{this.$emit("buttonBlur")}' >
       </button>
       {{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}
-      <div class="back_to_today" v-if='showABWeek' @click='backToToday()'>Today</div>
+      <div class="back_to_today" v-if='showABWeek' @click='backToToday()'>{{ $t("Today") }}</div>
       <button class="nav_right" @click='changeActMonth("next_month")'
               @focus='()=>{this.$emit("buttonFocus")}'
               @blur='()=>{this.$emit("buttonBlur")}' >
@@ -25,7 +25,7 @@
         <div class="table_right">
           <!-- 星期 -->
           <div class="li li_head">
-            <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+            <div>{{ $t("Mon") }}</div><div>{{ $t("Tue") }}</div><div>{{ $t("Wed") }}</div><div>{{ $t("Thu") }}</div><div>{{ $t("Fri") }}</div><div>{{ $t("Sat") }}</div><div>{{ $t("Sun") }}</div>
             <div v-if='selectModel==="week"'></div>
           </div>
           <!-- 日期 -->

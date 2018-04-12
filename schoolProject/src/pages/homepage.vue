@@ -11,7 +11,7 @@
       <crumbs></crumbs>
       <div class="page_body_box clearfix">
         <div class="part_1">
-          <div class="title">Calendar</div>
+          <div class="title">{{ $t("Calendar") }}</div>
 
           <!-- 日历组件 -->
           <calendar :inputActDateInfo='actDateInfo'
@@ -21,7 +21,7 @@
                     @syncDataFunc='syncDataFunc'>
           </calendar>
 
-          <div class="title bg_color">Places</div>
+          <div class="title bg_color">{{ $t("Places") }}</div>
           <div class="places">
             <button type="button" class="btn btn-block"
                     v-for='place in placesList'
@@ -37,12 +37,12 @@
               <button @click='switchWeek("prev")'></button>
               <button @click='switchWeek("next")'></button>
               <span class="week_info">
-                Week: <span class="week_num">{{getYearWeek()}}</span>
+                {{ $t("Week") }}: <span class="week_num">{{getYearWeek()}}</span>
               </span>
               <span class="week_ab" :class='getABHWeek()'>{{getABHWeek()}}</span>
             </div>
             <div class="filter_condition">
-              <span>Category:</span>
+              <span>{{ $t("Category") }}:</span>
               <div class="select">
 
                 <!-- 下拉组件 -->
@@ -55,7 +55,7 @@
                 </drapdown>
 
               </div>
-              <span v-if='data.canEdit'>See as:</span>
+              <span v-if='data.canEdit'>{{ $t("See as") }}:</span>
               <div class="select" v-if='data.canEdit'>
 
                 <!-- 下拉组件 -->
@@ -67,7 +67,7 @@
 
               </div>
               <button type="button" class="btn btn-primary" @click='newEvent()' v-if='data.canEdit'>
-                <span class="icon_btn_add"></span> New Event
+                <span class="icon_btn_add"></span> {{ $t("New Event") }}
               </button>
             </div>
           </div>
@@ -76,7 +76,7 @@
               <div class="th" v-for='th in weekTableHead'
                               :class='{"act": th.isActDate, "hasEvent": th.hasEvent}'
                               @click='changeActDateFromWeekview(th)'>
-                <div class="week_name">{{th.week}}</div>
+                <div class="week_name">{{ $t(th.week) }}</div>
                 <div class="month_num">{{th.date}}</div>
               </div>
             </div>
@@ -127,7 +127,7 @@
           <div class="task_detail" >
             <div v-if='weekTaskListActId!=null'>
               <div class="tast_detail_right">
-                <div class="title">Participants</div>
+                <div class="title">{{ $t("Participants") }}</div>
                 <div class="scroll_box">
                   <template v-for='(item, index) in eventsUserGroupList'>
                     <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
@@ -148,7 +148,7 @@
                     </button>
                   </template>
                 </div>
-                <div class="title margin_top" v-if='data.canEdit'>Viewed by</div>
+                <div class="title margin_top" v-if='data.canEdit'>{{ $t("Viewed by") }}</div>
                 <div class="scroll_box" v-if='data.canEdit'>
                   <template v-for='(item, index) in eventsGroupList'>
                     <button type="button" class="btn btn-block" :class='{act: item.operation_flag == 1}'>
@@ -163,22 +163,22 @@
               </div>
               <div class="tast_detail_left">
                 <div class="item">
-                  <span>Title:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
+                  <span>{{ $t("Title") }}:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
                 </div>
                 <div class="item">
-                  <span>Categroy:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
+                  <span>{{ $t("Category") }}:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
                 </div>
                 <div class="item">
-                  <span>Time:</span><div>{{taskDetailInfo.start}} - {{taskDetailInfo.end}}</div>
+                  <span>{{ $t("Time") }}:</span><div>{{taskDetailInfo.start}} - {{taskDetailInfo.end}}</div>
                 </div>
                 <div class="item">
-                  <span>Place:</span><div>{{taskDetailInfo.place}} - {{taskDetailInfo.room}}</div>
+                  <span>{{ $t("Place") }}:</span><div>{{taskDetailInfo.place}} - {{taskDetailInfo.room}}</div>
                 </div>
                 <div class="item">
-                  <span>Description:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
+                  <span>{{ $t("Description") }}:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
                 </div>
                 <div class="item" v-if='taskDetailInfo.fileList.length'>
-                  <span>Attachment:</span>
+                  <span>{{ $t("Attachment") }}:</span>
                   <div>
                     <template v-for='file in taskDetailInfo.fileList'>
                       <a class="link_download" download :href="$config.api_path.img_path+file.file_url">{{file.file_name}}<i class="icon_attachment"></i></a><br/>
@@ -188,18 +188,19 @@
               </div>
               <div class="edit_btn">
                 <button type="button" class="btn btn-primary" @click='editEvent()' v-if='data.canEdit'>
-                  <span class="icon icon_btn_edit"></span> Edit
+                  <span class="icon icon_btn_edit"></span> {{ $t("Edit") }}
                 </button>
                 <button type="button" class="btn btn-danger" @click='deleteEvent()' v-if='data.canEdit'>
-                  <span class="icon icon_btn_del"></span> Delete
+                  <span class="icon icon_btn_del"></span> {{ $t("Delete") }}
                 </button>
                 <div class="creater_info">
-                  <div class="name">Creater</div>
+                  <div class="name">{{ $t("Creater") }}</div>
                   <div>{{taskDetailInfo.creater}}</div>
                   <div>{{taskDetailInfo.create_time}}</div>
                 </div>
               </div>
             </div>
+            <div class="empty" v-else>{{ $t("no event") }}</div>
           </div>
         </div>
       </div>
@@ -617,7 +618,7 @@
       formatActDateInfoLabel () {
         let actDate = [this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-')
         let week = new Date(actDate).getDay()
-        this.data.actDateInfoLabel = formatDate(actDate, 'yyyy-mm-dd') + ', ' + weekMap[week].substr(0, 3)
+        this.data.actDateInfoLabel = formatDate(actDate, 'yyyy-mm-dd') + ', ' + this.$t(weekMap[week].substr(0, 3))
       },
       // 周视图隐藏空行
       showli (li) {
@@ -969,7 +970,6 @@
       .task_title{
         float: left;width: 323px;height: 100%;overflow-y: auto;
         &::-webkit-scrollbar {width: 0;height: 0;}
-        &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
         .act_date_info{text-align: center;padding: 10px 0;font-size: 16px;}
         .li{
           line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #333;font-size: 14px;position: relative;
@@ -982,7 +982,7 @@
       }
       .task_detail{
         overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;
-        &:empty:after{content: 'no event';padding: 20px;display: block;font-size: 18px;color: #333;}
+        .empty{padding: 20px;font-size: 18px;color: #333;}
         .tast_detail_left{
           overflow: hidden;padding: 20px 0;height: 100%;
           .item{
