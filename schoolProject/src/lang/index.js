@@ -13,6 +13,6 @@ const messages = {
 }
 
 export default new VueI18n({
-  locale: localStorage.getItem('LANGUAGE') || 'fr-FR',
+  locale: localStorage.getItem('LANGUAGE') || 'en-US',
   messages
 })

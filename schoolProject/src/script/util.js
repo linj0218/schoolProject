@@ -151,8 +151,10 @@ export const getShortName = (str) => {
   let shortName = '';
   if (name.length > 1) {
     shortName = [name[0].substr(0, 1).toUpperCase(), name[1].substr(0, 1).toUpperCase()].join('')
-  } else {
+  } else if (name.length === 0) {
     shortName = name[0].substr(0, 1).toUpperCase()
+  } else {
+    shortName = '-'
   }
   return shortName;
 }
