@@ -3,8 +3,8 @@
     <div class="config_bg" @click='closeConfig()'></div>
     <div class="config_body">
       <div class="title">
-        <span class="icon_back" @click='closeConfig()'></span>{{eventType=="new"?"New":"Edit"}} event
-        <span v-if="data.requiredFlg" style="color:#f56c6c;font-size:18px;margin-left: 20px;">Please enter the required fields</span>
+        <span class="icon_back" @click='closeConfig()'></span> {{eventTitle}}
+        <span v-if="data.requiredFlg" style="color:#f56c6c;font-size:18px;margin-left: 20px;">{{ $t("Please enter the required fields") }}</span>
       </div>
       <div class="content">
 
@@ -18,7 +18,7 @@
         <div>
           <div class="left" :class="{'request_check': data.check}">
             <div>
-              <span class="lab">Title</span>
+              <span class="lab">{{ $t("Title") }}</span>
               <div class="name_value">
                 <input class="form-control" type="text" name="" v-model='data.title' :class='{"noInput": !!data.titleRequired}'>
               </div>
@@ -26,12 +26,12 @@
             <div class="all_day">
               <div class="checkbox">
                 <label :class='{"checked": data.day_flag}'>
-                  <input type="checkbox" v-model='data.day_flag'> All day
+                  <input type="checkbox" v-model='data.day_flag'> {{ $t("All day") }}
                 </label>
               </div>
             </div>
             <div>
-              <span class="lab">Category</span>
+              <span class="lab">{{ $t("Category") }}</span>
               <div class="name_value flex">
                 <drapdown :input-value='data.category_id'
                           :input-name='data.categoryName'
@@ -44,7 +44,7 @@
               </div>
             </div>
             <div>
-              <span class="lab">Place</span>
+              <span class="lab">{{ $t("Place") }}</span>
               <div class="name_value flex">
                 <drapdown :input-value='data.place_id'
                           :input-name='data.placeName'
@@ -61,7 +61,7 @@
               </div>
             </div>
             <div>
-              <span class="lab">Start</span>
+              <span class="lab">{{ $t("Start") }}</span>
               <div class="name_value flex">
                 <date-select :input-value='data.start_date'
                              :show-icon='false'
@@ -89,7 +89,7 @@
               </div>
             </div>
             <div>
-              <span class="lab">End</span>
+              <span class="lab">{{ $t("End") }}</span>
               <div class="name_value flex">
                 <date-select :input-value='data.end_date'
                              :show-icon='false'
@@ -117,13 +117,13 @@
               </div>
             </div>
             <div>
-              <span class="lab">Description</span>
+              <span class="lab">{{ $t("Description") }}</span>
               <div class="name_value">
                 <textarea class="form-control textarea" v-model='data.description'></textarea>
               </div>
             </div>
             <div>
-              <span class="lab">Attachment</span>
+              <span class="lab">{{ $t("Attachment") }}</span>
               <div class="name_value" style="background: #f5f5f5;border: 1px solid #ccc;border-radius: 4px;height: 150px;position: relative;">
                 <el-upload class="upload-demo"
                           :action="actionUrl"
@@ -133,14 +133,14 @@
                           :on-success="handleAvatarSuccess"
                           :on-remove='handleRemove'
                           :file-list="data.fileList">
-                  <a class="upload_a" v-show='data.fileList.length < 3'><i class="iconfont iconfont-shangchuan"></i>Upload</a>
+                  <a class="upload_a" v-show='data.fileList.length < 3'><i class="iconfont iconfont-shangchuan"></i>{{ $t("Upload") }}</a>
                 </el-upload>
               </div>
             </div>
           </div>
           <div class="right">
             <div>
-              <span class="lab">Participants</span>
+              <span class="lab">{{ $t("Participants") }}</span>
               <div class="participants">
                 <div style="height: 100%;overflow: auto;">
                   <div class="li" v-for='(item, index) in data.participants'>
@@ -150,17 +150,17 @@
                   </div>
                 </div>
                 <button type="button" class="btn btn-primary" @click='()=>{this.data.showAddParticipantPopup=true}' :disabled="!loadOver">
-                  <span class="icon_btn_add"></span> Participants
+                  <span class="icon_btn_add"></span> {{ $t("Participants") }}
                 </button>
               </div>
             </div>
             <div>
-              <span class="lab">Viewed by</span>
+              <span class="lab">{{ $t("Viewed by") }}</span>
               <div class="viewed_by">
                 <div class="check_all">
                   <div class="checkbox">
                     <label :class='{"checked": data.viewedAll}'>
-                      <input @click='checkAllChange()' type="checkbox" v-model='data.viewedAll'> All Employees
+                      <input @click='checkAllChange()' type="checkbox" v-model='data.viewedAll'> {{ $t("All Employees") }}
                     </label>
                   </div>
                 </div>
@@ -177,9 +177,9 @@
         </div>
       </div>
       <div class="btns">
-        <button type="button" class="btn btn-primary" @click='saveAndClose()'>Save</button>
-        <button type="button" class="btn btn-danger" v-show='eventType=="new"' @click='saveAndContinue()'>Save and continue</button>
-        <button type="button" class="btn cancel" @click='closeConfig()'>Cancel</button>
+        <button type="button" class="btn btn-primary" @click='saveAndClose()'>{{ $t("Save") }}</button>
+        <button type="button" class="btn btn-danger" v-show='eventType=="new"' @click='saveAndContinue()'>{{ $t("Save and continue") }}</button>
+        <button type="button" class="btn cancel" @click='closeConfig()'>{{ $t("Cancel") }}</button>
       </div>
     </div>
 
@@ -264,6 +264,7 @@ export default {
         endTimeRequired: false,
         check: false
       },
+      eventTitle: '',
       loadOver: false,
       copyData: {}
     }
@@ -312,6 +313,7 @@ export default {
         this.data = JSON.parse(JSON.stringify(this.copyData))
       }
       if (this.showConfig) {
+        this.eventTitle = this.$t((this.eventType === 'new' ? 'New' : 'Edit') + ' event');
         this.findEvent().then(() => {
           this.getUsers();
           if (this.eventType !== 'new') {

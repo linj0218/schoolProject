@@ -3,7 +3,7 @@
     <div class="popup_bg" @click='closePopup()'></div>
     <div class="popup_content">
       <div class="popup_header">
-        Add participants
+        {{ $t("Add participants") }}
         <span class="icon_close" @click='closePopup()'></span>
       </div>
       <div class="popup_body">
@@ -11,7 +11,7 @@
           <div class="left">
             <div class="search_box">
               <div>
-                <input type="text" class="form-control" placeholder="Search staff"
+                <input type="text" class="form-control" :placeholder='$t("Search staff")'
                        v-model='searchValue'
                        @keyup='formSearch()'>
               </div>
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div class="popup_footer">
-        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>{{ $t("Confirm") }}</button>
       </div>
     </div>
   </div>
