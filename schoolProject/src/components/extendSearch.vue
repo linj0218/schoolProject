@@ -8,14 +8,14 @@
     </div>
     <div class="extendIconsText">
       <template v-for="sys in data.sysList">
-        <el-tooltip effect="dark" :content="sys.sys" placement="bottom">
-          <span>{{sys.sys}}</span>
+        <el-tooltip effect="dark" :content="$t(sys.sys)" placement="bottom">
+          <span>{{ $t(sys.sys) }}</span>
         </el-tooltip>
       </template>
     </div>
     <div class="search_box">
       <i class="iconfont iconfont-fangdajing"></i>
-      <input type="text" class="form-control" v-model='data.searchText' placeholder="Search" @keyup.enter='searchEvent()'>
+      <input type="text" class="form-control" v-model='data.searchText' :placeholder='$t("Search")' @keyup.enter='searchEvent()'>
     </div>
   </div>
 </template>

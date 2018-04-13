@@ -15,8 +15,8 @@
       </div>
 
       <div class="popup_footer">
-        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
-        <button type="button" class="btn cancel" @click='cancel()'>Cancel</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>{{ $t("Confirm") }}</button>
+        <button type="button" class="btn cancel" @click='cancel()'>{{ $t("Cancel") }}</button>
       </div>
     </div>
   </div>

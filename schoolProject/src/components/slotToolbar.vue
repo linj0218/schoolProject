@@ -2,14 +2,14 @@
   <div class="body" v-cloak>
 
     <div class="nav_tab">
-      <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>Power Users</div></div>
+      <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>{{ $t("Power Users") }}</div></div>
     </div>
     <div class="nav_body">
       <div class="_body">
         <!-- Groups -->
         <div class="nav_content" v-show='data.tab==0' style="padding: 0;text-align: left;">
           <div class="member_box">
-            <span class="lab">Power Users:</span>
+            <span class="lab">{{ $t("Power Users") }}:</span>
             <div class="member_value">
               <div class="li" v-for='(item, index) in data.users'>
                 {{item.name}}
@@ -21,7 +21,7 @@
             <span class="lab"></span>
             <div class="name_value" style="text-align: right;">
               <button type="button" class="btn btn-primary" @click='openAddParticipantModal()'>
-                <i class="iconfont iconfont-jia"></i> New Users
+                <i class="iconfont iconfont-jia"></i> {{ $t("New Users") }}
               </button>
             </div>
           </div>

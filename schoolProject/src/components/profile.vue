@@ -3,7 +3,7 @@
     <div class="config_bg" @click='closeProfile()'></div>
     <div class="config_body">
       <div class="title">
-        <span class="icon_back" @click='closeProfile()'></span>Profile
+        <span class="icon_back" @click='closeProfile()'></span>{{ $t("Profile") }}
       </div>
       <div class="content">
         <div class="short_name">
@@ -20,19 +20,19 @@
           </el-upload> -->
         </div>
         <div class="user_info">
-          <span class="label_key">Name:</span>
+          <span class="label_key">{{ $t("Name") }}:</span>
           <div class="label_value">{{data.nom||'-'}}</div>
         </div>
         <div class="user_info">
-          <span class="label_key">Position(Job Title):</span>
+          <span class="label_key">{{ $t("Position") }}({{ $t("Job Title") }}):</span>
           <div class="label_value">{{data.title||'-'}}</div>
         </div>
         <div class="user_info">
-          <span class="label_key">department:</span>
+          <span class="label_key">{{ $t("Department") }}:</span>
           <div class="label_value">{{data.department||'-'}}</div>
         </div>
         <div class="user_info">
-          <span class="label_key">Office No:</span>
+          <span class="label_key">{{ $t("Office No") }}:</span>
           <div class="label_value">{{data.extension||'-'}}</div>
         </div>
         <!-- <div class="user_info">
@@ -40,11 +40,11 @@
           <div class="label_value">{{data.extension}}</div>
         </div> -->
         <div class="user_info">
-          <span class="label_key">Telephone No:</span>
+          <span class="label_key">{{ $t("Telephone No") }}:</span>
           <div class="label_value">{{data.tel||'-'}}</div>
         </div>
         <div class="user_info">
-          <span class="label_key">E-mail:</span>
+          <span class="label_key">{{ $t("E-mail") }}:</span>
           <div class="label_value">{{data.email||'-'}}</div>
         </div>
         <!-- <div class="user_info">

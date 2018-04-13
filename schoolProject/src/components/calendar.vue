@@ -46,7 +46,7 @@
     </div>
     <!-- 活动周信息 -->
     <div class="month_info" v-if='showMonthInfo'>
-        Week: {{getYearWeek()}}
+        {{ $t("Week") }}: {{getYearWeek()}}
         <span :class='getABHWeek2()'></span>
     </div>
   </div>

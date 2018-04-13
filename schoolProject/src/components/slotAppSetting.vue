@@ -2,10 +2,10 @@
   <div class="body" v-cloak>
 
     <div class="nav_tab">
-      <div><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>Groups</div></div>
+      <div><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>{{ $t("Groups") }}</div></div>
       <div v-if="false"><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
       <div v-if="false"><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
-      <div><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>Ad sync</div></div>
+      <div><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>{{ $t("Ad sync") }}</div></div>
     </div>
     <div class="nav_body">
       <div class="_body">
@@ -15,14 +15,14 @@
                     :data="groupsData.groupList"
                     style="width: 680px;"
                     tooltip-effect="dark"
-                    empty-text="No Data"
+                    :empty-text='$t("No Data")'
                     @selection-change="">
             <el-table-column prop="group_name"
-                             label="Ad group"
+                             :label='$t("Ad group")'
                              show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="group_alias_name"
-                             label="Alias"
+                             :label='$t("Alias")'
                              show-overflow-tooltip>
             </el-table-column>
             <el-table-column label=""
@@ -31,7 +31,7 @@
                 <span class="icon icon_edit" @click='editGroupAlias(scope.$index, scope.row)'></span>
               </template>
             </el-table-column>
-            <el-table-column label="Active"
+            <el-table-column :label='$t("Active")'
                              width="80">
               <template slot-scope="scope">
                 <div class="checkbox"
@@ -208,7 +208,7 @@
         <!-- Ad Sync -->
         <div class="nav_content_1" v-show='data.tab==2'>
           <div class="name_box">
-            <span class="lab" style="width: 220px;">Daily synchronization time:</span>
+            <span class="lab" style="width: 220px;">{{ $t("Daily synchronization time") }}:</span>
             <div class="name_value" style="width: 500px;">
               <el-time-picker v-model="data.taskTime"
                               :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
@@ -217,26 +217,26 @@
                               @focus='timeFocus'
                               format="HH:mm"
                               value-format="HH:mm"
-                              placeholder="Select">
+                              :placeholder='$t("Select")'>
               </el-time-picker>
-              <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">Manual Sync</button>
+              <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">{{ $t("Manual Sync") }}</button>
             </div>
           </div>
           <div class="name_box">
-            <span class="lab" style="width: 220px;">Last sync time:</span>
+            <span class="lab" style="width: 220px;">{{ $t("Last sync time") }}:</span>
             <div class="name_value" style="line-height: 34px;font-size: 18px;color: #333;">
               {{data.lastSyncTime}}
             </div>
           </div>
           <div class="name_box">
-            <span class="lab" style="width: 220px;">Last sync statistics:</span>
+            <span class="lab" style="width: 220px;">{{ $t("Last sync statistics") }}:</span>
             <div class="name_value" style="width: 1000px;">
               <div class="sync_nav_tab">
-                <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>Adds<span class="_badge">{{data.syncData.addsNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=2}' :class='{"act": data.sync_tab==2}'>Updates<span class="_badge">{{data.syncData.updatesNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=3}' :class='{"act": data.sync_tab==3}'>Renames<span class="_badge">{{data.syncData.renameNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=4}' :class='{"act": data.sync_tab==4}'>Deletes<span class="_badge">{{data.syncData.deleteNum}}</span></div></div>
-                <div><div @click='()=>{this.data.sync_tab=0}' :class='{"act": data.sync_tab==0}'>Unchanged<span class="_badge">{{data.syncData.unchangedNum}}</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>{{ $t("Adds") }}<span class="_badge">{{data.syncData.addsNum}}</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=2}' :class='{"act": data.sync_tab==2}'>{{ $t("Updates") }}<span class="_badge">{{data.syncData.updatesNum}}</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=3}' :class='{"act": data.sync_tab==3}'>{{ $t("Renames") }}<span class="_badge">{{data.syncData.renameNum}}</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=4}' :class='{"act": data.sync_tab==4}'>{{ $t("Deletes") }}<span class="_badge">{{data.syncData.deleteNum}}</span></div></div>
+                <div><div @click='()=>{this.data.sync_tab=0}' :class='{"act": data.sync_tab==0}'>{{ $t("Unchanged") }}<span class="_badge">{{data.syncData.unchangedNum}}</span></div></div>
               </div>
               <div class="sync_list" v-show="data.sync_tab==1">
                 <div class="sync_field" v-for="item in data.syncData.addsList" @click="userPermission(item)">
@@ -296,6 +296,7 @@
   import alert from '@/components/alert'
   import prompt from '@/components/prompt'
   import {forEach} from '@/script/util'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -367,6 +368,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        lang: 'lang'
+      })
     },
     mounted () {
       let levels = [];
@@ -950,6 +954,7 @@
         })
       },
       timeFocus () {
+        if (this.lang === 'zh-CH') return;
         setTimeout(() => {
           document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('cancel')[0].innerHTML = 'cancel'
           document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('confirm')[0].innerHTML = 'confirm'

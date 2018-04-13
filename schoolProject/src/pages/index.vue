@@ -42,7 +42,7 @@
         </div>
         <div class="part_2">
           <div class="calendar">
-            <router-link :to='{path: "/homepage"}' tag='div' class="title">Calendar</router-link>
+            <router-link :to='{path: "/homepage"}' tag='div' class="title">{{ $t("Calendar") }}</router-link>
 
             <!-- 日历组件 -->
             <calendar :inputActDateInfo='actDateInfo'
@@ -53,9 +53,9 @@
 
             <div class="week_cal">
               <div v-for='(li, index) in weekList'>
-                <div class="drawer_title" @click='changeDrawerActIndex(index, li)' :class='{"act": li.openFlg}'>{{li.week}}, {{li.date}} {{li.month}}</div>
+                <div class="drawer_title" @click='changeDrawerActIndex(index, li)' :class='{"act": li.openFlg}'>{{ $t(li.week) }}, {{li.date}} {{ $t(li.month) }}</div>
                 <div class="drawer_list">
-                  <div>
+                  <div v-if="li.taskList.length">
 
                     <router-link tag='div' class="drawer_li"
                                  :to='{path: "/homepage", query: {year: actDateInfo.thisYear, month: actDateInfo.thisMonth, date: actDateInfo.thisDate}}'
@@ -81,6 +81,9 @@
                       </div>
                     </router-link>
 
+                  </div>
+                  <div class="empty" v-else>
+                    {{ $t("no event") }}
                   </div>
                 </div>
               </div>
@@ -141,7 +144,7 @@
         ],
         // 配置弹窗
         showDialog: false,
-        isFirst: true // 首次加载页面展开当前日期后的所有时间
+        isFirst: 0 // 首次加载页面展开当前日期后的所有时间
       }
     },
     computed: {
@@ -204,11 +207,12 @@
           let tempObj = {};
           // 首次加载数据，展开当前日期往后的所有日期，往后只展开选中日期
           let openFlg = false;
-          if (this.isFirst) {
+          if (this.isFirst === 1 || this.isFirst === 0) { // 神奇的判断
             openFlg = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate}).add(-1, 'day') < this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day});
           } else {
             openFlg = this.$moment({y: this.actDateInfo.thisYear, M: this.actDateInfo.thisMonth - 1, d: this.actDateInfo.thisDate}).format('YYYY-MM-DD') == this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}).format('YYYY-MM-DD');
           }
+          // console.log(openFlg);
           tempObj = {
             dateStr: this.$moment({y: item.yearValue, M: item.monthValue - 1, d: item.day}).format('YYYY-MM-DD'),
             week: weekMap[Number(i) + 1].substr(0, 3),
@@ -219,7 +223,7 @@
           }
           tempList.push(tempObj)
         })
-        this.isFirst = false; // 首次加载完毕
+        this.isFirst++; // 首次加载完毕
 
         this.weekList = tempList;
       },
@@ -339,7 +343,7 @@
           .drawer_list{
             padding: 0 10px;font-size: 16px;color: #003;height: 0;overflow: hidden;
             & > div{padding: 5px 0;}
-            & > div:empty:after{content: 'no event';padding: 10px;display: block;font-size: 18px;color: #333;}
+            & > .empty{padding: 10px;font-size: 18px;color: #333;}
             .li_1{float: right;line-height: 44px;}
             .point_icon{display: inline-block;width: 14px;height: 14px;border-radius: 50%;}
             .drawer_li{line-height: 22px;padding: 7px 10px;height: 58px;}

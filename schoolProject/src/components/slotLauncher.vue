@@ -3,8 +3,8 @@
 
     <div class="nav_tab">
       <div v-if="false"><div @click='()=>{this.data.tab=3}' :class='{"act": data.tab==3}'>Groups</div></div>
-      <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>App Management</div></div>
-      <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>User Permission</div></div>
+      <div><div @click='()=>{this.data.tab=0}' :class='{"act": data.tab==0}'>{{ $t("App Management") }}</div></div>
+      <div><div @click='()=>{this.data.tab=1}' :class='{"act": data.tab==1}'>{{ $t("User Permission") }}</div></div>
       <div v-if="false"><div @click='()=>{this.data.tab=2}' :class='{"act": data.tab==2}'>Ad sync</div></div>
     </div>
     <div v-show='data.tab==3' class="syncBtn">
@@ -18,7 +18,7 @@
                     :data="groupsData.groupList"
                     style="width: 680px;"
                     tooltip-effect="dark"
-                    empty-text="No Data"
+                    :empty-text='$t("No Data")'
                     @selection-change="">
             <el-table-column prop="group_name"
                              label="Ad group"
@@ -47,7 +47,7 @@
         <!-- Application Management -->
         <div class="nav_content_1" v-show='data.tab==0'>
           <div class="name_box">
-            <span class="lab">Name:</span>
+            <span class="lab">{{ $t("Name") }}:</span>
             <div class="name_value">
 
               <drapdown :input-value='data.appName'
@@ -64,7 +64,7 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab" style="vertical-align: middle;">Logo:</span>
+            <span class="lab" style="vertical-align: middle;">{{ $t("Logo") }}:</span>
             <div class="name_value" style="vertical-align: middle;">
 
               <!-- 图片上传 -->
@@ -82,19 +82,19 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab">URL:</span>
+            <span class="lab">{{ $t("URL") }}:</span>
             <div class="name_value">
               <input class="form-control" type="text" name="" v-model='data.appUrl' @blur='submitApp(0)'>
             </div>
           </div>
           <div class="name_box">
-            <span class="lab">Description:</span>
+            <span class="lab">{{ $t("Description") }}:</span>
             <div class="name_value">
               <textarea class="form-control textarea" v-model='data.appDesc' @blur='submitApp(0)'></textarea>
             </div>
           </div>
           <div class="name_box">
-            <span class="lab">Position:</span>
+            <span class="lab">{{ $t("Priority") }}:</span>
             <div class="name_value">
 
               <drapdown :input-value='data.sortNum'
@@ -107,12 +107,12 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab">Permission:</span>
+            <span class="lab">{{ $t("Permission") }}:</span>
             <div class="name_value show_border scroll_box">
               <div class="check_all">
                 <div class="checkbox">
                   <label :class='{"checked": data.groupsInAppChecked}'>
-                    <input @click='appCheckAllChange()' type="checkbox" v-model='data.groupsInAppChecked'> All Groups
+                    <input @click='appCheckAllChange()' type="checkbox" v-model='data.groupsInAppChecked'> {{ $t("All Groups") }}
                   </label>
                 </div>
               </div>
@@ -136,15 +136,15 @@
           <!-- Users -->
           <div v-show='data.subtab==1'>
             <div class="name_box">
-              <span class="lab">User:</span>
+              <span class="lab">{{ $t("User") }}:</span>
               <div class="name_value hide-icon">
 
                 <el-select filterable default-first-option placeholder=""
                            v-model="data.userId"
                            :name="data.userName"
                            :filter-method="userFilter"
-                           no-match-text="No Data"
-                           no-data-text="No Data"
+                           :no-match-text='$t("No Data")'
+                           :no-data-text='$t("No Data")'
                            @visible-change="visibleChanged"
                            @change="userChanged(data.userId)">
                   <el-option v-for="user in data.userList"
@@ -161,13 +161,13 @@
               <div class="name_value">
                 <div class="checkbox">
                   <label class="allCheck" :class='{"checked": data.user_flag}'>
-                    <input type="checkbox" @click='userPermissionChanged' v-model='data.user_flag'>Only search in custom permission users
+                    <input type="checkbox" @click='userPermissionChanged' v-model='data.user_flag'>{{ $t("Only search in custom permission users") }}
                   </label>
                 </div>
               </div>
             </div>
             <div class="name_box">
-              <span class="lab" style="vertical-align: middle;">Grouped in:</span>
+              <span class="lab" style="vertical-align: middle;">{{ $t("Grouped in") }}:</span>
               <div class="name_value" style="vertical-align: top;">
                 <div class="card" v-for='group in data.userGroupedIn' :title='group.name' :class='{enable: group.operation_flag == 1}'>
                   <span class="icon icon_members"></span> {{group.name}}
@@ -175,7 +175,7 @@
               </div>
             </div>
             <div class="name_box">
-              <span class="lab">Custom Permission:</span>
+              <span class="lab">{{ $t("Custom Permission") }}:</span>
               <div class="name_value">
                 <div class="lj_switch" :class='{"on": data.switch_flag, "off": !data.switch_flag}' @click='switchChanged'>
                   <div class="icon_switch"></div>

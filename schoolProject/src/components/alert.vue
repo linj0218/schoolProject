@@ -8,15 +8,15 @@
       </div>
 
       <div class="popup_body">
-        {{text}}
+        {{ $t(text) }}
       </div>
 
       <div class="popup_footer" v-if='!showOK'>
-        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
-        <button type="button" class="btn cancel" @click='cancel()'>Cancel</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>{{ $t("Confirm") }}</button>
+        <button type="button" class="btn cancel" @click='cancel()'>{{ $t("Cancel") }}</button>
       </div>
       <div class="popup_footer" v-if='showOK'>
-        <button type="button" class="btn btn-primary" @click='cancel()'>OK</button>
+        <button type="button" class="btn btn-primary" @click='cancel()'>{{ $t("OK") }}</button>
       </div>
     </div>
   </div>

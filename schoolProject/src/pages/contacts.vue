@@ -10,9 +10,9 @@
           <button type="button" class="btn iconfont iconfont-fanhui" @click="back()"></button>
           <div class="search_input">
             <i class="iconfont iconfont-fangdajing"></i>
-            <input class="form-control" type="text" v-model='data.searchText' placeholder="Search" @keyup.enter='searchEvent()'>
+            <input class="form-control" type="text" v-model='data.searchText' :placeholder='$t("Search")' @keyup.enter='searchEvent()'>
           </div>
-          <div class="search_result">Found <span class="color_red">{{data.dataList.length}}</span> results</div>
+          <div class="search_result">{{ $t("Found") }} <span class="color_red">{{data.dataList.length}}</span> {{ $t("results") }}</div>
         </div>
         <div class="content">
           <div class="content_main">
@@ -39,31 +39,31 @@
                   <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
                 </div>
               </el-tooltip>
-              <div class="form_label">Position(Job Title)</div>
+              <div class="form_label">{{ $t("Position") }}({{ $t("Job Title") }})</div>
               <el-tooltip class="item" effect="dark" :content="item.title || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(title, index) in item.titleList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.title ? '-' : title}}</span>
                 </div>
               </el-tooltip>
-              <div class="form_label">Department</div>
+              <div class="form_label">{{ $t("Department") }}</div>
               <el-tooltip class="item" effect="dark" :content="item.department || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(department, index) in item.departmentList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.department ? '-' : department}}</span>
                 </div>
               </el-tooltip>
-              <div class="form_label">Office No</div>
+              <div class="form_label">{{ $t("Office No") }}</div>
               <el-tooltip class="item" effect="dark" :content="item.ext || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(ext, index) in item.extList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.ext ? '-' : ext}}</span>
                 </div>
               </el-tooltip>
-              <div class="form_label">Telephone No</div>
+              <div class="form_label">{{ $t("Telephone No") }}</div>
               <el-tooltip class="item" effect="dark" :content="item.mobile || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(mobile, index) in item.mobileList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.mobile ? '-' : mobile}}</span>
                 </div>
               </el-tooltip>
-              <div class="form_label">E-mail</div>
+              <div class="form_label">{{ $t("E-mail") }}</div>
               <el-tooltip class="item" effect="dark" :content="item.email || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(email, index) in item.emailList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.email ? '-' : email}}</span>

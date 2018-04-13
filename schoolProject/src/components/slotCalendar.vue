@@ -2,10 +2,10 @@
   <div class="body" v-cloak>
     <div class="nav_tab flex">
       <div v-if='false'><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div>
-      <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>School years</div></div>
-      <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>Places</div></div>
-      <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>Categories</div></div>
-      <div><div @click='()=>{this.tab=4}' :class='{"act": tab==4}'>Power Users</div></div>
+      <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>{{ $t("School years") }}</div></div>
+      <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>{{ $t("Places") }}</div></div>
+      <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>{{ $t("Categories") }}</div></div>
+      <div><div @click='()=>{this.tab=4}' :class='{"act": tab==4}'>{{ $t("Power Users") }}</div></div>
     </div>
     <div class="nav_body">
       <div class="_body">
@@ -44,7 +44,7 @@
         <!-- School years -->
         <div class="nav_content_1" v-show='tab==1'>
           <div class="name_box">
-            <span class="lab long_text">Name:</span>
+            <span class="lab long_text">{{ $t("Name") }}:</span>
             <div class="name_value">
 
               <drapdown :input-value='schoolYearData.yearId'
@@ -61,7 +61,7 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab long_text">Start date:</span>
+            <span class="lab long_text">{{ $t("Start date") }}:</span>
             <div class="name_value">
 
               <date-select :input-value='schoolYearData.startDate'
@@ -71,7 +71,7 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab long_text">End date:</span>
+            <span class="lab long_text">{{ $t("End date") }}:</span>
             <div class="name_value">
 
               <date-select :input-value='schoolYearData.endDate'
@@ -81,7 +81,7 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab long_text">Define First Week A/B:</span>
+            <span class="lab long_text">{{ $t("Define First Week A/B") }}:</span>
             <div class="name_value">
 
               <drapdown :input-value='schoolYearData.weekName'
@@ -95,7 +95,7 @@
             </div>
           </div>
           <div class="member_box">
-            <span class="lab long_text">Week to Skip:</span>
+            <span class="lab long_text">{{ $t("Week to Skip") }}:</span>
             <div class="member_value">
               <div class="li" v-for='(item, index) in schoolYearData.holidays'>
                 <span class="icon_H">H</span>
@@ -108,7 +108,7 @@
             <span class="lab"></span>
             <div class="name_value">
               <button type="button" class="btn btn-primary" @click='()=>{this.showWeekSelectModal=true}'>
-                <span class="icon_btn_add"></span> New Hoildays
+                <span class="icon_btn_add"></span> {{ $t("New Hoildays") }}
               </button>
 
               <week-select-modal :show-popup='showWeekSelectModal'
@@ -122,7 +122,7 @@
         <!-- Places -->
         <div class="nav_content_1" v-show='tab==2'>
           <div class="name_box">
-            <span class="lab">Name:</span>
+            <span class="lab">{{ $t("Name") }}:</span>
             <div class="name_value">
 
               <drapdown :input-value='placesData.value'
@@ -139,7 +139,7 @@
             </div>
           </div>
           <div class="member_box">
-            <span class="lab">Room/Places:</span>
+            <span class="lab">{{ $t("Room/Places") }}:</span>
             <div class="member_value">
               <div class="li" v-for='(item, index) in placesData.rooms'>
                 {{item.name}}
@@ -152,7 +152,7 @@
             <span class="lab"></span>
             <div class="name_value">
               <button type="button" class="btn btn-primary" @click='addPlaceRoom()'>
-                <span class="icon_btn_add"></span> New room
+                <span class="icon_btn_add"></span> {{ $t("New room") }}
               </button>
             </div>
           </div>
@@ -160,7 +160,7 @@
         <!-- Categories -->
         <div class="nav_content_1" v-show='tab==3'>
           <div class="name_box">
-            <span class="lab">Name:</span>
+            <span class="lab">{{ $t("Name") }}:</span>
             <div class="name_value">
               <drapdown :input-value='categoryData.name'
                         :input-name='categoryData.name'
@@ -176,7 +176,7 @@
             </div>
           </div>
           <div class="name_box">
-            <span class="lab">Color:</span>
+            <span class="lab">{{ $t("Color") }}:</span>
             <div class="name_value">
               <drapdown :input-value='categoryData.color'
                         :input-name='""'
@@ -191,7 +191,7 @@
         <!-- Power Users -->
         <div class="nav_content" v-show='tab==4'>
           <div class="member_box">
-            <span class="lab">Power Users:</span>
+            <span class="lab">{{ $t("Power Users") }}:</span>
             <div class="member_value">
               <div class="li" v-for='(item, index) in data.users'>
                 {{item.name}}
@@ -203,7 +203,7 @@
             <span class="lab"></span>
             <div class="name_value" style="text-align: right;">
               <button type="button" class="btn btn-primary" @click='openAddParticipantModal()'>
-                <i class="iconfont iconfont-jia"></i> New Users
+                <i class="iconfont iconfont-jia"></i> {{ $t("New Users") }}
               </button>
             </div>
           </div>

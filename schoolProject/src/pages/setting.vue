@@ -10,16 +10,16 @@
           <button type="button" class="btn iconfont iconfont-fanhui" @click="back()"></button>
           <div class="tab">
             <button type="button" class="btn" :class="{act: data.tab == 0}" @click='()=>{this.data.tab=0}'>
-              <i class="iconfont iconfont-shezhi"></i><span>General</span>
+              <i class="iconfont iconfont-shezhi"></i><span>{{ $t("General") }}</span>
             </button>
             <button type="button" class="btn" :class="{act: data.tab == 2}" @click='()=>{this.data.tab=2}'>
-              <i class="iconfont iconfont-gongjuxiang"></i><span>Toolbox</span>
+              <i class="iconfont iconfont-gongjuxiang"></i><span>{{ $t("Toolbox") }}</span>
             </button>
             <button type="button" class="btn" :class="{act: data.tab == 3}" @click='()=>{this.data.tab=3}'>
-              <i class="iconfont iconfont-gongneng"></i><span>Launcher</span>
+              <i class="iconfont iconfont-gongneng"></i><span>{{ $t("Launcher") }}</span>
             </button>
             <button type="button" class="btn" :class="{act: data.tab == 1}" @click='()=>{this.data.tab=1}'>
-              <i class="iconfont iconfont-rili"></i><span>Calendar</span>
+              <i class="iconfont iconfont-rili"></i><span>{{ $t("Calendar") }}</span>
             </button>
           </div>
         </div>
