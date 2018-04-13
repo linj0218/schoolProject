@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="popup_footer">
-        <button type="button" class="btn btn-primary" @click='confirm()'>Confirm</button>
+        <button type="button" class="btn btn-primary" @click='confirm()'>{{ $t("Confirm") }}</button>
       </div>
     </div>
   </div>
