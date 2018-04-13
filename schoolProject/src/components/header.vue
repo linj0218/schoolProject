@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
-    <div class="title">LFS Applications Portal</div>
+    <div class="title">{{ $t("LFS Applications Portal") }}</div>
     <div class="userInfo">
       <span>{{userName}}</span>
       <div class="icon head_portrait">
