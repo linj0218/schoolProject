@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import {getSStorage} from '@/script/util'
 
-const Test = r => require.ensure([], () => r(require('@/pages/test')), 'main')
+const Test = r => require.ensure([], () => r(require('@/pages/test')), 'test')
 const Login = r => require.ensure([], () => r(require('@/pages/login')), 'main')
 const Index = r => require.ensure([], () => r(require('@/pages/index')), 'main')
 const Homepage = r => require.ensure([], () => r(require('@/pages/homepage')), 'main')

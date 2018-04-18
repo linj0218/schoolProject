@@ -116,7 +116,7 @@
       .icon3{background: url('../images/icon_3.png') 50% 50% / auto auto no-repeat;}
       .icon{display: inline-block;border-radius: 50%;background: #fff;vertical-align: middle;margin: 0 10px;position: relative;}
       .icon .drop_down{
-        height: 0;overflow: hidden;width: 190px;margin-bottom: 0;font-size: 16px;position: absolute;
+        height: 0;overflow: hidden;width: 190px;margin-bottom: 0;font-size: 16px;position: absolute;transition:all 0.3s; -webkit-transition:all 0.3s;
         .icon_other1{height: 22px;background: url('../images/icon_other3.png') 45% 100% / auto auto no-repeat;}
         .icon_other2{height: 28px;background: url('../images/icon_other3.png') 100% 100% / auto auto no-repeat;}
       }
@@ -133,10 +133,11 @@
       .icon .drop_down li.french i{background: url('../images/french.png') 0 0 / 100% 100% no-repeat;}
       .icon .drop_down li.china i{background: url('../images/china.png') 0 0 / 100% 100% no-repeat;}
       .icon:hover{cursor: pointer;}
-      .icon:hover .drop_down{height: 200px;transition:all 0.2s; -webkit-transition:all 0.2s;}
+      .icon:hover .drop_down{height: 200px;}
       .icon.head_portrait{width: 60px;height: 60px;color: #4E81BD;text-align: center;line-height: 60px;font-size: 28px;}
-      .icon.head_portrait:hover .drop_down{left: -60px;top: 60px;}
+      .icon.head_portrait .drop_down{left: -55px;top: 60px;}
       .icon.language{width: 50px;height: 50px;}
+      .icon.language .drop_down{left: -145px;top: 50px;}
       .icon.language.en-US{background: #fff url('../images/english1.png') 0 0 / 100% 100% no-repeat;}
       .icon.language.fr-FR{background: #fff url('../images/french1.png') 0 0 / 100% 100% no-repeat;}
       .icon.language.zh-CH{background: #fff url('../images/china1.png') 0 0 / 100% 100% no-repeat;}

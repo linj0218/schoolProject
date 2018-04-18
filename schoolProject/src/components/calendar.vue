@@ -1,6 +1,6 @@
 <template>
   <div class="month_cal">
-    <!-- 日历导航 -->
+    <!-- 日历导航 上、下月 -->
     <div class="month_nav">
       <button class="nav_left" @click='changeActMonth("last_month")'
               @focus='()=>{this.$emit("buttonFocus")}'
@@ -13,9 +13,10 @@
               @blur='()=>{this.$emit("buttonBlur")}' >
       </button>
     </div>
+    <!-- 日历主体 -->
     <div class="month_body">
       <div class="month_table clearfix">
-        <!-- A、B、H 周 -->
+        <!-- 日历周次 A、B、H 周 -->
         <div class="table_left" v-if='showABWeek'>
           <div></div>
           <div v-for='(row, index) in calendarList'>
@@ -57,21 +58,21 @@
   import { mapGetters } from 'vuex'
   export default {
     props: {
-      showMonthInfo: {
+      showMonthInfo: { // 是否显示当前周信息
         type: Boolean,
         required: false,
         default: true
       },
-      showABWeek: {
+      showABWeek: { // 是否显示A、B、H周标识
         type: Boolean,
         required: false,
         default: true
       },
-      inputActDateInfo: {
+      inputActDateInfo: { // 当前选中日期信息
         type: Object,
         required: true
       },
-      selectModel: {
+      selectModel: { // 周选择模式 date-日期 week-周
         type: String,
         required: false,
         default: 'date'

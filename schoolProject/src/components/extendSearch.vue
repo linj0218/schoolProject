@@ -3,13 +3,15 @@
     <div class="extendIcons">
       <template v-for="(sys, index) in data.sysList">
         <a class="iconfont" target="_blank" :href="sys.url" :class="sys.icon">
+          <img v-if='sys.picUrl' :src='$config.api_path.img_path + sys.picUrl'>
+          <img v-if='!sys.picUrl' src="../images/icon_default.png">
         </a><span class="line" v-if="index != data.sysList.length - 1"></span>
       </template>
     </div>
     <div class="extendIconsText">
       <template v-for="sys in data.sysList">
-        <el-tooltip effect="dark" :content="$t(sys.sys)" placement="bottom">
-          <span>{{ $t(sys.sys) }}</span>
+        <el-tooltip effect="dark" :content="sys.sys" placement="bottom">
+          <span>{{sys.sys}}</span>
         </el-tooltip>
       </template>
     </div>
@@ -34,9 +36,25 @@
         }
       }
     },
+    mounted () {
+      this.getQuickAccess();
+    },
     methods: {
-      switchSearch (n) {
-        // this.data.searchIcon = n;
+      // 获取快速访问APP列表
+      getQuickAccess () {
+        return this.$http.post('/appCtl/app/quickAccessList', {}).then((res) => {
+          if (res.result === 'SUCCESS') {
+            let sysList = [];
+            for (let i = 0; i < res.data.length; i++) {
+              sysList.push({
+                sys: res.data[i].nom,
+                url: res.data[i].baseaddress,
+                picUrl: res.data[i].picUrl
+              })
+            }
+            this.data.sysList = sysList;
+          }
+        })
       },
       searchEvent () {
         if (this.data.searchText === '') return false;
@@ -50,13 +68,8 @@
   @import '../styles/mixin';
   .extend_search{position: relative;height: 46px;margin-bottom: 20px;}
   .extendIcons{padding-left: 20px;}
-  .extendIcons .iconfont{width: 46px;height: 46px;display: inline-block;background: #ccc;border-radius: 50%;font-size: 30px;text-align: center;line-height: 46px;cursor: pointer;color: #fff;vertical-align: middle;margin-top: -8px;text-decoration: none;}
-  .extendIcons .iconfont-tongxunlu{background: #4E81BD;}
-  .extendIcons .iconfont-QPDirectory{background: #4DB7BD;}
-  .extendIcons .iconfont-PGDirectory{background: #65BD4D;}
-  .extendIcons .iconfont-OneDrive{background: #BD9B4D;}
-  .extendIcons .iconfont-Trombinoscope{background: #BD644D;}
-  .extendIcons .iconfont-E-mail{background: #4D51BD;}
+  .extendIcons .iconfont{width: 46px;height: 46px;display: inline-block;background: #ccc;border-radius: 50%;font-size: 30px;text-align: center;line-height: 46px;cursor: pointer;color: #fff;vertical-align: middle;margin-top: -8px;text-decoration: none;overflow: hidden;}
+  .extendIcons .iconfont img{width: 100%;height: 100%;}
   .extendIcons .line{display: inline-block;width: 1.3px;height: 20px;background: #ccc;margin: 13px 20px;vertical-align: middle;margin-top: 0px;}
   // .extendIconsText{height: 10px;line-height: 10px;margin-top: 4px;}
   .extendIconsText span{display: inline-block;width: 87px;font-size: 12px;color: #666;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;text-align: center;}
