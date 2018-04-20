@@ -30,6 +30,11 @@ axios.interceptors.request.use((config) => {
     }
     config.data = qs.stringify({data: JSON.stringify(param)})
   }
+
+  // 手动同步，正式环境调用测试环境的固定接口，我也是醉了
+  if (config.url.indexOf('toSynchronize') > -1 && process.env.PROJECT_BUILD_ENV === 'production') {
+    config.url = 'http://116.228.73.106:8111/adSynchronizeCtl/sys/toSynchronizeForFormal';
+  }
   return config
 }, (err) => {
   console.log('传参错误')
