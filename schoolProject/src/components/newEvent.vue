@@ -75,16 +75,6 @@
                     @change='startTimeChanged'
                     placeholder="Select">
                   </el-time-select>
-                  <!-- <el-time-picker v-model="data.start_time"
-                                  :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
-                                  :disabled='data.day_flag'
-                                  @change='startTimeChanged'
-                                  @focus='timeFocus'
-                                  @blur="timeBlur"
-                                  format="HH:mm"
-                                  value-format="HH:mm"
-                                  placeholder="Select">
-                  </el-time-picker> -->
                 </div>
               </div>
             </div>
@@ -103,16 +93,6 @@
                     @change='endTimeChanged'
                     placeholder="Select">
                   </el-time-select>
-                  <!-- <el-time-picker v-model="data.end_time"
-                                  :picker-options="{ selectableRange: '00:00:00 - 23:59:00' }"
-                                  :disabled='data.day_flag'
-                                  @change='endTimeChanged'
-                                  @focus='timeFocus'
-                                  @blur="timeBlur"
-                                  format="HH:mm"
-                                  value-format="HH:mm"
-                                  placeholder="Select">
-                  </el-time-picker> -->
                 </div>
               </div>
             </div>
@@ -778,16 +758,6 @@ export default {
     // 关闭弹窗
     closeConfig () {
       this.$emit('closeEventModal')
-    },
-    timeFocus () {
-      setTimeout(() => {
-        document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('cancel')[0].innerHTML = 'cancel'
-        document.getElementsByClassName('el-time-panel__footer')[0].getElementsByClassName('confirm')[0].innerHTML = 'confirm'
-        if (document.getElementsByClassName('el-time-panel__footer')[1]) {
-          document.getElementsByClassName('el-time-panel__footer')[1].getElementsByClassName('cancel')[0].innerHTML = 'cancel'
-          document.getElementsByClassName('el-time-panel__footer')[1].getElementsByClassName('confirm')[0].innerHTML = 'confirm'
-        }
-      }, 100)
     },
     timeBlur (obj) {
       // if (parseInt(obj.userInput) === 'NaN') return false;
