@@ -228,8 +228,24 @@
               {{data.lastSyncTime}}
             </div>
           </div>
+          <!-- 查询条件 -->
           <div class="name_box">
             <span class="lab" style="width: 220px;">{{ $t("Last sync statistics") }}:</span>
+            <div class="name_value" style="width: 800px;">
+              <el-date-picker v-model="data.searchDate"
+                              @change="dateRangeChanged()"
+                              class="lj_date_picker"
+                              type="daterange"
+                              range-separator="-"
+                              :editable="false"
+                              :start-placeholder="$t('Start date')"
+                              :end-placeholder="$t('End date')">
+              </el-date-picker>
+              <input type="text" class="form-control" v-model='data.searchName' :placeholder='$t("User")' @keyup.enter='searchEvent()'>
+            </div>
+          </div>
+          <div class="name_box">
+            <span class="lab" style="width: 220px;"></span>
             <div class="name_value" style="width: 1000px;">
               <div class="sync_nav_tab">
                 <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>{{ $t("Adds") }}<span class="_badge">{{data.syncData.addsNum}}</span></div></div>
@@ -355,7 +371,9 @@
           syncDataList: [{name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}, {name: 'William trang'}],
           sync_tab: 1,
           syncData: {},
-          taskTime: ''
+          taskTime: '',
+          searchDate: '',
+          searchName: ''
         },
         actionUrl: this.$config.api_path.img_upload,
         // Groups data
@@ -970,7 +988,16 @@
       },
       // 查询同步时间
       getSyncTime () {
-        return this.$http.post('/adSynchronizeCtl/sys/findAdSyncTaskTime', {}).then((res) => {
+        let params = {
+          userName: this.data.searchName,
+          startDate: '',
+          endDate: ''
+        }
+        if (this.data.searchDate) {
+          params.startDate = this.$moment(this.data.searchDate[0]).format('YYYY-MM-DD');
+          params.endDate = this.$moment(this.data.searchDate[1]).format('YYYY-MM-DD');
+        }
+        return this.$http.post('/adSynchronizeCtl/sys/findAdSyncTaskTime', params).then((res) => {
           if (res.result === 'SUCCESS' && res.data[0]) {
             let taskTime = res.data[0].task_time;
             this.data.taskId = res.data[0].id;
@@ -995,6 +1022,14 @@
             this.$emit('openBanner', banner);
           }
         })
+      },
+      dateRangeChanged () {
+        // console.log(this.$moment(this.data.searchDate[0]).format('YYYY-MM-DD'));
+        this.getSyncTime();
+      },
+      searchEvent () {
+        // console.log(this.data.searchName);
+        this.getSyncTime();
       }
     }
   }
@@ -1093,4 +1128,6 @@
   }
   .sync_list .sync_field:nth-child(4n+1){text-align: left;}
   .sync_list .sync_field:nth-child(4n+4){text-align: right;}
+  .lj_date_picker{display: inline-block;}
+  .lj_date_picker + .form-control{display: inline-block;width: 200px;height: 40px;border: 1px solid #dcdfe6;}
 </style>
