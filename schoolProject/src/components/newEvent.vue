@@ -392,6 +392,12 @@ export default {
           self.data.end_date = formatDate(resData.eventInfo.end_date, 'dd/mm/yyyy')
           self.data.end_time = resData.eventInfo.end_time
           self.data.description = resData.eventInfo.description
+        } else {
+          self.placeChanged({value: resData.campusList[0].id, name: resData.campusList[0].campus_name})
+          // self.data.place_id = resData.campusList[0].id;
+          // self.data.place_name = resData.campusList[0].campus_name;
+          // self.data.place_name = resData.placesList[0].campus_name;
+          // self.data.place_name = resData.placesList[0].campus_name;
         }
 
         // 附件
@@ -693,7 +699,12 @@ export default {
           }
           rooms.push(tempObj)
         })
-        this.data.rooms = rooms
+        this.data.rooms = rooms;
+        // 带出第一个教室
+        if (rooms && rooms.length) {
+          this.data.roomId = rooms[0].value;
+          this.data.roomName = rooms[0].name;
+        }
       })
     },
     roomChanged (item) {

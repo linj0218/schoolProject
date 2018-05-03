@@ -1,7 +1,8 @@
 // 配置信息
-// 测试环境-116.228.73.106:8111 生产环境-13.75.92.183:8121 周勇-192.168.8.125:8081
+// 测试环境-116.228.73.106:8111
+// 生产环境-portal.lfshanghai.cn (116.228.73.106:80)
 let configTest = 'http://116.228.73.106:8111';
-let configProd = 'http://13.75.92.183:8121';
+let configProd = 'http://portal.lfshanghai.cn';
 let configDev = 'http://116.228.73.106:8111';
 
 // 根据环境修改API地址
