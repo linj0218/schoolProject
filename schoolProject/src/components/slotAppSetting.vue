@@ -219,7 +219,7 @@
                               value-format="HH:mm"
                               :placeholder='$t("Select")'>
               </el-time-picker>
-              <button class="btn btn-primary" @click="syncAdData()" style="width: 180px;height: 42px;vertical-align: top;">{{ $t("Manual Sync") }}</button>
+              <button class="btn btn-primary" @click="syncAdData()" style="display: block;height: 42px;vertical-align: top;">{{ $t("Manual Sync") }}</button>
             </div>
           </div>
           <div class="name_box">
