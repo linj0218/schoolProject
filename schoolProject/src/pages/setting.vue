@@ -108,7 +108,7 @@
         .tab{
           display: inline-block;height: 42px;line-height: 42px;vertical-align: middle;border: 1px solid #ddd;border-radius: 3px;margin-left: 20px;position: relative;overflow: hidden;
           .btn{
-            position: relative;float: left;width: 180px;height: 100%;background: transparent;color: #ccc;padding: 0;border: 0;outline: none;border-radius: 0;
+            position: relative;float: left;height: 100%;background: transparent;color: #ccc;padding: 0 20px;border: 0;outline: none;border-radius: 0;
             .iconfont{font-size: 22px;margin-right: 10px;vertical-align: middle;}
             span{font-size: 18px;vertical-align: middle;display: inline-block;}
           }

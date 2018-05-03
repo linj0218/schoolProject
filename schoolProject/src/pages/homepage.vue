@@ -66,9 +66,11 @@
                 </drapdown>
 
               </div>
-              <button type="button" class="btn btn-primary" @click='newEvent()' v-if='data.canEdit'>
-                <span class="icon_btn_add"></span> {{ $t("New Event") }}
-              </button>
+              <el-tooltip class="item" effect="dark" :content="$t('New Event')" placement="top" :open-delay="1000">
+                <button style="width: 130px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="button" class="btn btn-primary" @click='newEvent()' v-if='data.canEdit'>
+                  <span class="icon_btn_add"></span> {{ $t("New Event") }}
+                </button>
+              </el-tooltip>
             </div>
           </div>
           <div class="week_calendar">
