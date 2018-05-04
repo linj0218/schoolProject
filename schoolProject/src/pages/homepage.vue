@@ -67,7 +67,7 @@
 
               </div>
               <el-tooltip class="item" effect="dark" :content="$t('New Event')" placement="top" :open-delay="1000">
-                <button style="width: 130px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="button" class="btn btn-primary" @click='newEvent()' v-if='data.canEdit'>
+                <button style="width: 140px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;" type="button" class="btn btn-primary" @click='newEvent()' v-if='data.canEdit'>
                   <span class="icon_btn_add"></span> {{ $t("New Event") }}
                 </button>
               </el-tooltip>

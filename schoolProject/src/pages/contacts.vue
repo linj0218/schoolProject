@@ -39,7 +39,7 @@
                   <span v-for='(name, index) in item.nameList' :style="{color: index == 1 ? '#f00' : ''}">{{name}}</span>
                 </div>
               </el-tooltip>
-              <div class="form_label">{{ $t("Position") }}({{ $t("Job Title") }})</div>
+              <div class="form_label">{{ $t("Position") }}</div>
               <el-tooltip class="item" effect="dark" :content="item.title || '-'" placement="top-start" :open-delay="1000">
                 <div class="form_value">
                   <span v-for='(title, index) in item.titleList' :style="{color: index == 1 ? '#f00' : ''}">{{index == 0 && !item.title ? '-' : title}}</span>

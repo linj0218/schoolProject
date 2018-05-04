@@ -4,7 +4,7 @@
     <div class="form">
       <div class="form_title">
         <span class="logo"></span>
-        <span>Welcome to LFS Portal</span>
+        <span>{{$t('Welcome to LFS Portal')}}</span>
       </div>
       <div class="form_cont">
         <input tabindex="1" id='user' class="form-control" type="text" :placeholder="$t('Enter your email address')" v-model='userName'>

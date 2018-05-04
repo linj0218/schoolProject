@@ -122,7 +122,7 @@
         <!-- Places -->
         <div class="nav_content_1" v-show='tab==2'>
           <div class="name_box">
-            <span class="lab">{{ $t("Name") }}:</span>
+            <span class="lab">{{ $t("Places") }}:</span>
             <div class="name_value">
 
               <drapdown :input-value='placesData.value'
@@ -139,7 +139,7 @@
             </div>
           </div>
           <div class="member_box">
-            <span class="lab">{{ $t("Room/Places") }}:</span>
+            <span class="lab">{{ $t("Rooms") }}:</span>
             <div class="member_value">
               <div class="li" v-for='(item, index) in placesData.rooms'>
                 {{item.name}}
@@ -323,7 +323,6 @@ export default {
         })
         this.placesData.places = placesList
         let categoryList = []
-        let colorList = []
         forEach(resData.categoryList, (i, item) => {
           if (i === '0') {
             this.categoryData.value = item.id
@@ -336,15 +335,19 @@ export default {
             name: data.category_no,
             color: data.category_remark
           }
-          let color = {
-            value: data.category_remark,
-            name: '',
-            color: data.category_remark
-          }
           categoryList.push(obj)
-          colorList.push(color)
         })
         this.categoryData.nameList = categoryList
+        // 颜色列表
+        let colorList = [];
+        for (let i = 1; i <= 11; i++) {
+          let color = {
+            value: 'bg_color_' + i,
+            name: '',
+            color: 'bg_color_' + i
+          }
+          colorList.push(color)
+        }
         this.categoryData.colorList = colorList
         let schoolYearList = []
         forEach(resData.schoolYearList, (i, item) => {

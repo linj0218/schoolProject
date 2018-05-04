@@ -286,8 +286,8 @@
             {value: 2, name: 'App name 2', checked: false}
           ],
           userList: [],
-          userId: '1161',
-          userName: 'william',
+          userId: '',
+          userName: '',
           user_flag: false,
           switch_flag: false,
           userGroupedIn: [],
