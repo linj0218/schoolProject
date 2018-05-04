@@ -183,7 +183,7 @@
                   <span>{{ $t("Attachment") }}:</span>
                   <div>
                     <template v-for='file in taskDetailInfo.fileList'>
-                      <a class="link_download" download :href="$config.api_path.img_path+file.file_url">{{file.file_name}}<i class="icon_attachment"></i></a><br/>
+                      <a class="link_download" target="_blank" download :href="$config.api_path.img_path+file.file_url">{{file.file_name}}<i class="icon_attachment"></i></a><br/>
                     </template>
                   </div>
                 </div>

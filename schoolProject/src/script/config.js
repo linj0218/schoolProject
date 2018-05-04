@@ -1,9 +1,9 @@
 // 配置信息
 // 测试环境-116.228.73.106:8111
 // 生产环境-portal.lfshanghai.cn (116.228.73.106:80)
-let configTest = 'http://116.228.73.106:8111';
-let configProd = 'http://portal.lfshanghai.cn';
-let configDev = 'http://116.228.73.106:8111';
+const configTest = 'http://218.83.241.198:8111';
+const configProd = 'http://218.83.241.198:8111';
+const configDev = 'http://218.83.241.198:8111';
 
 // 根据环境修改API地址
 let url = '';

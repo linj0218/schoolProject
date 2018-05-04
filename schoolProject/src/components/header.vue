@@ -19,7 +19,7 @@
           <div class="icon_other2"></div>
           <li class="english" :class="lang=='en-US'?'act':''" @click="changeLanguage('en-US')"><i></i></span>English</li>
           <li class="french" :class="lang=='fr-FR'?'act':''" @click="changeLanguage('fr-FR')"><i></i>French</li>
-          <li class="china" :class="lang=='zh-CH'?'act':''" @click="changeLanguage('zh-CH')"><i></i>简体中文</li>
+          <!-- <li class="china" :class="lang=='zh-CH'?'act':''" @click="changeLanguage('zh-CH')"><i></i>简体中文</li> -->
         </ul>
       </div>
     </div>

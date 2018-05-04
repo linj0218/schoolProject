@@ -7,8 +7,8 @@
         <span>Welcome to LFS Portal</span>
       </div>
       <div class="form_cont">
-        <input tabindex="1" id='user' class="form-control" type="text" placeholder="User" v-model='userName'>
-        <input tabindex="2" id='pwd' class="form-control" type="password" placeholder="Password" v-model='passWord' @keyup.enter='login()'>
+        <input tabindex="1" id='user' class="form-control" type="text" :placeholder="$t('Enter your email address')" v-model='userName'>
+        <input tabindex="2" id='pwd' class="form-control" type="password" :placeholder="$t('Password')" v-model='passWord' @keyup.enter='login()'>
       </div>
       <div class="error_info" v-show='errorText !== ""'>
         <span>
@@ -20,7 +20,7 @@
       </div>
       <div class="login_btn">
         <button type="button" class="btn btn-primary btn-block" @click='login()'>
-          Log in
+          {{$t("Log in")}}
         </button>
       </div>
     </div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import {setSStorage} from '@/script/util'
+import {setSStorage, setCookie} from '@/script/util'
 export default {
   components: {
   },
@@ -71,6 +71,8 @@ export default {
             resData.role = 2;
           }
           localStorage.setItem('USERNAME', this.userName)
+          setCookie('USERNAME', this.userName, {expires: 1 / 8});
+          setCookie('PASSWORD', this.passWord, {expires: 1 / 8});
           setSStorage('userinfo', resData);
           this.$store.dispatch('getUserInfo');
           self.$router.push({ path: '/' })

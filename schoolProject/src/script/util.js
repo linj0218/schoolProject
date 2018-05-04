@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 export const url = 'http://cc.test.shbaoyuantech.com/v_1_0'; // 测试
 
 /*****************************************************
@@ -245,6 +247,41 @@ export const getByObject = (array, paramObject) => {
   }
   return undefined;
 };
+
+/**
+ * 设置cookie
+ * @param {[type]} key    key
+ * @param {[type]} val    value
+ * @param {[type]} params 参数：{expires: 1(以天为单位，默认浏览器关闭后失效), path: '/'(作用地址), domain: ''(cookie生效地址，只有在该地址下才能读取), secure: false(是否使用https安全传输)}
+ */
+export const setCookie = (key, val, params) => {
+  if (params instanceof Object) {
+    return Cookies.set(key, val, params);
+  } else {
+    return Cookies.set(key, val);
+  }
+}
+/**
+ * 获取cookie
+ * @param  {[type]} key key
+ * @return {[type]}     返回key对应的value，或所有cookie
+ */
+export const getCookie = (key) => {
+  return Cookies.get(key);
+}
+/**
+ * 删除cookie
+ * @param  {[type]} key    key
+ * @param  {[type]} params 创建cookie时的参数，比如：{path: ''}
+ * @return {[type]}        undefined
+ */
+export const removeCookie = (key, params) => {
+  if (params instanceof Object) {
+    return Cookies.remove(key, params);
+  } else {
+    return Cookies.remove(key);
+  }
+}
 
 export default {
 }
