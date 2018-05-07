@@ -104,7 +104,7 @@ const EN = {
   'Enter your email address': 'Email',
   'Password': 'Password',
   'Log in': 'Log in',
-  'Welcome to LFS Portal': 'Welcome to LFS Portal',
+  'Welcome to LFS Portal': 'Bienvenu au Lycée Français de Shanghai',
   'Mon': 'Mon',
   'Tue': 'Tue',
   'Wed': 'Wed',

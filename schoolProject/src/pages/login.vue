@@ -89,9 +89,9 @@ export default {
   #body{height: 100%;background: #f5f5f5;overflow: auto;position: relative;}
   .bg{height: 100%;background: url('../images/login_bg.jpg') 0 0 / 100% auto no-repeat;}
   .form{
-    position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);width: 400px;height: 380px;background: #fff;
+    position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);min-width: 400px;height: 380px;background: #fff;
     .form_title{
-      line-height: 150px;color: #2C66C2;font-size: 22px;text-align: center;
+      line-height: 150px;color: #2C66C2;font-size: 22px;text-align: center;padding: 0 20px;
       .logo{display: inline-block;width: 63px;height: 95px;background: url('../images/logo_2.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
     }
     .form_cont{
