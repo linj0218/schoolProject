@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import {getSStorage} from '@/script/util'
+import { getSStorage, getCookie } from '@/script/util'
 
 const Test = r => require.ensure([], () => r(require('@/pages/test')), 'test')
 const Login = r => require.ensure([], () => r(require('@/pages/login')), 'main')
@@ -73,7 +73,13 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // 校验用户是否登录，未登录跳转登陆页
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    !getSStorage('userinfo') ? next({path: '/login'}) : next();
+    const username = getCookie('USERNAME');
+    const password = getCookie('PASSWORD');
+    if (username && password) {
+      next();
+    } else {
+      !getSStorage('userinfo') ? next({path: '/login'}) : next();
+    }
   } else {
     next();
   }

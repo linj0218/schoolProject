@@ -6,6 +6,9 @@
       <span>{{userName}}</span>
       <div class="icon head_portrait">
         {{shortName}}
+        <div class="logo_box">
+          <img v-if="avatar" :src="avatar">
+        </div>
         <ul class="drop_down">
           <div class="icon_other1"></div>
           <li @click='profileToggle()'><span class="icon1"></span>{{ $t("Profile") }}</li>
@@ -46,7 +49,8 @@
         permission: '',
         shortName: '',
         showConfig: false,
-        showAppSetting: false
+        showAppSetting: false,
+        avatar: ''
       }
     },
     computed: {
@@ -62,10 +66,13 @@
       // 初始化用户信息
       initUserInfo () {
         let userInfo = getSStorage('userinfo');
+        console.log(userInfo);
         this.userName = userInfo.nom
         this.permission = userInfo.permission_title
-        this.userRole = userInfo.role
-        this.shortName = getShortName(userInfo.nom)
+        this.userRole = userInfo.role;
+        // 这接口写的
+        this.avatar = !userInfo.avatar ? '' : (this.$config.api_path.img_path + '/avatar/' + userInfo.avatar);
+        this.shortName = getShortName(userInfo.nom);
       },
       // 初始化头部菜单
       initMenu () {
@@ -134,7 +141,9 @@
       .icon .drop_down li.china i{background: url('../images/china.png') 0 0 / 100% 100% no-repeat;}
       .icon:hover{cursor: pointer;}
       .icon:hover .drop_down{height: 200px;}
-      .icon.head_portrait{width: 60px;height: 60px;color: #4E81BD;text-align: center;line-height: 60px;font-size: 28px;}
+      .icon.head_portrait{width: 60px;height: 60px;color: #4E81BD;text-align: center;line-height: 60px;font-size: 28px;position: relative;}
+      .icon.head_portrait .logo_box{width: 100%;height: 100%;position: absolute;top: 0;left: 0;z-index: 2;}
+      .icon.head_portrait .logo_box img{width: 100%;height: 100%;float: left;}
       .icon.head_portrait .drop_down{left: -55px;top: 60px;}
       .icon.language{width: 50px;height: 50px;}
       .icon.language .drop_down{left: -145px;top: 50px;}

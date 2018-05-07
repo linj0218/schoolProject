@@ -41,6 +41,7 @@ export default {
     }
   },
   mounted () {
+    // william.trang@lyceeshanghai.com
     let cacheUserName = localStorage.getItem('USERNAME')
     if (cacheUserName) {
       this.userName = cacheUserName
@@ -87,7 +88,7 @@ export default {
 
 <style lang='scss' scoped>
   #body{height: 100%;background: #f5f5f5;overflow: auto;position: relative;}
-  .bg{height: 100%;background: url('../images/login_bg.jpg') 0 0 / 100% auto no-repeat;}
+  .bg{height: 100%;background-image: url('../images/login_bg.jpg');background-repeat: no-repeat;background-size: cover;background-position: center;}
   .form{
     position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);min-width: 400px;height: 380px;background: #fff;
     .form_title{
