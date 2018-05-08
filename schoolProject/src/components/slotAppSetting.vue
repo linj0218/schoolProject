@@ -229,7 +229,7 @@
             </div>
           </div>
           <!-- 查询条件 -->
-          <div class="name_box">
+          <!-- <div class="name_box">
             <span class="lab" style="width: 220px;">{{ $t("Last sync statistics") }}:</span>
             <div class="name_value" style="width: 800px;">
               <el-date-picker v-model="data.searchDate"
@@ -243,9 +243,9 @@
               </el-date-picker>
               <input type="text" class="form-control" v-model='data.searchName' :placeholder='$t("User")' @keyup.enter='searchEvent()'>
             </div>
-          </div>
+          </div> -->
           <div class="name_box">
-            <span class="lab" style="width: 220px;"></span>
+            <span class="lab" style="width: 220px;">{{ $t("Last sync statistics") }}:</span>
             <div class="name_value" style="width: 1000px;">
               <div class="sync_nav_tab">
                 <div><div @click='()=>{this.data.sync_tab=1}' :class='{"act": data.sync_tab==1}'>{{ $t("Adds") }}<span class="_badge">{{data.syncData.addsNum}}</span></div></div>
@@ -1118,7 +1118,7 @@
   .sync_nav_tab > div{height: 100%;line-height: 48px;text-align: center;display: inline-block;margin: 0 10px;}
   .sync_nav_tab > div > div{height: 100%;display: inline-block;border-bottom: 4px solid transparent;font-size: 20px;color: #ccc;line-height: 48px;cursor: pointer;padding: 0 10px;}
   .sync_nav_tab > div > div.act{border-bottom: 4px solid #4F81BE;color: #4E81BD;}
-  .sync_nav_tab ._badge{position: relative;background: #ccc;color: #fff;font-size: 12px;display: inline-block;width: 34px;height: 18px;line-height: 18px;border-radius: 2px;text-align: center;vertical-align: middle;margin-left: 10px;}
+  .sync_nav_tab ._badge{position: relative;background: #ccc;color: #fff;font-size: 12px;display: inline-block;padding: 0 10px;height: 18px;line-height: 18px;border-radius: 2px;text-align: center;vertical-align: middle;margin-left: 10px;}
   .sync_nav_tab ._badge:before{content: '';width: 6px;height: 6px;transform: translateX(0) translateY(6px) rotate(45deg);top: 0;left: -3px;position: absolute;background: inherit;z-index: 2;}
   .sync_nav_tab .act ._badge{background: #FF3B30;}
   .sync_list{padding: 0 20px;}

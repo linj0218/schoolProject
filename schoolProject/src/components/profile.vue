@@ -18,6 +18,9 @@
             <i class="icon" :class='data.sex'></i>
             <button class="btn" type="primary"><i class="icon_profile_edit"></i></button>
           </el-upload> -->
+          <div class="logo_box">
+            <img v-if="data.avatar" :src="data.avatar">
+          </div>
         </div>
         <div class="user_info">
           <span class="label_key">{{ $t("Name") }}:</span>
@@ -79,6 +82,7 @@ export default {
       show: false,
       sex: 'male',
       data: {
+        avatar: '',
         name: '',
         shortName: '',
         role: '',
@@ -113,7 +117,8 @@ export default {
       //   tel: user.mobile || '-',
       //   email: user.email
       // }
-      this.data.shortName = getShortName(this.data.nom)
+      this.data.shortName = getShortName(this.data.nom);
+      this.data.avatar = !this.data.avatar ? '' : (this.$config.api_path.img_path + '/avatar/' + this.data.avatar)
     },
     // 图标上传成功
     handleAvatarSuccess (res, file) {
@@ -175,6 +180,8 @@ export default {
           .icon.female{background: url('../images/icon_female.png') 0 0 / 100% 100% no-repeat;}
           .btn{position: absolute;width: 60px;height: 38px;border-radius: 38px;border: 2px solid #ddd;right: -104px;top: 50%;transform: translateY(-50%);outline: none;}
           .icon_profile_edit{background: url('../images/icon_profile_edit.png') 0 0 / 100% 100% no-repeat;display: inline-block;width: 16px;height: 16px;vertical-align: middle;}
+          .logo_box{width: 100px;height: 100px;position: absolute;top: -2px;left: -2px;z-index: 2;}
+          .logo_box img{width: 100%;height: 100%;float: left;}
         }
         .user_info{
           text-align: center;
