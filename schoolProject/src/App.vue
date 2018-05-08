@@ -31,6 +31,13 @@
       this.autoLogin().then(() => {
         this.$store.dispatch('getUserInfo');
         this.$store.dispatch('getLanguage');
+        // 更新cookie
+        setInterval(() => {
+          this.updateCookie();
+        }, 1000 * 60 * 60 * 1);
+        window.onbeforeunload = (e) => {
+          this.updateCookie();
+        }
       })
     },
     mounted () {
@@ -90,6 +97,13 @@
         } else {
           return new Promise((resolve, reject) => {});
         }
+      },
+      updateCookie () {
+        // console.log('update cookie', getCookie());
+        const username = getCookie('USERNAME');
+        const password = getCookie('PASSWORD');
+        setCookie('USERNAME', username, {expires: 1 / 8});
+        setCookie('PASSWORD', password, {expires: 1 / 8});
       }
     }
   }

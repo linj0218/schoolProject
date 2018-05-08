@@ -66,7 +66,7 @@
       // 初始化用户信息
       initUserInfo () {
         let userInfo = getSStorage('userinfo');
-        console.log(userInfo);
+        // console.log(userInfo);
         this.userName = userInfo.nom
         this.permission = userInfo.permission_title
         this.userRole = userInfo.role;
