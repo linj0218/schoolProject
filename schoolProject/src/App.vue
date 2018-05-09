@@ -28,9 +28,9 @@
       })
     },
     created () {
+      this.$store.dispatch('getLanguage');
       this.autoLogin().then(() => {
         this.$store.dispatch('getUserInfo');
-        this.$store.dispatch('getLanguage');
         // 更新cookie
         setInterval(() => {
           this.updateCookie();

@@ -4,6 +4,7 @@ import VueI18n from 'vue-i18n'
 import ZH from '@/lang/zh-CH'
 import EN from '@/lang/en-US'
 import FR from '@/lang/fr-FR'
+import { setSStorage } from '@/script/util'
 
 Vue.use(VueI18n)
 
@@ -12,6 +13,8 @@ const messages = {
   'en-US': EN,
   'fr-FR': FR
 }
+
+setSStorage('lang', messages)
 
 const i18n = new VueI18n({
   locale: localStorage.getItem('LANGUAGE') || 'en-US',

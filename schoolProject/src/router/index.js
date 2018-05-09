@@ -75,7 +75,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const username = getCookie('USERNAME');
     const password = getCookie('PASSWORD');
-    if (username && password) {
+    if (username !== 'undefined' && password !== 'undefined') {
       next();
     } else {
       !getSStorage('userinfo') ? next({path: '/login'}) : next();

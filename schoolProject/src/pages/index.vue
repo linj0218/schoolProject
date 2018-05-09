@@ -286,6 +286,10 @@
           data: param
         }).then((res) => {
           this.applicationList = res.data;
+          if (!this.applicationList) {
+            console.log(res);
+            return res;
+          }
           for (let i = 0; i < this.applicationList.length; i++) {
             if (this.applicationList[i].nom.length > 15) {
               this.applicationList[i].small_font = true;

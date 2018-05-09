@@ -17,6 +17,12 @@
         </li>
       </ul>
     </div>
+    <h3 @click="() => {this.data.showflg_4 = !this.data.showflg_4}">多语言</h3>
+    <div class="" v-show="data.showflg_4">
+      <div v-for="(val, key) in data.lang" style="padding-bottom: 10px;">
+        {{key}}: <input :value="val"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -24,7 +30,8 @@
   import alert from '@/components/alert'
   import uedit from '@/components/uedit'
   import Sortable from 'sortablejs'
-  import {mapState, mapMutations} from 'vuex'
+  import { mapState, mapMutations, mapGetters } from 'vuex'
+  import { getSStorage } from '@/script/util'
   export default {
     name: 'test',
     components: {
@@ -37,12 +44,17 @@
           showflg_1: false,
           showflg_2: false,
           showflg_3: false,
-          list: [{name: '芒果'}, {name: '苹果'}, {name: '菠萝'}]
+          showflg_4: true,
+          list: [{name: '芒果'}, {name: '苹果'}, {name: '菠萝'}],
+          lang: {}
         }
       }
     },
     computed: {
-      ...mapState(['test'])
+      ...mapState(['test']),
+      ...mapGetters({
+        lang: 'lang'
+      })
     },
     watch: {
       test () {
@@ -52,6 +64,9 @@
     mounted () {
       var el = document.getElementById('items');
       Sortable.create(el);
+
+      this.data.lang = getSStorage('lang')[this.lang];
+      delete this.data.lang.el;
     },
     methods: {
       ...mapMutations(['SET_TEST']),

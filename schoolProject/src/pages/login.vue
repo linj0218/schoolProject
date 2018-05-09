@@ -10,14 +10,14 @@
         <input tabindex="1" id='user' class="form-control" type="text" :placeholder="$t('Enter your email address')" v-model='userName'>
         <input tabindex="2" id='pwd' class="form-control" type="password" :placeholder="$t('Password')" v-model='passWord' @keyup.enter='login()'>
       </div>
-      <div class="error_info" v-show='errorText !== ""'>
+      <div class="error_info" :style='{visibility: errorText !== "" ? "visible" : "hidden"}'>
         <span>
           <span class="icon"></span> {{errorText}}
         </span>
       </div>
-      <div class="forget_pwd">
-        <!-- <a href="javascripe:void(0);">Forget your Password?</a> -->
-      </div>
+      <!-- <div class="forget_pwd">
+        <a href="javascripe:void(0);">Forget your Password?</a>
+      </div> -->
       <div class="login_btn">
         <button type="button" class="btn btn-primary btn-block" @click='login()'>
           {{$t("Log in")}}
