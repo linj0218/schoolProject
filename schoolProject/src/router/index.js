@@ -6,7 +6,7 @@ const Test = r => require.ensure([], () => r(require('@/pages/test')), 'test')
 const Login = r => require.ensure([], () => r(require('@/pages/login')), 'main')
 const Index = r => require.ensure([], () => r(require('@/pages/index')), 'main')
 const Homepage = r => require.ensure([], () => r(require('@/pages/homepage')), 'main')
-const Setting = r => require.ensure([], () => r(require('@/pages/setting')), 'main')
+const Setting = r => require.ensure([], () => r(require('@/pages/setting')), 'setting')
 const Contacts = r => require.ensure([], () => r(require('@/pages/contacts')), 'main')
 
 Vue.use(Router)

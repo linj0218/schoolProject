@@ -69,7 +69,7 @@
       autoLogin () {
         const username = getCookie('USERNAME');
         const password = getCookie('PASSWORD');
-        if (!this.userInfo.id && username && password) {
+        if (!this.userInfo.id && username !== 'undefined' && password !== 'undefined') {
           let params = {
             userName: username,
             passWord: password

@@ -24,16 +24,16 @@
           </div>
         </div>
         <div class="content">
-          <div class="tab_content" v-show='data.tab==0'>
+          <div class="tab_content" v-if='data.tab==0'>
             <app-setting @openBanner='openBanner' @switchTab="switchTab"></app-setting>
           </div>
-          <div class="tab_content" v-show='data.tab==1'>
+          <div class="tab_content" v-if='data.tab==1'>
             <calendar @openBanner='openBanner'></calendar>
           </div>
-          <div class="tab_content" v-show='data.tab==2'>
+          <div class="tab_content" v-if='data.tab==2'>
             <toolbar @openBanner='openBanner'></toolbar>
           </div>
-          <div class="tab_content" v-show='data.tab==3'>
+          <div class="tab_content" v-if='data.tab==3'>
             <launcher @openBanner='openBanner' ref='launcher'></launcher>
           </div>
         </div>
