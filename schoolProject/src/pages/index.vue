@@ -147,9 +147,17 @@
         isFirst: 0 // 首次加载页面展开当前日期后的所有时间
       }
     },
+    watch: {
+      autoLoginFinish () {
+        if (this.autoLoginFinish) {
+          this.initAppList();
+        }
+      }
+    },
     computed: {
       ...mapGetters({
-        userInfo: 'userInfo'
+        userInfo: 'userInfo',
+        autoLoginFinish: 'autoLoginFinish'
       })
     },
     mounted () {

@@ -11,7 +11,8 @@ const state = {
   userInfo: {}, // 用户信息
   lang: '', // 多语言
   initHoliday: false, // 节假日是否初始化
-  schoolYearInfo: [] // 学期信息list
+  schoolYearInfo: [], // 学期信息list
+  autoLoginFinish: false // 自动登录完毕
 }
 
 const store = new Vuex.Store({

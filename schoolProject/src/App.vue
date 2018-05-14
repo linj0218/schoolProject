@@ -24,7 +24,8 @@
     computed: {
       ...mapGetters({
         userInfo: 'userInfo',
-        lang: 'lang'
+        lang: 'lang',
+        autoLoginFinish: 'autoLoginFinish'
       })
     },
     created () {
@@ -67,6 +68,7 @@
     },
     methods: {
       autoLogin () {
+        console.log('auto login in');
         const username = getCookie('USERNAME');
         const password = getCookie('PASSWORD');
         if (!this.userInfo.id && username !== 'undefined' && password !== 'undefined') {
@@ -91,6 +93,7 @@
               setCookie('PASSWORD', password, {expires: 1 / 8});
               setSStorage('userinfo', resData);
               this.$store.dispatch('getUserInfo');
+              this.$store.dispatch('getAutoLoginFinish');
             }
             return res;
           })

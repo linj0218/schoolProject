@@ -22,3 +22,8 @@ export const getInitHoliday = ({ commit }) => {
 export const getSchoolYearInfo = ({ commit }, list) => {
   commit(types.GET_SCHOOLYEARINFO, list);
 }
+
+// 节假日初始化标识
+export const getAutoLoginFinish = ({ commit }) => {
+  commit(types.GET_AUTOLOGINFINISH, true);
+}

@@ -105,6 +105,7 @@ const EN = {
   'Password': 'Password',
   'Log in': 'Log in',
   'Welcome to LFS Portal': 'Portail Intranet du Lycée Français de Shanghai',
+  'All': 'All',
   'Mon': 'Mon',
   'Tue': 'Tue',
   'Wed': 'Wed',

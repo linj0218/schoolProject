@@ -6,7 +6,7 @@
               @focus='()=>{this.$emit("buttonFocus")}'
               @blur='()=>{this.$emit("buttonBlur")}' >
       </button>
-      {{actDateInfo.thisMonth | monthName}} {{actDateInfo.thisYear}}
+      {{getMonth}} {{actDateInfo.thisYear}}
       <el-tooltip effect="dark" :content="$t('Today')" placement="top-start" :open-delay="1000">
         <div class="back_to_today" v-if='showABWeek' @click='backToToday()'>{{ $t("Today") }}</div>
       </el-tooltip>
@@ -100,7 +100,10 @@
       ...mapGetters({
         initHoliday: 'initHoliday',
         schoolYearInfo: 'schoolYearInfo'
-      })
+      }),
+      getMonth () {
+        return this.$t(monthMap[Number(this.actDateInfo.thisMonth)].substr(0, 3));
+      }
     },
     created () {
       this.actDateInfo = this.inputActDateInfo
@@ -442,11 +445,6 @@
       // 返回数据：日历数据，今日数据，当前日期数据，当前日期所属周数据
       syncData () {
         this.$emit('syncDataFunc', this.calendarList, this.thisDateInfo, this.actDateInfo, this.getActWeek());
-      }
-    },
-    filters: {
-      monthName (str) {
-        return monthMap[Number(str)].substr(0, 3)
       }
     }
   }

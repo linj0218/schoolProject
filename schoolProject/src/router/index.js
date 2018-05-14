@@ -73,8 +73,8 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // 校验用户是否登录，未登录跳转登陆页
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    const username = getCookie('USERNAME');
-    const password = getCookie('PASSWORD');
+    const username = String(getCookie('USERNAME'));
+    const password = String(getCookie('PASSWORD'));
     if (username !== 'undefined' && password !== 'undefined') {
       next();
     } else {

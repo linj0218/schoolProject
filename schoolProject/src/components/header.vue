@@ -34,7 +34,7 @@
 
 <script>
   import alert from '@/components/alert'
-  import {getShortName, getSStorage, removeSStorage} from '@/script/util'
+  import {getShortName, removeSStorage} from '@/script/util'
   import { mapGetters } from 'vuex';
   export default {
     components: {
@@ -55,17 +55,27 @@
     },
     computed: {
       ...mapGetters({
-        lang: 'lang'
+        lang: 'lang',
+        autoLoginFinish: 'autoLoginFinish',
+        userInfo: 'userInfo'
       })
     },
     mounted () {
       this.initUserInfo()
       this.initMenu()
     },
+    watch: {
+      autoLoginFinish () {
+        if (this.autoLoginFinish) {
+          this.initUserInfo();
+        }
+      }
+    },
     methods: {
       // 初始化用户信息
       initUserInfo () {
-        let userInfo = getSStorage('userinfo');
+        // let userInfo = getSStorage('userinfo');
+        let userInfo = this.userInfo;
         // console.log(userInfo);
         this.userName = userInfo.nom
         this.permission = userInfo.permission_title

@@ -272,11 +272,11 @@
         // part_2 ------------------------------------------------------------
         // Week info
         categoryId: '0',
-        categoryName: 'All',
+        categoryName: this.$t('All'),
         categoryColor: '',
         categorys: [],
         seeCategoryId: '0',
-        seeCategoryName: 'All',
+        seeCategoryName: this.$t('All'),
         seeCategoryColor: '',
         seeCategorys: [],
         weekTableHead: [],
@@ -378,7 +378,7 @@
           })
           self.placesList = placesList
 
-          let categorys = [{value: '0', name: 'All', color: ''}]
+          let categorys = [{value: '0', name: this.$t('All'), color: ''}]
           forEach(resData.categoryList, (i, item) => {
             let obj = {
               value: item.id,
@@ -390,7 +390,7 @@
           self.categorys = categorys
 
           // groups
-          let seeCategorys = [{value: '0', name: 'All'}]
+          let seeCategorys = [{value: '0', name: this.$t('All')}]
           forEach(resData.groupsList, (i, item) => {
             if (item.operation_flag == 0) return;
             let obj = {

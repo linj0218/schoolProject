@@ -105,6 +105,7 @@ const ZH = {
   'Password': '密码',
   'Log in': '登录',
   'Welcome to LFS Portal': 'Welcome to LFS Portal',
+  'All': '全部',
   'Mon': '周一',
   'Tue': '周二',
   'Wed': '周三',

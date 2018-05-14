@@ -20,5 +20,9 @@ export default {
   // 多语言
   [types.GET_LANGUAGE] (state, { lang }) {
     state.lang = lang;
+  },
+  // 自动登录
+  [types.GET_AUTOLOGINFINISH] (state, flg) {
+    state.autoLoginFinish = flg;
   }
 }
