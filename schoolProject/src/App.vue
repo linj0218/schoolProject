@@ -68,7 +68,7 @@
     },
     methods: {
       autoLogin () {
-        console.log('auto login in');
+        // console.log('auto login in');
         const username = getCookie('USERNAME');
         const password = getCookie('PASSWORD');
         if (!this.userInfo.id && username !== 'undefined' && password !== 'undefined') {
@@ -81,6 +81,7 @@
           }).then((res) => {
             if (res.result === 'SUCCESS') {
               let resData = res.data;
+              resData.token = res.token;
               if (resData.permission_title === 'Admin') {
                 resData.role = 0;
               } else if (resData.permission_title === 'Super User') {

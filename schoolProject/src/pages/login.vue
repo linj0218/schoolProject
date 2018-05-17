@@ -4,7 +4,8 @@
     <div class="form">
       <div class="form_title">
         <span class="logo"></span>
-        <span>{{$t('Welcome to LFS Portal')}}</span>
+        <span class="sys_name" style="margin-top: 28px;">Portail Intranet du</span>
+        <span class="sys_name">Lycée Français de Shanghai</span>
       </div>
       <div class="form_cont">
         <input tabindex="1" id='user' class="form-control" type="text" :placeholder="$t('Enter your email address')" v-model='userName'>
@@ -29,6 +30,8 @@
 
 <script>
 import {setSStorage, setCookie} from '@/script/util'
+// import md5 from 'js-md5';
+
 export default {
   components: {
   },
@@ -54,7 +57,9 @@ export default {
     login () {
       if (this.userName === '' || this.passWord === '') return false;
 
-      let self = this
+      let self = this;
+      // this.passWord = md5(this.passWord)
+
       let params = {
         userName: this.userName,
         passWord: this.passWord
@@ -64,6 +69,7 @@ export default {
       }).then((res) => {
         if (res.result === 'SUCCESS') {
           let resData = res.data;
+          resData.token = res.token;
           if (resData.permission_title === 'Admin') {
             resData.role = 0;
           } else if (resData.permission_title === 'Super User') {
@@ -92,12 +98,14 @@ export default {
   .form{
     position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);min-width: 400px;height: 380px;background: #fff;
     .form_title{
-      line-height: 150px;color: #2C66C2;font-size: 22px;text-align: center;padding: 0 20px;
-      .logo{display: inline-block;width: 63px;height: 95px;background: url('../images/logo_2.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;}
+      color: #4F81BE;font-size: 18px;text-align: center;padding: 25px 20px 30px 20px;
+      .logo{float: left;width: 63px;height: 95px;background: url('../images/logo_2.png') 0 0 / 100% 100% no-repeat;margin: 0 15px 0 20px;}
+      .sys_name{display: block;overflow: hidden;text-align: left;}
     }
+    .form_title:after{content: '';clear: both;display: block;}
     .form_cont{
       padding: 0 20px;
-      .form-control{background: transparent;}
+      .form-control{background: transparent;height: 38px;}
       .form-control:first-child{margin-bottom: 15px;}
     }
     .error_info{

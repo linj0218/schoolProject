@@ -21,7 +21,8 @@ const config = {
     'img_upload': url + '/HTMS_WeChat/fileCtl/app/imgUpload', // APP图片上传
     'user_img_upload': url + '/HTMS_WeChat/fileCtl/avatar/avatarUpload', // users图片上传
     'file_upload': url + '/HTMS_WeChat/fileCtl/file/fileUpload', // 文件上传
-    'img_path': url + '' // 图片查看
+    'img_path': url + '', // 图片查看
+    'fix_sync_path': url + '/adSynchronizeCtl/sys/toSynchronizeForFormal' // AD同步接口
   }
 }
 

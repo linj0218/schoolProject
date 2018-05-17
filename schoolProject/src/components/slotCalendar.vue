@@ -1,7 +1,6 @@
 <template>
   <div class="body" v-cloak>
     <div class="nav_tab flex">
-      <div v-if='false'><div @click='()=>{this.tab=0}' :class='{"act": tab==0}'>Groups</div></div>
       <div><div @click='()=>{this.tab=1}' :class='{"act": tab==1}'>{{ $t("School years") }}</div></div>
       <div><div @click='()=>{this.tab=2}' :class='{"act": tab==2}'>{{ $t("Places") }}</div></div>
       <div><div @click='()=>{this.tab=3}' :class='{"act": tab==3}'>{{ $t("Categories") }}</div></div>
@@ -9,38 +8,6 @@
     </div>
     <div class="nav_body">
       <div class="_body">
-        <!-- Groups -->
-        <div class="nav_content_1" v-show='tab==0' style="padding: 0;text-align: left;display: none;">
-          <el-table ref="groups"
-                    :data="groupsData.groupList"
-                    tooltip-effect="dark"
-                    style="width: 100%"
-                    @selection-change="">
-            </el-table-column>
-            <el-table-column prop="group_name"
-                             label="Ad group"
-                             show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column prop="group_alias_name"
-                             label="Alias"
-                             show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column label=""
-                             width="140">
-              <template slot-scope="scope">
-                <span class="icon icon_edit" @click='editGroupAlias(scope.$index, scope.row)'></span>
-              </template>
-            </el-table-column>
-            <el-table-column label="Active"
-                             width="80">
-              <template slot-scope="scope">
-                <div class="checkbox"
-                     :class='{"checked": scope.row.operation_flag==1}'
-                     @click='groupStatusChanged(scope.$index, scope.row)'></div>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
         <!-- School years -->
         <div class="nav_content_1" v-show='tab==1'>
           <div class="name_box">
@@ -178,13 +145,17 @@
           <div class="name_box">
             <span class="lab">{{ $t("Color") }}:</span>
             <div class="name_value">
-              <drapdown :input-value='categoryData.color'
+              <!-- <drapdown :input-value='categoryData.color'
                         :input-name='""'
                         :input-color-type='"background"'
                         :input-color='categoryData.color'
                         :input-select='categoryData.colorList'
                         @inputChange='editCategoryColor'>
-              </drapdown>
+              </drapdown> -->
+              <el-color-picker v-model="categoryData.color"
+                               :predefine="predefineColors"
+                               @change="editCategoryColor">
+              </el-color-picker>
             </div>
           </div>
         </div>
@@ -242,12 +213,6 @@ export default {
     return {
       tab: 1,
       show: false,
-      // Groups data
-      groupsData: {
-        groupList: [],
-        names: [],
-        membersList: []
-      },
       // School years data
       schoolYearData: {
         yearId: '',
@@ -278,6 +243,19 @@ export default {
         nameList: [],
         colorList: []
       },
+      predefineColors: [
+        '#DB465F',
+        '#B59479',
+        '#716DC2',
+        '#2C66C2',
+        '#47AD56',
+        '#687280',
+        '#00B3CF',
+        '#F2A200',
+        '#00CFB0',
+        '#4A90E2',
+        '#5ACE6D'
+      ],
       showWeekSelectModal: false,
       data: {
         users: [],
@@ -294,6 +272,8 @@ export default {
     this.getUsers().then(() => {
       this.getPowerUsers();
     });
+    // !@#$%^&*()_+
+    document.getElementsByClassName('el-color-dropdown')[0].style.zoom = 2.1 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
   },
   methods: {
     ...mapMutations(['SET_HOLIDAY']),
@@ -307,7 +287,6 @@ export default {
         let resData = res.data
         self.placesList = []
 
-        this.groupsData.groupList = resData.groupsList
         let placesList = []
         forEach(resData.campusList, (i, item) => {
           if (i === '0') {
@@ -339,16 +318,16 @@ export default {
         })
         this.categoryData.nameList = categoryList
         // 颜色列表
-        let colorList = [];
-        for (let i = 1; i <= 11; i++) {
-          let color = {
-            value: 'bg_color_' + i,
-            name: '',
-            color: 'bg_color_' + i
-          }
-          colorList.push(color)
-        }
-        this.categoryData.colorList = colorList
+        // let colorList = [];
+        // for (let i = 1; i <= 11; i++) {
+        //   let color = {
+        //     value: 'bg_color_' + i,
+        //     name: '',
+        //     color: 'bg_color_' + i
+        //   }
+        //   colorList.push(color)
+        // }
+        // this.categoryData.colorList = colorList
         let schoolYearList = []
         forEach(resData.schoolYearList, (i, item) => {
           if (i === '0') {
@@ -371,63 +350,6 @@ export default {
         this.schoolYearData.years = schoolYearList
 
         return res
-      })
-    },
-    findUsersByGroupId (id) {
-      let param = JSON.stringify({group_id: id})
-      this.$http.post('/sharedcalendarSettingCtl/event/getUsersByGroupId', {
-        data: param
-      }).then((res) => {
-        let resData = res.data
-        let objList = []
-        forEach(resData, (i, item) => {
-          let obj = {
-            value: item.id,
-            name: item.nom,
-            type: 'icon_member'
-          }
-          objList.push(obj)
-        })
-        this.groupsData.membersList = objList
-      })
-    },
-    closeConfig () {
-      this.show = false;
-      this.$emit('close');
-    },
-    // groups functions
-    // 修改group别名
-    editGroupAlias (index, row) {
-      this.$refs.prompt.showDialog(row.group_alias_name).then((text) => {
-        row.group_alias_name = text;
-        this.submitGroup(row)
-      })
-    },
-    // group状态修改
-    groupStatusChanged (index, row) {
-      row.operation_flag = row.operation_flag === 1 ? 0 : 1;
-      this.submitGroup(row)
-    },
-    // 提交groups表单
-    submitGroup (row) {
-      // console.log(row)
-      let param = {
-        'id': row.id,
-        'group_name': row.group_name,
-        'operation_flag': row.operation_flag,
-        'group_alias_name': row.group_alias_name
-      }
-      return this.$http.post('/sharedcalendarSettingCtl/event/editGroups', {
-        data: JSON.stringify(param)
-      }).then((res) => {
-        if (res.success) {
-          let banner = {
-            status: 'SUCCESS',
-            msg: 'Succeeded!'
-          }
-          this.$emit('openBanner', banner);
-          return res;
-        }
       })
     },
     // School years functions
@@ -736,6 +658,7 @@ export default {
       this.$refs.prompt.showDialog().then((text) => {
         this.categoryData.value = 0
         this.categoryData.name = text
+        this.categoryData.color = '#ff0000'
 
         this.submitCategory(0)
       })
@@ -748,7 +671,17 @@ export default {
       })
     },
     editCategoryColor (item) {
-      this.categoryData.color = item.value
+      if (!item) {
+        this.categoryData.color = '#ff0000';
+        return false;
+      }
+      this.categoryData.color = item;
+      for (let i = 0; i < this.categoryData.nameList.length; i++) {
+        if (this.categoryData.nameList[i].value === this.categoryData.value) {
+          this.categoryData.nameList[i].color = item;
+          break;
+        }
+      }
 
       this.submitCategory(0)
     },
@@ -872,55 +805,5 @@ export default {
 
 <style lang="scss" scoped>
   @import '../styles/mixin';
-  .body{position: relative;height: 100%;overflow: hidden;}
-  .nav_tab{height: 100px;border-bottom: 1px solid #eee;position: absolute;width: 100%;}
-  .nav_tab > div{padding: 34px 0;text-align: center;display: inline-block;margin: 0 20px;}
-  .nav_tab > div > div{height: 32px;display: inline-block;border-bottom: 4px solid #fff;font-size: 20px;color: #ccc;line-height: 20px;cursor: pointer;}
-  .nav_tab > div > div.act{border-bottom: 4px solid #4F81BE;color: #333;}
-  .nav_body{
-    padding-top: 100px;height: 100%;overflow: hidden;
-    ._body{border-radius: 2px;height: 100%;overflow: auto;}
-    .nav_content_1{
-      padding: 26px 0;
-      .name_box{margin-top: 14px;}
-      .lab{font-size: 18px;color: #999;vertical-align: top;display: inline-block;width: 120px;text-align: right;margin-right: 10px;line-height: 34px;}
-      .lab.long_text{width: 185px;}
-      .name_value{display: inline-block;width: 350px;position: relative;}
-      .name_value > .icon{position: absolute;width: 22px;height: 22px;right: 35px;top: 50%;transform: translateY(-50%);cursor: pointer;}
-      .name_value > .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;right: 65px;}
-      .name_value > .icon.icon_delete{background: url('../images/icon_delete.png') 0 0 / 100% 100% no-repeat;}
-      .member_box{margin-top: 14px;}
-      .member_value{
-        display: inline-block;width: 350px;min-height: 293px;background: #fff;border: 1px solid #ddd;border-radius: 2px;text-align: left;overflow-y: auto;overflow-x: hidden;
-        .li{
-          position: relative;line-height: 42px;padding: 0 16px;color: #333;
-          .icon_H{width: 30px;height: 30px;background: #F4A222;font-size: 16px;color: #fff;display: inline-block;vertical-align: middle;line-height: 30px;text-align: center;border-radius: 2px;margin-right: 10px;}
-          .icon{width: 24px;height: 24px;display: inline-block;vertical-align: middle;margin-right: 16px;}
-          .icon_member{left: 16px;background: url('../images/icon_member.png') 0 0 / 100% 100% no-repeat;}
-          .icon_members{left: 16px;background: url('../images/icon_members.png') 0 0 / 100% 100% no-repeat;}
-          .action_icon{width: 22px;height: 22px;cursor: pointer;position: absolute;top: 50%;transform: translateY(-50%);display: none;}
-          .action_icon.icon_delete{right: 30px;background: url('../images/icon_delete.png') 0 0 / 100% 100% no-repeat;}
-          .action_icon.icon_edit{right: 62px;background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
-        }
-        .li:nth-child(odd){background: #F9F9F9;}
-        .li:hover{
-          background: rgba(78,129,189,0.1);
-          .action_icon{display: block;}
-        }
-      }
-      table .icon{position: absolute;width: 22px;height: 22px;left: 0;top: 50%;transform: translateY(-50%);cursor: pointer;}
-      table .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
-      .button_box .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
-      table .checkbox{width: 20px;height: 20px;background: url('../images/icon_checkbox_unchecked.png') 50% 50%/auto auto no-repeat;cursor: pointer;}
-      table .checkbox.checked{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
-    }
-    .nav_content_1_btn{
-      text-align: center;
-      .btn{width: 150px;margin-top: 50px;}
-      .cancel{background: #ccc;color: #fff;}
-    }
-    .nav_content{
-      .name_value{display: inline-block;width: 350px;position: relative;}
-    }
-  }
+  @import '../styles/components/slotCalendar'
 </style>

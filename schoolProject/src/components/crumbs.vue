@@ -22,6 +22,10 @@
         this.data.crumbs = [
           { name: 'Home', path: '/', isHome: true }, { name: 'Calendar', path: '/homepage' }
         ]
+      } else if (this.$route.path === '/memo') {
+        this.data.crumbs = [
+          { name: 'Home', path: '/', isHome: true }, { name: 'IT Department', path: '/homepage' }, { name: 'Edit Memo', path: '/memo' }
+        ]
       }
     },
     methods: {
@@ -31,10 +35,10 @@
 
 <style lang='scss' scoped>
   @import '../styles/mixin';
-  .crumbs{padding: 15px 0;}
+  .crumbs{padding: 15px 0;height: 56px;position: relative;z-index: 2;background: #f5f5f5;}
   .crumbs:after{content: '';display: block;clear: both;}
   .nav{
-    display: inline-block;width: 90px;height: 26px;line-height: 27px;background: #fff;font-size: 12px;color: #4E81BD;position: relative;float: left;margin-left: 18px;padding-left: 10px;
+    display: inline-block;min-width: 90px;height: 26px;line-height: 27px;background: #fff;font-size: 12px;color: #4E81BD;position: relative;float: left;margin-left: 18px;padding-left: 10px;
     .icon_home{display: inline-block;width: 15px;height: 14px;background: url('../images/icon_home.png') 0 0 / 100% 100% no-repeat;margin-right: 5px;}
   }
   .nav:first-child{margin-left: 0;}

@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import md5 from 'js-md5';
 
 export const url = 'http://cc.test.shbaoyuantech.com/v_1_0'; // 测试
 
@@ -281,6 +282,16 @@ export const removeCookie = (key, params) => {
   } else {
     return Cookies.remove(key);
   }
+}
+
+/**
+ * 由md5加密生成签名
+ * @param  {[type]} str 待加密字符串
+ * @return {[type]}     返回加密后的字符串
+ */
+export const getSignByMd5 = (str) => {
+  // console.log(str);
+  return md5(str)
 }
 
 export default {
