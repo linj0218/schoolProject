@@ -154,6 +154,7 @@
               </drapdown> -->
               <el-color-picker v-model="categoryData.color"
                                :predefine="predefineColors"
+                               class="lj_colorpicker"
                                @change="editCategoryColor">
               </el-color-picker>
             </div>

@@ -62,7 +62,7 @@ axios.interceptors.response.use((res) => {
   return res.data
 }, (err) => {
   document.getElementById('loading').className = ''
-  console.log('网络异常')
+  console.log('网络异常');
   return Promise.reject(err)
 })
 

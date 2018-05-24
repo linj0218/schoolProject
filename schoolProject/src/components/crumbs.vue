@@ -24,7 +24,7 @@
         ]
       } else if (this.$route.path === '/memo') {
         this.data.crumbs = [
-          { name: 'Home', path: '/', isHome: true }, { name: 'IT Department', path: '/homepage' }, { name: 'Edit Memo', path: '/memo' }
+          { name: 'Home', path: '/', isHome: true }, { name: 'IT Department', path: '/setting?tabflg=4' }, { name: 'Edit Memo', path: '/memo' }
         ]
       }
     },

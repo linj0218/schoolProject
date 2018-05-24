@@ -24,5 +24,13 @@ export default {
   // 自动登录
   [types.GET_AUTOLOGINFINISH] (state, flg) {
     state.autoLoginFinish = flg;
+  },
+  // 备忘录侧边栏显示状态
+  [types.SET_MEMOSIDE] (state, flg) {
+    state.memoSide = flg;
+  },
+  // 侧边栏备忘录数据
+  [types.SET_MEMOSIDELIST] (state, list) {
+    state.memoSideList = list;
   }
 }

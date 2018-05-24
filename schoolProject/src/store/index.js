@@ -12,7 +12,9 @@ const state = {
   lang: '', // 多语言
   initHoliday: false, // 节假日是否初始化
   schoolYearInfo: [], // 学期信息list
-  autoLoginFinish: false // 自动登录完毕
+  autoLoginFinish: false, // 自动登录完毕
+  memoSide: false, // 是否显示侧边栏备忘录
+  memoSideList: [] // 侧边栏备忘录数据
 }
 
 const store = new Vuex.Store({

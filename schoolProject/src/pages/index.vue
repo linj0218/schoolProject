@@ -23,22 +23,9 @@
           </div>
         </div>
         <div class="part_3">
-          <div class="deps">
-            <div class="media" v-for='dep in departmentList'>
-              <div class="media-left media-middle">
-                <a href="javascript:void(0);">
-                  <img class="media-object" :src='dep.imgUrl' alt="">
-                </a>
-              </div>
-              <div class="media-body">
-                <h4 class="media-heading">{{dep.title}}</h4>
-                {{dep.description}}
-              </div>
-            </div>
-            <div class="title">
-              <div class="nav_btns"><a href="javascript:void(0);">&lt;</a>&nbsp;&nbsp;<a href="javascript:void(0);">&gt;</a></div>
-            </div>
-          </div>
+          <template v-for="memo in memoList">
+            <memo :titleType="memo.titleType" :memo="memo" @openSide="openMemoSide"></memo>
+          </template>
         </div>
         <div class="part_2">
           <div class="calendar">
@@ -102,23 +89,28 @@
       <!-- APP设置 -->
       <app-setting ref='appSetting' @openBanner='openBanner' @close='fresh'></app-setting>
 
+      <!-- 备忘录 -->
+      <memo-side ref='memoSide' :memoList="memoSideList"></memo-side>
+
     </div>
   </div>
 </template>
 
 <script>
   import headerr from '@/components/header'
-  import extendSearch from '@/components/extendSearch'
   import banner from '@/components/banner'
   import calendar from '@/components/calendar'
   import profile from '@/components/profile'
   import appSetting from '@/components/appSetting'
+  import extendSearch from '@/components/extendSearch'
+  import memo from '@/components/memoModel'
+  import memoSide from '@/components/memoSide'
 
   import { mapGetters } from 'vuex'
   import {weekMap, monthMap, forEach, formatDate} from '@/script/util'
   export default {
     components: {
-      headerr, banner, calendar, profile, appSetting, extendSearch
+      headerr, banner, calendar, profile, appSetting, extendSearch, memo, memoSide
     },
     data () {
       return {
@@ -136,12 +128,8 @@
         // Application
         applicationList: [
         ],
-        // Department
-        departmentList: [
-          {imgUrl: '', title: 'HR', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'},
-          {imgUrl: '', title: 'IT', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'},
-          {imgUrl: '', title: 'Doctor', description: 'Lorem ipsum dolor sit amet, consectectur adipiscing elit.Aeneam euismod bibendum laoreet.Proin gravida dolor sit amer lacus accumsan et viverra justo commodo,Proin sodales pulvinartem'}
-        ],
+        // Memo
+        memoList: [],
         // 配置弹窗
         showDialog: false,
         isFirst: 0 // 首次加载页面展开当前日期后的所有时间
@@ -157,11 +145,13 @@
     computed: {
       ...mapGetters({
         userInfo: 'userInfo',
-        autoLoginFinish: 'autoLoginFinish'
+        autoLoginFinish: 'autoLoginFinish',
+        memoSideList: 'memoSideList'
       })
     },
     mounted () {
       this.initAppList();
+      this.getTopMemo();
     },
     methods: {
       init () {
@@ -276,6 +266,7 @@
       },
       profileToggle (bol) {
         this.$refs.profile.show = bol;
+        this.$store.dispatch('setMemoSide', false);
       },
       // 配置弹窗切换事件
       appSettingToggle (bol) {
@@ -304,6 +295,69 @@
             }
           }
         })
+      },
+      // 更多memo事件，查询该memo所属group的所有memo
+      openMemoSide (groupId) {
+        let params = {
+          memo_groupid: groupId
+        }
+        return this.$http.post('/memoCtl/memo/findMemoByGroupId', params).then((res) => {
+          // console.log(res);
+          let memoSideList = [];
+          for (let i = 0; i < res.data.length; i++) {
+            let tempObj = {
+              titleType: 'type2',
+              titleColor: res.data[i].color,
+              contentType: 'type1',
+              memoId: res.data[i].id,
+              memoGroupId: res.data[i].memo_groupid,
+              title: res.data[i].memo_name,
+              memos: []
+            }
+            for (let i2 = 0; i2 < res.data[i].memoContentList.length; i2++) {
+              tempObj.memos.push({
+                subTitle: res.data[i].memoContentList[i2].sub_title,
+                imgUrl: res.data[i].memoContentList[i2].pic_url,
+                content: res.data[i].memoContentList[i2].memo_text
+              })
+            }
+            if (res.data[i].template === 0) tempObj.contentType = 'type2';
+            else if (res.data[i].template === 1) tempObj.contentType = 'type3';
+            else if (res.data[i].template === 2) tempObj.contentType = 'type1';
+            memoSideList.push(tempObj);
+          }
+          this.$store.dispatch('setMemoSideList', memoSideList);
+          this.$store.dispatch('setMemoSide', true);
+        })
+      },
+      // 获取置顶memo列表
+      getTopMemo () {
+        this.$http.post('/memoCtl/memo/findStickyMemo', {}).then((res) => {
+          let memoList = [];
+          for (let i = 0; i < res.data.length; i++) {
+            let tempObj = {
+              titleType: 'type2',
+              titleColor: res.data[i].color,
+              contentType: 'type1',
+              memoId: res.data[i].id,
+              memoGroupId: res.data[i].memo_groupid,
+              title: res.data[i].memo_name,
+              memos: []
+            }
+            for (let i2 = 0; i2 < res.data[i].memoContentList.length; i2++) {
+              tempObj.memos.push({
+                subTitle: res.data[i].memoContentList[i2].sub_title,
+                imgUrl: res.data[i].memoContentList[i2].pic_url,
+                content: res.data[i].memoContentList[i2].memo_text
+              })
+            }
+            if (res.data[i].template === 0) tempObj.contentType = 'type2';
+            else if (res.data[i].template === 1) tempObj.contentType = 'type3';
+            else if (res.data[i].template === 2) tempObj.contentType = 'type1';
+            memoList.push(tempObj);
+          }
+          this.memoList = memoList;
+        })
       }
     },
     filters: {
@@ -316,79 +370,5 @@
 
 <style lang='scss' scoped>
   @import '../styles/mixin';
-  #body{height: 100%;background: #f5f5f5;overflow: auto;}
-  .page_body{
-    padding: 20px 180px 30px;position: relative;
-    .part_1, .part_3{float: left;width: 63%;background: #fff;box-shadow: 0 0 1px #ddd;margin-right: 20px;margin-bottom: 20px;}
-    .part_1{
-      padding: 12px;
-      .apps{
-        height: 100%;padding: 0;
-        .app{
-          background: #eee;box-shadow: 0 0 1px #fff;color: #999;font-size: 20px;height: 120px;text-align: left;transition:all 0.5s; -webkit-transition:all 0.5s;text-decoration: none;overflow: hidden;position: relative;display: table;
-          .icon{
-            position: absolute;width: 80px;height: 80px;background: #fff;border-radius: 50%;overflow: hidden;vertical-align: middle;margin-right: 15px;top: 50%;transform: translateY(-50%);
-            img{width: 100%;height: 100%;position: absolute;left: 0;top: 0;}
-            img.icon_on{z-index: -1;}
-          }
-          .text{display: table-cell;vertical-align: middle;padding-left: 90px;}
-        }
-        .app.small_font{font-size: 18px;}
-        .app:hover{
-          color: #fff;background: #4E81BD;
-          img.icon_on{z-index: 1;}
-        }
-      }
-    }
-    .part_2{
-      overflow: hidden;background: #fff;box-shadow: 0 0 1px #ddd;min-height: 900px;padding: 0 20px;
-      .calendar{
-        .title{font-size: 40px;color: #4A90E2;text-align: center;height: 85px;line-height: 85px;border-bottom: 1px solid #f5f5f5;cursor: pointer;}
-        .title:hover{text-decoration: underline;}
-        .homePageLink{
-          i{display: inline-block;width: 20px;height: 20px;background: url('../images/icon_homepagelink.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;margin-right: 10px;}
-          right: 25px;font-size: 16px;color: #333;display: block;text-align: right;padding: 10px 20px;
-        }
-        .week_cal{
-          padding: 0 20px;color: #003;
-          .drawer_title{background: rgba(74,144,226,0.1);line-height: 40px;font-size: 18px;padding-left: 16px;border-bottom: 1px solid #fff;border-left: 4px solid #4A90E2;}
-          .drawer_list{
-            padding: 0 10px;font-size: 16px;color: #003;height: 0;overflow: hidden;
-            & > div{padding: 5px 0;}
-            & > .empty{padding: 10px;font-size: 18px;color: #333;}
-            .li_1{float: right;line-height: 44px;}
-            .point_icon{display: inline-block;width: 14px;height: 14px;border-radius: 50%;}
-            .drawer_li{line-height: 22px;padding: 7px 10px;height: 58px;}
-            .drawer_li:hover{background: #eee;}
-            .drawer_li div{
-              text-align: left;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;color: #666;font-size: 14px;
-              .info{display: inline-block;width: 50%;color: #333;font-size: 16px;}
-            }
-          }
-          .drawer_title.act + .drawer_list{height: auto;}
-        }
-      }
-    }
-    .part_3{
-      position: relative;
-      .deps{
-        padding: 0 30px 60px 30px;
-        .title{
-          text-align: center;height: 60px;border-top: 1px solid #f5f5f5;position: relative;margin-top: 15px;
-          .nav_btns{
-            position: absolute;right: 0;bottom: 10px;line-height: 30px;font-size: 18px;
-            a{display: inline-block;width: 30px;height: 30px;color: #666;box-shadow: 0 0 1px #999;background: #f5f5f5;}
-          }
-        }
-        .media{
-          padding-left: 10px;
-          img{width: 220px;height: 120px;background: #ddd;}
-        }
-        .media:first-child{margin-top: 15px;}
-      }
-    }
-    .part_3:after{
-      content: ''; position: absolute;width: 100%; height: 100%;background: url('../images/under_construction.jpg') 0 0 / 100% 100% no-repeat;top: 0;left: 0;color: #fff;text-align: center;line-height: 540px;font-size: 42px;
-    }
-  }
+  @import '../styles/index';
 </style>

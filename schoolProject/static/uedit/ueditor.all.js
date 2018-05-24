@@ -29452,7 +29452,7 @@ UE.ui = baidu.editor.ui = {};
      *
      */
     UE.getEditor = function (id, opt) {
-        var editor = instances[id];
+        var editor;
         if (!editor) {
             editor = instances[id] = new UE.ui.Editor(opt);
             editor.render(id);

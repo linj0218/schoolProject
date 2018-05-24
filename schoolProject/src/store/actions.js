@@ -27,3 +27,11 @@ export const getSchoolYearInfo = ({ commit }, list) => {
 export const getAutoLoginFinish = ({ commit }) => {
   commit(types.GET_AUTOLOGINFINISH, true);
 }
+// 设置备忘录状态
+export const setMemoSide = ({ commit }, flg) => {
+  commit(types.SET_MEMOSIDE, flg);
+}
+// 设置侧边备忘录数据
+export const setMemoSideList = ({ commit }, list) => {
+  commit(types.SET_MEMOSIDELIST, list);
+}

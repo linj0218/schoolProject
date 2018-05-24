@@ -45,6 +45,7 @@ export default {
   },
   mounted () {
     // william.trang@lyceeshanghai.com
+    // kan.chen@lyceeshanghai.com
     let cacheUserName = localStorage.getItem('USERNAME')
     if (cacheUserName) {
       this.userName = cacheUserName
