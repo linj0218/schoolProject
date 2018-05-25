@@ -620,7 +620,7 @@
       formatActDateInfoLabel () {
         let actDate = [this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-')
         let week = new Date(actDate).getDay()
-        this.data.actDateInfoLabel = formatDate(actDate, 'yyyy-mm-dd') + ', ' + this.$t(weekMap[week].substr(0, 3))
+        this.data.actDateInfoLabel = this.$moment(actDate).format('DD/MM/YYYY') + ' ' + this.$t(weekMap[week].substr(0, 3))
       },
       // 周视图隐藏空行
       showli (li) {

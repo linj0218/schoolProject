@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
-    <div class="title">{{ $t("LFS Applications Portal") }}</div>
+    <div class="title">{{ $t("LFS Applications Portal") }} {{envName}}</div>
     <div class="userInfo">
       <span>{{userName}}</span>
       <div class="icon head_portrait">
@@ -50,7 +50,8 @@
         shortName: '',
         showConfig: false,
         showAppSetting: false,
-        avatar: ''
+        avatar: '',
+        envName: ''
       }
     },
     computed: {
@@ -61,6 +62,7 @@
       })
     },
     mounted () {
+      if (process.env.PROJECT_BUILD_ENV === 'test') this.envName = ' (test)'
       this.initUserInfo()
       this.initMenu()
     },

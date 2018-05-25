@@ -24,9 +24,22 @@
             </div>
           </div>
           <div class="name_box">
+            <span class="lab">{{ $t("Priority") }}:</span>
+            <div class="name_value" style="width: 350px;">
+
+              <drapdown :input-value='data.sort_no'
+                        :input-name='data.sort_no'
+                        :input-select='data.sortList'
+                        :input-add='false'
+                        @inputChange='sortnoChanged'>
+              </drapdown>
+
+            </div>
+          </div>
+          <div class="name_box">
             <span class="lab">{{ $t("Memos") }}:</span>
-            <div class="name_value" id="sort_list">
-              <div class="memo_bg" :class="memo.sticky_flag === 1 ? 'top' : ''" v-for="memo in data.memoList">
+            <!-- <div class="name_value" id="sort_list">
+              <div class="memo_bg" v-for="memo in data.memoList">
                 <div class="memo_box">
                   <div class="memo_title" :style="{borderLeft: '3px solid ' + memo.color}">
                     {{memo.name}}
@@ -38,6 +51,26 @@
                   <span class="icon icon_delete" @click='deleteMemo(memo)'></span>
                 </div>
               </div>
+              <span class="top_bg"></span>
+            </div> -->
+
+            <!-- 排序 v2 -->
+            <div class="name_value">
+              <draggable v-model="data.memoList" @end="sortMemo">
+                <div class="memo_bg" v-for="memo in data.memoList" :key="memo.id">
+                  <div class="memo_box">
+                    <div class="memo_title" :style="{borderLeft: '3px solid ' + memo.color}">
+                      {{memo.name}}
+                    </div>
+                    <div class="memo_editor">
+                      {{statusFilter(memo.status)}}
+                    </div>
+                    <span class="icon icon_link" @click='viewMemo(memo)'></span>
+                    <span class="icon icon_delete" @click='deleteMemo(memo)'></span>
+                  </div>
+                </div>
+                <span class="top_bg"></span>
+              </draggable>
             </div>
           </div>
           <div class="name_box">
@@ -133,11 +166,12 @@ import drapdown from '@/components/drapdown'
 import prompt from '@/components/prompt'
 import alert from '@/components/alert'
 import addParticipantModal from '@/components/addParticipantModal'
-import Sortable from 'sortablejs'
+// import Sortable from 'sortablejs'
+import draggable from 'vuedraggable'
 
 export default {
   components: {
-    drapdown, prompt, alert, addParticipantModal
+    drapdown, prompt, alert, addParticipantModal, draggable
   },
   data () {
     return {
@@ -145,6 +179,8 @@ export default {
         tab: 0,
         memoGroupId: 0,
         memoGroupName: '',
+        sort_no: 0,
+        sortList: [],
         memoGroupList: [{value: '1', name: 'memo 1'}, {value: '2', name: 'memo 2'}],
         memoList: [],
         memoId: 0,
@@ -171,8 +207,13 @@ export default {
     document.getElementsByClassName('el-color-dropdown')[0].style.zoom = 2.1 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
     this.initPage();
     // 初始化排序插件
-    var el = document.getElementById('sort_list');
-    Sortable.create(el);
+    // var el = document.getElementById('sort_list');
+    // let _this = this;
+    // Sortable.create(el, {
+    //   onEnd (evt) {
+    //     console.log(evt, _this.data.memoList);
+    //   }
+    // });
   },
   methods: {
     initPage () {
@@ -180,6 +221,11 @@ export default {
       this.getMemoGroup().then(() => {
         this.getMemoList();
       })
+      let sortList = [];
+      for (let i = 1; i <= 20; i++) {
+        sortList.push({value: i, name: '' + i});
+      }
+      this.data.sortList = sortList;
     },
     switchTab (i) {
       if (i === 1 && !this.data.memoList.length) return false;
@@ -190,14 +236,16 @@ export default {
       return this.$http.post('/memoCtl/memo/getMemoGroupList', {}).then((res) => {
         let memoGroupList = [];
         for (let i = 0; i < res.data.length; i++) {
-          let tempObj = {value: res.data[i].id, name: res.data[i].memo_groupname};
+          let tempObj = {value: res.data[i].id, name: res.data[i].memo_groupname, field: res.data[i]};
           memoGroupList.push(tempObj);
 
           if (this.data.memoGroupName === '') {
             this.data.memoGroupId = tempObj.value;
             this.data.memoGroupName = tempObj.name;
+            this.data.sort_no = res.data[i].sort_no || 1;
           } else if (this.data.memoGroupName === tempObj.name) {
             this.data.memoGroupId = tempObj.value;
+            this.data.sort_no = res.data[i].sort_no || 1;
           }
         }
         this.data.memoGroupList = memoGroupList;
@@ -209,6 +257,7 @@ export default {
       this.$refs.prompt.showDialog().then((text) => {
         this.data.memoGroupId = 0;
         this.data.memoGroupName = text;
+        this.data.sort_no = 1;
         this.submitMemoGroup(1);
       })
     },
@@ -217,6 +266,7 @@ export default {
       this.data.memoName = '';
       this.data.memoGroupId = item.value;
       this.data.memoGroupName = item.name;
+      this.data.sort_no = item.field.sort_no || 1;
       this.getMemoList();
     },
     // 编辑memo group
@@ -235,13 +285,18 @@ export default {
         })
       })
     },
+    sortnoChanged (item) {
+      this.data.sort_no = item.value;
+      this.submitMemoGroup(0);
+    },
     // 提交memo group表单
     submitMemoGroup (opt) {
       // opt -1删除 0修改 1新增
       let params = {
         id: this.data.memoGroupId,
         memo_groupname: this.data.memoGroupName,
-        del_flag: opt
+        del_flag: opt,
+        sort_no: this.data.sort_no
       }
       return this.$http.post('/memoCtl/memo/editMemoGroup', {
         data: params
@@ -380,7 +435,7 @@ export default {
       if (opt === 1 && !this.data.memoList.length) {
         params.sticky_flag = 1;
       } else if (opt === 1) {
-        params.sticky_flag = 0;
+        params.sticky_flag = this.data.memoList.length + 1;
       } else {
         params.sticky_flag = this.data.sticky_flag;
       }
@@ -431,6 +486,17 @@ export default {
         self.data.allUsers = userList;
         return res
       })
+    },
+    // memo排序
+    sortMemo () {
+      let params = {
+        memoList: JSON.parse(JSON.stringify(this.data.memoList))
+      }
+      for (let i = 0; i < params.memoList.length; i++) {
+        params.memoList[i].sticky_flag = i + 1;
+      }
+      // console.log(params);
+      return this.$http.post('/memoCtl/memo/sortMemo', params);
     },
     // 开启Participant弹窗
     openAddParticipantModal () {

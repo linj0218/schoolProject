@@ -53,6 +53,7 @@ export default {
       UEDITOR_HOME_URL: 'static/uedit/',
       lang: lang,
       autosave: false,
+      elementPathEnabled: false,
       toolbars: [
         [
           'link', // 超链接

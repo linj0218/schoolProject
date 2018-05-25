@@ -80,7 +80,7 @@ const EN = {
   'Start date': 'Start date',
   'End date': 'End date',
   'Define First Week A/B': 'Define First Week A/B',
-  'Week to Skip': 'Week to Skip',
+  'Week to Skip': 'School holiday',
   'New Hoildays': 'New Hoildays',
   'Room/Places': 'Room/Places',
   'New room': 'New room',
