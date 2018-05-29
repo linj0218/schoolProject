@@ -66,14 +66,14 @@
 
 <style lang='scss' scoped>
   @import '../styles/mixin';
-  .extend_search{position: relative;height: 46px;margin-bottom: 20px;}
+  .extend_search{position: relative;height: 66px;margin-bottom: 20px;padding-top: 20px;}
   .extendIcons{padding-left: 20px;}
   .extendIcons .iconfont{width: 46px;height: 46px;display: inline-block;background: #ccc;border-radius: 50%;font-size: 30px;text-align: center;line-height: 46px;cursor: pointer;color: #fff;vertical-align: middle;margin-top: -8px;text-decoration: none;overflow: hidden;}
   .extendIcons .iconfont img{width: 100%;height: 100%;}
   .extendIcons .line{display: inline-block;width: 1.3px;height: 20px;background: #ccc;margin: 13px 20px;vertical-align: middle;margin-top: 0px;}
   // .extendIconsText{height: 10px;line-height: 10px;margin-top: 4px;}
   .extendIconsText span{display: inline-block;width: 87px;font-size: 12px;color: #666;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;text-align: center;}
-  .search_box{width: 360px;height: 46px;position: absolute;right: 0;top: 0;}
+  .search_box{width: 360px;height: 46px;position: absolute;right: 0;top: 20px;}
   .search_box .iconfont-fangdajing{position: absolute;width: 46px;height: 46px;font-size: 34px;color: #999;left: 10px;}
   .search_box .form-control{height: 100%;border-radius: 46px;padding-left: 56px;color: #999;}
 </style>

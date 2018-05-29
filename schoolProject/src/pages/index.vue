@@ -7,8 +7,8 @@
     </headerr>
 
     <div class="page_body">
-      <extend-search></extend-search>
       <div class="page_body_box clearfix">
+        <extend-search></extend-search>
         <div class="part_1">
           <div class="apps container-fluid">
             <!-- <div class="app col-lg-3" v-for='app in applicationList'> -->
@@ -312,6 +312,7 @@
               memoId: res.data[i].id,
               memoGroupId: res.data[i].memo_groupid,
               title: res.data[i].memo_name,
+              sticky_flag: res.data[i].sticky_flag,
               memos: []
             }
             for (let i2 = 0; i2 < res.data[i].memoContentList.length; i2++) {
@@ -342,6 +343,7 @@
               memoId: res.data[i].id,
               memoGroupId: res.data[i].memo_groupid,
               title: res.data[i].memo_name,
+              sticky_flag: res.data[i].sticky_flag,
               memos: []
             }
             for (let i2 = 0; i2 < res.data[i].memoContentList.length; i2++) {

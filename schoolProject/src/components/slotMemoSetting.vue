@@ -69,7 +69,7 @@
                     <span class="icon icon_delete" @click='deleteMemo(memo)'></span>
                   </div>
                 </div>
-                <span class="top_bg"></span>
+                <span class="top_bg" v-if="data.memoList.length"></span>
               </draggable>
             </div>
           </div>
@@ -89,7 +89,7 @@
 
               <drapdown :input-value='data.memoId'
                         :input-name='data.memoName'
-                        :input-select='data.memoList'
+                        :input-select='data.allMemos'
                         :input-add='false'
                         @addItem='addMemo'
                         @inputChange='memoChanged'>
@@ -102,7 +102,7 @@
           <div class="name_box">
             <span class="lab">{{$t('Memo of')}}:</span>
             <div class="name_value">
-              {{data.memoGroupName}}
+              {{data.memoOf}}
             </div>
           </div>
           <div class="name_box">
@@ -183,8 +183,10 @@ export default {
         sortList: [],
         memoGroupList: [{value: '1', name: 'memo 1'}, {value: '2', name: 'memo 2'}],
         memoList: [],
+        allMemos: [],
         memoId: 0,
         memoName: '',
+        memoOf: '',
         color: '',
         sticky_flag: 0, // 是否置顶
         status: 0, // memo编辑状态
@@ -221,6 +223,7 @@ export default {
       this.getMemoGroup().then(() => {
         this.getMemoList();
       })
+      this.getMemos();
       let sortList = [];
       for (let i = 1; i <= 20; i++) {
         sortList.push({value: i, name: '' + i});
@@ -342,6 +345,21 @@ export default {
         return res;
       })
     },
+    // 查询所有memo
+    getMemos () {
+      return this.$http.post('/memoCtl/memo/findMemoList', {}).then((res) => {
+        // console.log(res);
+        let memoList = [];
+        for (let i = 0; i < res.data.length; i++) {
+          let field = res.data[i];
+          field.value = field.id;
+          field.name = field.memo_name;
+          memoList.push(field);
+        }
+        this.data.allMemos = memoList;
+        return res;
+      })
+    },
     // memo编辑状态过滤器
     statusFilter (i) {
       return i === 1 ? this.$t('Newly created') : this.$t('Edited');
@@ -368,6 +386,7 @@ export default {
         this.data.memoName = res.data.memo_name;
         this.data.color = res.data.color;
         this.data.status = res.data.status;
+        this.data.memoOf = res.data.memo_groupname;
         this.data.sticky_flag = res.data.sticky_flag; // 是否置顶
         if (res.data.last_updatetime) {
           this.data.editTime = this.$moment(res.data.last_updatetime).format('DD/MM/YYYY');
@@ -428,7 +447,7 @@ export default {
         memo_name: this.data.memoName,
         memo_groupid: this.data.memoGroupId,
         del_flag: opt, // -1 删除 0 修改 1 新增
-        color: opt === 1 ? '#DB465F' : this.data.color, // 颜色
+        color: opt === 1 ? '#2C66C2' : this.data.color, // 颜色
         memoUserList: []
       }
       // 0 不置顶 1 置顶
@@ -461,6 +480,7 @@ export default {
         }
         this.$emit('openBanner', banner);
         this.getMemoList();
+        this.getMemos();
         return res;
       })
     },

@@ -1,14 +1,14 @@
 .memo_model{
   margin-bottom: 20px;background: #fff;
   .title{
-    height: 40px;font-weight: bold;position: relative;
+    height: 40px;font-weight: bold;position: relative;z-index: 0;
     .title_bg {display: inline-block;border-right: 15px solid transparent;height: 0;min-width: 120px;border-radius: 8px 30px 0 0 / 8px 50px 0 0;padding: 0 20px;line-height: 38px;color: #fff;font-size: 20px;}
     .edit{position: absolute;right: 0;top: 50%;transform: translateY(-50%);color: #0079F4;font-weight: normal;cursor: pointer;}
     .iconfont-bianji1{font-size: 18px;margin-right: 4px;}
     .top{position: absolute;top: 25px;right: 80px;width: 64px;height: 78px;background: url('../images/icon_topflg_2.png') 0 0 / 100% 100% no-repeat;}
   }
   .contents{
-    padding: 20px 30px;
+    padding: 20px 30px;position: relative;
     .sub_memo{margin-bottom: 16px;}
     .sub_memo:last-child{margin-bottom: 0;}
     .sub_memo:after{content: '';display: block;clear: both;}

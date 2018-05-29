@@ -71,7 +71,7 @@ export default {
     position: absolute;top: 0;right: 0;width: 100%;height: 100%;overflow: hidden;z-index: -1;
     .config_bg{position: absolute;width: 100%;height: 100%;background: rgba(0,0,0,0.2);z-index: -1;}
     .config_body{
-      width: 1040px;height: 100%;background: #fff;float: right;transform: translateX(1040px);transition: all .2s;
+      width: 1040px;height: 100%;background: #fff;float: right;transform: translateX(1040px);transition: all .2s;padding-top: 100px;overflow: auto;
       .icon_btn_add{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
       .title{
         height: 80px;border-bottom: 1px solid #eee;font-size: 30px;color: #4E81BD;padding: 20px 0;

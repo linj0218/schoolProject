@@ -33,7 +33,7 @@
             </div>
           </div>
           <div class="form_field" v-for="(cont, index) in data.memo.memoContentList" v-if="cont.del_flag != -1">
-            <label class="lab" style="vertical-align: top">{{$t('Contents')}} {{index + 1}}:</label>
+            <label class="lab" style="vertical-align: top">{{$t('Content')}} {{index + 1}}:</label>
             <div class="val">
               <div class="temp_cont" v-if='!cont.open' @click="trigger(cont)">
                 <span class="_title">{{cont.sub_title}}</span>
@@ -78,7 +78,7 @@
           <div class="btns">
             <button type="button" class="btn _preview" @click="openPreview()">{{ $t("Preview") }}</button>
             <button type="button" class="btn _save" @click="save()">{{ $t("Save") }}</button>
-            <button type="button" class="btn _cancel" @click="cancel()">{{ $t("Cancel") }}</button>
+            <button type="button" class="btn _cancel" @click="cancel()">{{ $t("Save and quit") }}</button>
           </div>
         </div>
       </div>
@@ -266,12 +266,52 @@
           }
           this.openBanner(banner);
           this.init();
+
+          return this.updateMemoSide().then((res) => {
+            return res;
+          })
+        })
+      },
+      // 更新memo list
+      updateMemoSide () {
+        let params = {
+          memo_groupid: this.data.memo.memo_groupid
+        }
+        return this.$http.post('/memoCtl/memo/findMemoByGroupId', params).then((res) => {
+          // console.log(res);
+          let memoSideList = [];
+          for (let i = 0; i < res.data.length; i++) {
+            let tempObj = {
+              titleType: 'type2',
+              titleColor: res.data[i].color,
+              contentType: 'type1',
+              memoId: res.data[i].id,
+              memoGroupId: res.data[i].memo_groupid,
+              title: res.data[i].memo_name,
+              sticky_flag: res.data[i].sticky_flag,
+              memos: []
+            }
+            for (let i2 = 0; i2 < res.data[i].memoContentList.length; i2++) {
+              tempObj.memos.push({
+                subTitle: res.data[i].memoContentList[i2].sub_title,
+                imgUrl: res.data[i].memoContentList[i2].pic_url,
+                content: res.data[i].memoContentList[i2].memo_text
+              })
+            }
+            if (res.data[i].template === 0) tempObj.contentType = 'type2';
+            else if (res.data[i].template === 1) tempObj.contentType = 'type3';
+            else if (res.data[i].template === 2) tempObj.contentType = 'type1';
+            memoSideList.push(tempObj);
+          }
+          this.$store.dispatch('setMemoSideList', memoSideList);
           return res;
         })
       },
       // 退出编辑
       cancel () {
-        this.$router.back();
+        this.save().then(() => {
+          this.$router.back();
+        })
       }
     }
   }

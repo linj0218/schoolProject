@@ -42,9 +42,9 @@
 .btns{
   text-align: center;padding: 70px 0 30px 0;
   .btn{color: #fff;min-width: 160px;height: 42px;}
-  ._preview{background: #FF7A7D;}
+  ._preview{background: #4dbd72;}
   ._save{background: #4E81BD;margin: 0 24px;}
-  ._cancel{background: #CCCCCC;}
+  ._cancel{background: #FF7A7D;}
 }
 .memo_preview{
   position: fixed;top: 0;left: 0;z-index: 999;width: 100%;height: 100%;background: rgba(0, 0, 0, .3);display: flex;align-items: center;justify-content: center;

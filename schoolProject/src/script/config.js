@@ -14,6 +14,7 @@ if (process.env.PROJECT_BUILD_ENV === 'production') {
 } else {
   url = configDev;
 }
+window.UEDITOR_HOME_URL = url;
 
 const config = {
   'api_path': { // API地址

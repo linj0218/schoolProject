@@ -8,7 +8,7 @@
       <div class="edit" @click='edit()' v-if="!readonly">
         <i class="iconfont iconfont-bianji1"></i><span>{{ $t("Edit") }}</span>
       </div>
-      <div class="top" v-if="memo.topflg"></div>
+      <div class="top" v-if="memo.sticky_flag==1"></div>
     </div>
     <!-- 标题样式2 -->
     <div class="title2" v-else>
@@ -19,7 +19,7 @@
     </div>
     <!-- 内容模板1 有图 -->
     <div class="contents cont_type1" v-if="memo.contentType === 'type1' && memo.memos.length">
-      <div class="sub_memo" v-for="(subMemo, index) in memo.memos" v-if="titleType === 'type1' || (titleType === 'type2' && index === 0)">
+      <div class="sub_memo" v-for="(subMemo, index) in memo.memos">
         <div class="img_box">
           <img class="img" src="../images/icon_noimg.png">
         </div>
@@ -35,7 +35,7 @@
     </div>
     <!-- 内容模板2 单行 -->
     <div class="contents cont_type2" v-if="memo.contentType === 'type2' && memo.memos.length">
-      <div class="sub_memo" v-for="(subMemo, index) in memo.memos" v-if="titleType === 'type1' || (titleType === 'type2' && index === 0)">
+      <div class="sub_memo" v-for="(subMemo, index) in memo.memos">
         <div class="text_box">
           <div class="sub_title">
             {{subMemo.subTitle}}
@@ -49,7 +49,7 @@
     <!-- 内容模板3 两行 -->
     <div class="contents cont_type3" v-if="memo.contentType === 'type3' && memo.memos.length">
       <div class="sub_memo">
-        <div class="text_box" v-for="(subMemo, index) in memo.memos" v-if="titleType === 'type1' || (titleType === 'type2' && index < 2)">
+        <div class="text_box" v-for="(subMemo, index) in memo.memos">
           <div class="sub_title">
             {{subMemo.subTitle}}
           </div>
@@ -89,6 +89,7 @@ export default {
           memoId: 0,
           memoGroupId: 0,
           title: 'title',
+          sticky_flag: 0,
           memos: [
             {
               subTitle: 'sub title',

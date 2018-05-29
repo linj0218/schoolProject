@@ -6,7 +6,7 @@
 
 <script>
 import '@/../static/uedit/ueditor.config';
-import '@/../static/uedit/ueditor.all.min';
+import '@/../static/uedit/ueditor.all';
 import '@/../static/uedit/lang/zh-cn/zh-cn';
 import '@/../static/uedit/lang/en/en';
 import { mapGetters } from 'vuex';
@@ -40,9 +40,6 @@ export default {
     })
   },
   watch: {
-    content () {
-      this.ue.setContent(this.content);
-    }
   },
   created () {
   },
@@ -57,7 +54,8 @@ export default {
       toolbars: [
         [
           'link', // 超链接
-          'attachment' // 附件
+          'attachment', // 附件
+          'simpleupload'
         ]
       ]
     });
@@ -66,7 +64,7 @@ export default {
       document.getElementById('content' + this.id).style.zoom =
       document.getElementById('edui_fixedlayer').style.zoom = 2 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
     });
-    this.ue.addListener('contentChange', (editor) => {
+    this.ue.addListener('blur', (editor) => {
       // console.log(this.ue.getContent());
       this.$emit('syncContent', this.id, this.ue.getContent());
     });
