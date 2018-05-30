@@ -45,7 +45,7 @@
                   <div v-if="li.taskList.length">
 
                     <router-link tag='div' class="drawer_li"
-                                 :to='{path: "/homepage", query: {year: actDateInfo.thisYear, month: actDateInfo.thisMonth, date: actDateInfo.thisDate}}'
+                                 :to='{path: "/homepage", query: {year: actDateInfo.thisYear, month: actDateInfo.thisMonth, date: actDateInfo.thisDate, id: task.id}}'
                                  v-for='task in li.taskList'
                                  :key='task.id'>
                       <div class="li_1">
@@ -313,6 +313,7 @@
               memoGroupId: res.data[i].memo_groupid,
               title: res.data[i].memo_name,
               sticky_flag: res.data[i].sticky_flag,
+              readonly: this.userInfo.role !== 0,
               memos: []
             }
             for (let i2 = 0; i2 < res.data[i].memoContentList.length; i2++) {
@@ -321,6 +322,15 @@
                 imgUrl: res.data[i].memoContentList[i2].pic_url,
                 content: res.data[i].memoContentList[i2].memo_text
               })
+            }
+            // 编辑权限
+            if (tempObj.readonly) {
+              for (let i3 = 0; i3 < res.data[i].memoUserList.length; i3++) {
+                if (res.data[i].memoUserList[i3].edit_userid === this.userInfo.id) {
+                  tempObj.readonly = false;
+                  break;
+                }
+              }
             }
             if (res.data[i].template === 0) tempObj.contentType = 'type2';
             else if (res.data[i].template === 1) tempObj.contentType = 'type3';
@@ -342,6 +352,7 @@
               contentType: 'type1',
               memoId: res.data[i].id,
               memoGroupId: res.data[i].memo_groupid,
+              memoGroupName: res.data[i].memo_groupname,
               title: res.data[i].memo_name,
               sticky_flag: res.data[i].sticky_flag,
               memos: []

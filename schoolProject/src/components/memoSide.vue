@@ -7,7 +7,7 @@
       </div>
       <div class="content">
         <template v-for="memo in memoList">
-          <memo :titleType="'type1'" :memo="memo"></memo>
+          <memo :titleType="'type1'" :memo="memo" :readonly="memo.readonly"></memo>
         </template>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :id="'content' + id" type="text/plain" style="width: 100%;height:200px;"></div>
+    <div :id="'content' + id" type="text/plain" style="width: 100%;" :style="{height: isfix ? '258px' : '200px'}"></div>
   </div>
 </template>
 
@@ -25,6 +25,12 @@ export default {
       type: String,
       required: false,
       default: 'Please entry content'
+    },
+    // isfix
+    isfix: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data () {
@@ -51,6 +57,7 @@ export default {
       lang: lang,
       autosave: false,
       elementPathEnabled: false,
+      autoHeightEnabled: !this.isfix,
       toolbars: [
         [
           'link', // 超链接
@@ -61,8 +68,10 @@ export default {
     });
     this.ue.addListener('ready', (editor) => {
       this.ue.setContent(this.content);
-      document.getElementById('content' + this.id).style.zoom =
-      document.getElementById('edui_fixedlayer').style.zoom = 2 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
+      if (!this.isfix) {
+        document.getElementById('content' + this.id).style.zoom =
+        document.getElementById('edui_fixedlayer').style.zoom = 2 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
+      }
     });
     this.ue.addListener('blur', (editor) => {
       // console.log(this.ue.getContent());

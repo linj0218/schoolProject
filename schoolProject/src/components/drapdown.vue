@@ -6,7 +6,7 @@
       <span class="button_bg" :class='inputColorType=="background" && inputColor' :title="inputName">
         {{inputName}}
       </span>
-      <span v-show='inputColorType=="circle"' class="icon_circle" :class='inputColor'></span>
+      <span v-show='inputColorType=="circle"' class="icon_circle" :style='{backgroundColor: inputColor}'></span>
       <span class="caret"></span>
     </button>
     <button type="button" v-if='inputAdd' @click='addItem()' class="li_add"></button>
@@ -19,7 +19,7 @@
              <span>{{item.name}}</span>
            </el-tooltip>
          <!-- {{item.name}} -->
-         <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle" && item.color'></span>
+         <span class="li_icon_circle" v-show='inputColorType=="circle"' :class='inputColorType=="circle"' :style="{backgroundColor: item.color}"></span>
         </a>
       </li>
       <!-- <li class="li_add" v-if='inputAdd' @click='addItem()'>

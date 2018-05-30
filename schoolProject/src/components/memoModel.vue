@@ -14,6 +14,7 @@
     <div class="title2" v-else>
       <div class="title_bg">
         {{memo.title}}
+        <span v-if="userInfo.role===0">&lt;group of {{memo.memoGroupName}}&gt;</span>
       </div>
       <span class="more_memo" @click="openMemoSide()"><i></i>{{ $t("More") }}</span>
     </div>
@@ -63,6 +64,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   props: {
     // 标题样式
@@ -88,6 +90,7 @@ export default {
           contentType: 'type1',
           memoId: 0,
           memoGroupId: 0,
+          memoGroupName: '',
           title: 'title',
           sticky_flag: 0,
           memos: [
@@ -105,6 +108,11 @@ export default {
   data () {
     return {
     }
+  },
+  computed: {
+    ...mapGetters({
+      userInfo: 'userInfo'
+    })
   },
   methods: {
     openMemoSide () {

@@ -8,8 +8,8 @@
 
 
     <div class="page_body">
-      <crumbs></crumbs>
       <div class="page_body_box clearfix">
+        <crumbs></crumbs>
         <div class="part_1">
           <div class="title">{{ $t("Calendar") }}</div>
 
@@ -90,7 +90,7 @@
                 <div class="li" v-show='showli(li)'>
                   <div v-for='td in li' :class='"task_" + td.spanNum' @click='()=>{if(td.spanNum<=1){changeActDateFromWeekview(td)}}'>
                     <div :title='td.title' v-show='!(td.spanNum==1 && td.time!="All day")'>
-                      <div class="content_box" :class='[td.color, {"no_table_cell": td.spanNum>1&&td.time!="All day"}]'>
+                      <div class="content_box" :class='[{"no_table_cell": td.spanNum>1&&td.time!="All day"}]' :style="{backgroundColor: td.color}">
                         <div class="title_line">
                           <div class="time_line">{{td.startTime}}</div><div class="time_line right">{{td.endTime}}</div>
                           {{td.title}}
@@ -115,7 +115,7 @@
                    v-if='showTask(td)'
                    :class='{"act": td.id==weekTaskListActId}'
                    @click='weekTaskListActIndexChanged(td)'>
-                <span :class='td.color'></span>
+                <span :style='{backgroundColor: td.color}'></span>
                 <div class="label_line"></span>{{td.time}}</div>
                 <div class="label_line">
                   <el-tooltip effect="dark" :content="td.category" placement="top-start">
@@ -168,7 +168,7 @@
                   <span>{{ $t("Title") }}:</span><div>{{taskDetailInfo.title ? taskDetailInfo.title : '-'}}</div>
                 </div>
                 <div class="item">
-                  <span>{{ $t("Category") }}:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :class='taskDetailInfo.color'></i></div>
+                  <span>{{ $t("Category") }}:</span><div>{{taskDetailInfo.categroy ? taskDetailInfo.categroy : '-'}} <i :style='{backgroundColor: taskDetailInfo.color}'></i></div>
                 </div>
                 <div class="item">
                   <span>{{ $t("Time") }}:</span><div>{{taskDetailInfo.start}} - {{taskDetailInfo.end}}</div>
@@ -177,7 +177,7 @@
                   <span>{{ $t("Place") }}:</span><div>{{taskDetailInfo.place}} - {{taskDetailInfo.room}}</div>
                 </div>
                 <div class="item">
-                  <span>{{ $t("Description") }}:</span><div>{{taskDetailInfo.description ? taskDetailInfo.description : '-'}}</div>
+                  <span>{{ $t("Description") }}:</span><div><span v-html="taskDetailInfo.description || '-'"></span></div>
                 </div>
                 <div class="item" v-if='taskDetailInfo.fileList.length'>
                   <span>{{ $t("Attachment") }}:</span>
@@ -313,6 +313,7 @@
         this.actDateInfo.thisYear = Number(this.$route.query.year)
         this.actDateInfo.thisMonth = Number(this.$route.query.month)
         this.actDateInfo.thisDate = Number(this.$route.query.date)
+        this.data.checkActEventId = this.$route.query.id;
       }
       this.data.role = getSStorage('userinfo').role;
       this.data.canEdit = getSStorage('userinfo').role === 0 || getSStorage('userinfo').calendar_flag === 1;
@@ -620,7 +621,7 @@
       formatActDateInfoLabel () {
         let actDate = [this.actDateInfo.thisYear, this.actDateInfo.thisMonth, this.actDateInfo.thisDate].join('-')
         let week = new Date(actDate).getDay()
-        this.data.actDateInfoLabel = this.$moment(actDate).format('DD/MM/YYYY') + ' ' + this.$t(weekMap[week].substr(0, 3))
+        this.data.actDateInfoLabel = this.$moment(actDate, 'YYYY-MM-DD').format('DD/MM/YYYY') + ' ' + this.$t(weekMap[week].substr(0, 3))
       },
       // 周视图隐藏空行
       showli (li) {
@@ -858,174 +859,5 @@
 
 <style lang='scss' scoped>
   @import '../styles/mixin';
-  #body{height: 100%;background: #f5f5f5;overflow: auto;}
-  .page_body{
-    padding: 0 180px 30px 180px;position: relative;
-    .icon_btn_add{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
-    .part_1{
-      background: #fff;float: left;width: 380px;height: 918px;margin-right: 20px;box-shadow: 0 0 1px #ddd;
-      .title{line-height: 56px;font-size: 28px;background: #4A90E2;color: #fff;text-align: center;position: relative;}
-      .title:after{content: '';position: absolute;bottom: -11px;height: 11px;width: 100%;left: 0;background: url('../images/icon_other1.png') 24px 0 / auto 100% no-repeat;}
-      .title.bg_color{background: #5ACE6D;margin-top: 95px;}
-      .title.bg_color:after{background: url('../images/icon_other2.png') 24px 0 / auto 100% no-repeat;}
-      .places{
-        padding: 40px 30px;
-        .btn{
-          border: 1px solid #ccc;font-size: 20px;color: #ccc;height: 36px;padding: 0;position: relative;outline: none;background: #fff;
-          span{position: absolute;width: 30px;height: 27px;right: -2px;top: -2px;background: url('../images/icon_checked.png') 0 0 / 100% 100% no-repeat;display: none;}
-        }
-        .btn.act{
-          border: 2px solid #5ACE6D;color: #5ACE6D;
-          span{display: block;}
-        }
-      }
-    }
-    .part_2, .part_3{overflow: hidden;background: #fff;box-shadow: 0 0 1px #ddd;}
-    .part_2{
-      min-height: 365px;margin-bottom: 20px;
-      .week_nav{
-        height: 76px;border-bottom: 1px solid #eee;
-        .month_info{
-          float: left;padding: 24px 30px;height: 76px;
-          button{width: 28px;height: 28px;border: 0;margin: 0 5px;vertical-align: middle;}
-          button:nth-child(1){background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;}
-          button:nth-child(2){background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;}
-          .week_info{font-size: 20px;color: #333;margin: 0 20px;}
-          .week_num{color: #666;}
-          .week_ab{font-size: 16px;display: inline-block;width: 28px;height: 28px;color: #fff;border-radius: 2px;text-align: center;line-height: 28px;}
-          .week_ab.A{background: #4A90E2;}
-          .week_ab.B{background: #5ACE6D;}
-          .week_ab.H{background: #F3A222;}
-        }
-        .filter_condition{
-          text-align: right;line-height: 76px;padding: 0 30px;
-          .select{width: 200px;display: inline-block;height: 36px;vertical-align: middle;line-height: 36px;margin: 10px;}
-        }
-      }
-      .week_calendar{
-        text-align: center;
-        .table_head{
-          height: 60px;border-bottom: 1px solid #eee;display: flex;margin-right: 5px;
-          .th{
-            flex: 1;height: 100%;border-right: 1px solid #eee;color: #969DBA;padding: 12px;position: relative;
-            .week_name{font-size: 18px;line-height: 18px;}
-            .month_num{font-size: 14px;line-height: 18px;}
-          }
-          .th.act{background: rgba(74,144,226,0.1);}
-          .th:last-child{border-right: 0;}
-          .th.hasEvent:after{content: "";width: 0;height: 0;border-top: 10px solid #CC3C39;border-left: 10px solid transparent;position: absolute;right: 0;top: 0;}
-        }
-        .table_body{
-          height: 229px;position: relative;padding: 4px 0;z-index: 0;overflow-y: scroll;
-          .table_body_bg{
-            position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: -1;
-            div{flex: 1;border-right: 1px solid #eee;}
-            div.act{background: rgba(74,144,226,0.1);}
-            div:last-child{border-right: 0;}
-          }
-          .li{
-            display: flex;height: 60px;
-            .task_1{flex: 1;min-width: 0;}
-            .task_2{flex: 2;min-width: 0;}
-            .task_3{flex: 3;min-width: 0;}
-            .task_4{flex: 4;min-width: 0;}
-            .task_5{flex: 5;min-width: 0;}
-            .task_6{flex: 6;min-width: 0;}
-            .task_7{flex: 7;min-width: 0;}
-            .task_1 > div,
-            .task_2 > div,
-            .task_3 > div,
-            .task_4 > div,
-            .task_5 > div,
-            .task_6 > div,
-            .task_7 > div{padding: 4px 8px;height: 60px;width: 100%;position: relative;cursor: pointer;}
-            .task_1 > div > .content_box,
-            .task_2 > div > .content_box,
-            .task_3 > div > .content_box,
-            .task_4 > div > .content_box,
-            .task_5 > div > .content_box,
-            .task_6 > div > .content_box,
-            .task_7 > div > .content_box{
-              height: 52px;border-radius: 3px;font-size: 16px;color: #fff;vertical-align: middle;line-height: 17.4px;
-              &.no_table_cell{display: block;}
-              .title_line{overflow: hidden;padding: 0 5px;max-height: 52px;}
-              .time_line{font-size: 12px;display: inline-block;width: 49%;text-align: left;}
-              .time_line.right{text-align: right;}
-            }
-            .task_1 > div > .event_box,
-            .task_2 > div > .event_box,
-            .task_3 > div > .event_box,
-            .task_4 > div > .event_box,
-            .task_5 > div > .event_box,
-            .task_6 > div > .event_box,
-            .task_7 > div > .event_box{
-              position: absolute;top: 0;left: 0;width: 100%;height: 100%;display: flex;
-              & > div{flex: 1;}
-            }
-            .task_0{flex: 1;}
-          }
-        }
-      }
-    }
-    .part_3{
-      height: 533px;
-      .task_title{
-        float: left;width: 323px;height: 100%;overflow-y: auto;
-        &::-webkit-scrollbar {width: 0;height: 0;}
-        .act_date_info{text-align: center;padding: 10px 0;font-size: 16px;}
-        .li{
-          line-height: 20px;border-bottom: 1px solid #eee;padding: 10px 20px;color: #333;font-size: 14px;position: relative;
-          .label_line{overflow: hidden;white-space: nowrap;text-overflow: ellipsis;position: relative;color: #333;font-size: 16px;}
-          .label_line.class_room{color: #666;font-size: 14px;}
-          span{width: 14px;height: 14px;border-radius: 50%;position: absolute;right: 20px;top: 50%;transform: translateY(-50%);float: right;}
-        }
-        .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
-        .li:hover{cursor: default;}
-      }
-      .task_detail{
-        overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;
-        .empty{padding: 20px;font-size: 18px;color: #333;}
-        .tast_detail_left{
-          overflow: hidden;padding: 20px 0;height: 100%;
-          .item{
-            line-height: 24px;padding: 5px 0;
-            span{float: left;width: 140px;text-align: right;color: #999;font-size: 14px;margin-right: 10px;}
-            div{overflow: hidden;font-size: 14px;color: #333;}
-            i{display: inline-block;width: 20px;height: 20px;border-radius: 50%;vertical-align: middle;margin-left: 10px;}
-            .link_download{display: inline-block;margin-bottom: 10px;}
-            .icon_attachment{display: inline-block; width: 28px;height: 28px;background: url('../images/icon_attachment.png') 0 0 / 100% 100% no-repeat;}
-          }
-        }
-        .tast_detail_right{
-          float: right;width: 300px;padding: 30px 5px 94px 30px;height: 100%;position: relative;
-          .scroll_box{max-height: 158px;overflow-y: scroll;padding-right: 10px;}
-          .scroll_box::-webkit-scrollbar {width: 5px;height: auto;}
-          .scroll_box::-webkit-scrollbar-thumb {background: #bbb;border-radius: 5px;}
-          .scroll_box::-webkit-scrollbar-track-piece {background-color: #fff;}
-          .title{text-align: center;color: #999;font-size: 16px;margin-bottom: 12px;}
-          .margin_top{margin-top: 35px;}
-          & .btn{
-            border: 1px solid #aaa;color: #aaa;font-size: 14px;background: #fff;outline: none;cursor: default;position: relative;padding: 0 10px 0 40px;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;text-align: left;line-height: 26px;
-            .icon{width: 17px;height: 14px;display: inline-block;vertical-align: middle;position: absolute;top: 50%;transform: translateY(-50%);}
-            .icon_member{left: 10px;background: url('../images/icon_member_disabled_v2.png') 50% 0 / auto 100% no-repeat;}
-            .icon_members{left: 10px;background: url('../images/icon_members_disabled_v2.png') 0 0 / 100% 100% no-repeat;}
-          }
-          & .btn.act{
-            border: 1px solid #4E81BD;color: #4E81BD;
-            .icon_member{left: 12px;background: url('../images/icon_member_v2.png') 50% 0 / auto 100% no-repeat;}
-            .icon_members{left: 12px;background: url('../images/icon_members_v2.png') 0 0 / 100% 100% no-repeat;}
-          }
-        }
-        .edit_btn{
-          position: absolute;width: 100%;bottom: 0;text-align: center;left: 0;padding: 30px;
-          .btn{margin: 0 5px;width: 120px;}
-          .icon{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;margin-right: 5px;}
-          .icon_btn_edit{background: url('../images/icon_btn_edit.png') 50% 50% / auto auto no-repeat;}
-          .icon_btn_del{background: url('../images/icon_btn_del.png') 50% 50% / auto auto no-repeat;}
-          .creater_info{position: absolute;right: 10px;top: 50%;transform: translateY(-50%);color: #aaa;}
-          .creater_info .name{color: #333;}
-        }
-      }
-    }
-  }
+  @import '../styles/homepage';
 </style>
