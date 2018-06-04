@@ -142,7 +142,7 @@ const FR = {
   'Mar': 'Mars',
   'Apr': 'Avr',
   'May': 'Mai',
-  'Jun': 'Junin',
+  'Jun': 'Juin',
   'Jul': 'Juill',
   'Aug': 'Août',
   'Sep': 'Sept',

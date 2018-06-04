@@ -1,0 +1,55 @@
+.month_cal{
+  text-align: center;
+  .month_nav{
+    font-size: 20px;color: #333;padding: 20px;position: relative;
+    .back_to_today{cursor: pointer;width: 70px;height: 28px;background: #4A90E2;color: #fff;border-radius: 2px;position: absolute;right: 20px;top: 50%;transform: translateY(-50%);font-size: 14px;line-height: 28px;padding: 0 10px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+    button{width: 28px;height: 28px;border: 0;vertical-align: middle;}
+    button.nav_left{background: url(../images/icon_calendar_left.png) 0 0 / 100% 100% no-repeat;margin-right: 10px;}
+    button.nav_right{background: url(../images/icon_calendar_right.png) 0 0 / 100% 100% no-repeat;margin-left: 10px;}
+  }
+  .month_body{
+    font-size: 14px;padding: 0 20px;
+    .table_left{
+      float: left;width: 44px;
+      & > div{
+        color: #fff;height: 38px;padding: 4px 0;
+        & div{height: 100%;line-height: 30px;border-radius: 2px;}
+      }
+      & .A{background: #4A90E2;}
+      & .B{background: #5ACE6D;}
+      & .H{background: #F3A222;}
+    }
+    .table_right{
+      overflow: hidden;
+      .li{
+        display: flex;
+        div{flex: 1;height: 38px;line-height: 38px;}
+      }
+      .li_head{color: #969DBA;}
+      .li_cont{
+        color: #333;
+        .last_month, .next_month{color: #aaa;}
+        .this_day div{background: #ddd;}
+        .act div{background: #4E81BD !important;color: #fff;}
+        div{text-align: center;}
+        & > div > div{width: 38px;margin: auto;position: relative;border: 2px solid transparent;line-height: 34px;cursor: pointer;}
+        & > div > div.hasEvent:after{content: "";position: absolute;width: 5px;height: 5px;border-radius: 50%;background: #CC3C39;right: 2px;top: 4px;}
+        & > div > div:hover{border: 2px solid #4E81BD;}
+      }
+      .li_cont.week .act div{background: inherit !important;color: #333;}
+      .li_cont.week.act{background: rgba(79,129,190,0.3) !important;}
+      .li_cont.week.act .icon_check{background: #4F81BE url('../images/icon_calendar_checked.png') 50% 50% / auto auto no-repeat;}
+      .li_cont.week:nth-child(even){background: #f9f9f9;}
+    }
+  }
+  .month_info{
+    font-size: 30px;color: #333;line-height: 30px;padding: 20px;text-align: center;
+    span{display: inline-block;width: 44px;height: 30px;color: #fff;font-size: 16px;vertical-align: top;line-height: 30px;border-radius: 2px;margin: 0 10px;}
+    span.A{background: #4A90E2;}
+    span.A:after{content: 'A';}
+    span.B{background: #5ACE6D;}
+    span.B:after{content: 'B';}
+    span.H{background: #F3A222;}
+    span.H:after{content: 'H';}
+  }
+}

@@ -123,7 +123,7 @@
         span{width: 14px;height: 14px;border-radius: 50%;position: absolute;right: 20px;top: 50%;transform: translateY(-50%);float: right;}
       }
       .li.act{border-left: 2px solid #4A90E2;background: rgba(74,144,226,0.1);}
-      .li:hover{cursor: default;}
+      .li:hover{cursor: default;cursor: pointer;}
     }
     .task_detail{
       overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;

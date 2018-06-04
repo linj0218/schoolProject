@@ -14,7 +14,7 @@
     <div class="title2" v-else>
       <div class="title_bg">
         {{memo.title}}
-        <span v-if="userInfo.role===0">&lt;of {{memo.memoGroupName}}&gt;</span>
+        <span v-if="userInfo.role===0 && memo.title">&lt;of {{memo.memoGroupName}}&gt;</span>
       </div>
       <span class="more_memo" @click="openMemoSide()"><i></i>{{ $t("More") }}</span>
     </div>

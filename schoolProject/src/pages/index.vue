@@ -50,7 +50,7 @@
                                  :key='task.id'>
                       <div class="li_1">
                         <el-tooltip effect="dark" :content="task.category" placement="top-start">
-                          <span class="point_icon" :class='task.color'></span>
+                          <span class="point_icon" :style='{backgroundColor: task.color}'></span>
                         </el-tooltip>
                       </div>
                       <div>

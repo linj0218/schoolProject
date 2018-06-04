@@ -17,7 +17,7 @@
           <div class="label_value">{{data.nom||'-'}}</div>
         </div>
         <div class="user_info">
-          <span class="label_key">{{ $t("Position") }}({{ $t("Job Title") }}):</span>
+          <span class="label_key">{{ $t("Position") }}:</span>
           <div class="label_value">{{data.title||'-'}}</div>
         </div>
         <div class="user_info">

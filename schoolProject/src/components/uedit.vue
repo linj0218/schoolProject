@@ -9,6 +9,7 @@ import '@/../static/uedit/ueditor.config';
 import '@/../static/uedit/ueditor.all';
 import '@/../static/uedit/lang/zh-cn/zh-cn';
 import '@/../static/uedit/lang/en/en';
+import '@/../static/uedit/lang/fr/fr';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -50,7 +51,7 @@ export default {
   created () {
   },
   mounted () {
-    let lang = this.lang === 'zh-CH' ? 'zh-cn' : 'en'; // 只提供英文、中文
+    let lang = this.lang; // 只提供英文、中文
     this.ue = window.UE.getEditor('content' + this.id, {
       BaseUrl: '',
       UEDITOR_HOME_URL: 'static/uedit/',

@@ -43,7 +43,7 @@
           & > .empty{padding: 10px;font-size: 18px;color: #333;}
           .li_1{float: right;line-height: 44px;}
           .point_icon{display: inline-block;width: 14px;height: 14px;border-radius: 50%;}
-          .drawer_li{line-height: 22px;padding: 7px 10px;height: 58px;}
+          .drawer_li{line-height: 22px;padding: 7px 10px;height: 58px;cursor: pointer;}
           .drawer_li:hover{background: #eee;}
           .drawer_li div{
             text-align: left;overflow: hidden;white-space: nowrap;text-overflow: ellipsis;color: #666;font-size: 14px;

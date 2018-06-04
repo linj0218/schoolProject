@@ -25871,6 +25871,10 @@ UE.ui = baidu.editor.ui = {};
             }
         },
         Stateful_onMouseUp: function (evt, el){
+            setTimeout(() => {
+              document.getElementsByClassName('edui-dialog edui-for-attachment edui-default edui-state-centered')[0].style.zoom = 2 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
+              document.getElementsByClassName('edui-mask  edui-dialog-modalmask edui-default')[0].style.zoom = 2 - Number.parseFloat(document.getElementsByTagName('html')[0].style.zoom, 10);
+            })
             if (!this.isDisabled()) {
                 this.removeState('active');
             }
