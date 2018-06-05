@@ -12,7 +12,7 @@
     </div>
     <!-- 标题样式2 -->
     <div class="title2" v-else>
-      <div class="title_bg">
+      <div class="title_bg" @click="openMemoSide()">
         {{memo.title}}
         <span v-if="userInfo.role===0 && memo.title">&lt;of {{memo.memoGroupName}}&gt;</span>
       </div>

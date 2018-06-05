@@ -2,7 +2,7 @@
   <div class="body" v-cloak>
     <div class="nav_tab">
       <div><div @click='switchTab(0)' :class='{"act": data.tab==0}'>{{ $t("Memo Group") }}</div></div>
-      <div><div @click='switchTab(1)' :class='{"act": data.tab==1}'>{{ $t("Memo") }}</div></div>
+      <!-- <div><div @click='switchTab(1)' :class='{"act": data.tab==1}'>{{ $t("Memo") }}</div></div> -->
     </div>
     <div class="nav_body">
       <div class="_body">
@@ -366,8 +366,9 @@ export default {
     },
     // 查看当前memo
     viewMemo (item) {
-      this.data.tab = 1;
-      this.getMemo(item.value);
+      // this.data.tab = 1;
+      // this.getMemo(item.value);
+      this.$router.push({path: '/memo', query: {memo_id: item.value}})
     },
     // 编辑memo
     editMemo (str) {

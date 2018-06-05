@@ -5,7 +5,7 @@
     <headerr @profileToggle='profileToggle'></headerr>
 
     <div class="page_body">
-      <crumbs></crumbs>
+      <crumbs :name="data.crumbsName"></crumbs>
       <div class="page_body_box">
         <div class="content">
           <div class="form_field">
@@ -22,6 +22,23 @@
                                :predefine="predefineColors"
                                @change="">
               </el-color-picker>
+            </div>
+          </div>
+          <div class="form_field">
+            <label class="lab">{{ $t("Editor") }}:</label>
+            <div class="val editors">
+              <div class="li" v-for='(item, index) in data.editors'>
+                {{item.name}}
+                <span class="action_icon icon_delete" @click='removeEditor(item, index)'></span>
+              </div>
+            </div>
+          </div>
+          <div class="form_field">
+            <label class="lab"></label>
+            <div class="val" style="width: 348px;height: 38px;">
+              <button type="button" class="btn btn-primary" id="new_editor" @click='openAddParticipantModal()' :disabled="!data.allUsers.length">
+                <i class="iconfont iconfont-jia"></i> {{ $t("New Editor") }}
+              </button>
             </div>
           </div>
           <div class="form_field">
@@ -103,6 +120,11 @@
 
       <alert ref='alert'></alert>
 
+      <!-- 选择成员弹窗 -->
+      <add-participant-modal :show-popup='data.showAddParticipantPopup'
+                             :data-list='data.copyAllUsers'
+                             @closePopup='closeAddParticipantModal'>
+      </add-participant-modal>
     </div>
   </div>
 </template>
@@ -115,10 +137,11 @@
   import uedit from '@/components/uedit'
   import memo from '@/components/memoModel'
   import alert from '@/components/alert'
+  import addParticipantModal from '@/components/addParticipantModal'
 
   export default {
     components: {
-      headerr, crumbs, banner, profile, uedit, memo, alert
+      headerr, crumbs, banner, profile, uedit, memo, alert, addParticipantModal
     },
     data () {
       return {
@@ -126,7 +149,12 @@
           memo: {},
           templateAct: 0,
           previewFlg: false,
-          previewMemo: {}
+          previewMemo: {},
+          crumbsName: '',
+          editors: [],
+          showAddParticipantPopup: false,
+          copyAllUsers: [],
+          allUsers: []
         },
         predefineColors: [
           '#DB465F', '#B59479', '#716DC2', '#2C66C2', '#47AD56', '#687280', '#00B3CF', '#F2A200', '#00CFB0', '#4A90E2', '#5ACE6D'
@@ -142,6 +170,7 @@
     },
     methods: {
       init () {
+        this.getUsers();
         this.getMemo();
       },
       // 按id查询memo
@@ -159,7 +188,20 @@
               res.data.memoContentList[i].open = true;
             }
           }
+          let editors = [];
+          for (let i = 0; i < res.data.memoUserList.length; i++) {
+            let tempObj = {
+              id: res.data.memoUserList[i].edit_userid,
+              name: res.data.memoUserList[i].edit_username,
+              type: 'icon_member',
+              selected: true,
+              show: true
+            }
+            editors.push(tempObj);
+          }
+          this.data.editors = editors;
           this.data.memo = res.data;
+          this.data.crumbsName = res.data.memo_name;
           return res;
         })
       },
@@ -249,6 +291,14 @@
         }
         let params = JSON.parse(JSON.stringify(this.data.memo));
         params.memoContentList = contentList;
+        // editors
+        params.memoUserList = [];
+        for (let i = 0; i < this.data.editors.length; i++) {
+          let tempObj = {
+            edit_userid: this.data.editors[i].id
+          }
+          params.memoUserList.push(tempObj);
+        }
         // console.log(params);
         return this.$http.post('/memoCtl/memo/editMemoContents', params).then((res) => {
           // console.log(res);
@@ -312,6 +362,47 @@
         this.save().then(() => {
           this.$router.back();
         })
+      },
+      // 获取所有用户
+      getUsers () {
+        // console.log(1);
+        let self = this;
+        return this.$http.post('/sharedcalendarSettingCtl/event/getGroupsOrUsers', {
+          data: {flag: 1}
+        }).then((res) => {
+          let resData = res.data
+          let userList = []
+          for (let i = 0; i < resData.length; i++) {
+            let item = resData[i];
+            userList.push({
+              id: item.id,
+              name: item.nom,
+              type: 'icon_member',
+              selected: false,
+              show: true
+            })
+          }
+          self.data.allUsers = userList;
+          return res
+        })
+      },
+      // 删除editor
+      removeEditor (item, index) {
+        this.data.editors.splice(index, 1);
+      },
+      // 开启Participant弹窗
+      openAddParticipantModal () {
+        this.data.copyAllUsers = JSON.parse(JSON.stringify(this.data.allUsers));
+        this.data.showAddParticipantPopup = true;
+      },
+      // 关闭Participant弹窗
+      closeAddParticipantModal (resData) {
+        this.data.showAddParticipantPopup = false;
+        if (resData && resData.status === 'ok') {
+          this.data.allUsers = this.data.copyAllUsers;
+          this.data.editors = this.data.editors.concat(resData.data);
+          // this.save();
+        }
       }
     }
   }

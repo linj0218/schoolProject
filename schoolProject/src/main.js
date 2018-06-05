@@ -17,6 +17,8 @@ import 'jquery/dist/jquery.min.js'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+Vue.config.productionTip = false; // 项目启动时的提示
+
 Vue.prototype.$http = Axios;
 Vue.prototype.$moment = Moment;
 Vue.prototype.$config = config;

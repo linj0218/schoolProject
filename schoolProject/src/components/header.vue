@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <router-link :to='{path: "/"}' tag='div' class="logo"></router-link>
+    <router-link :to='{path: "/", query: {memoside: false}}' tag='div' class="logo"></router-link>
     <div class="title">{{ $t("LFS Applications Portal") }} {{envName}}</div>
     <div class="userInfo">
       <span>{{userName}}</span>

@@ -30,7 +30,7 @@
 .memo_model.type2{
   .title2{
     border-bottom: 1px solid #eee;height: 52px;position: relative;font-weight: bold;
-    .title_bg{font-size: 20px;color: #333;display: inline-block;line-height: 52px;padding-left: 25px;}
+    .title_bg{font-size: 20px;color: #333;display: inline-block;line-height: 52px;padding-left: 25px;cursor: pointer;}
     .more_memo{
       position: absolute;right: 18px;top: 50%;transform: translateY(-50%);font-weight: normal;padding: 10px;cursor: pointer;color: #333;
       i{display: inline-block;width: 20px;height: 20px;background: url('../images/icon_homepagelink.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;margin-right: 10px;}

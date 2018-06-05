@@ -152,6 +152,10 @@
     mounted () {
       this.initAppList();
       this.getTopMemo();
+      // 关闭mode side
+      if (this.$route.query.memoside == false) {
+        this.$store.dispatch('setMemoSide', false);
+      }
     },
     methods: {
       init () {
