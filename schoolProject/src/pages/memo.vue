@@ -12,35 +12,31 @@
             <label class="lab">{{$t('Title')}}:</label>
             <div class="val">
               <input class="form-control" type="text" v-model="data.memo.memo_name">
-            </div>
-          </div>
-          <div class="form_field">
-            <label class="lab">{{$t('Color')}}:</label>
-            <div class="val">
               <el-color-picker id="lj_colorpicker"
-                               v-model="data.memo.color"
-                               :predefine="predefineColors"
-                               @change="">
-              </el-color-picker>
+              v-model="data.memo.color"
+              :predefine="predefineColors"
+              @change="">
+            </el-color-picker>
             </div>
           </div>
-          <div class="form_field">
+          <div class="form_field"  v-if="userInfo.role===0">
             <label class="lab">{{ $t("Editor") }}:</label>
             <div class="val editors">
               <div class="li" v-for='(item, index) in data.editors'>
                 {{item.name}}
-                <span class="action_icon icon_delete" @click='removeEditor(item, index)'></span>
+                <i class="iconfont iconfont-chahao" @click="removeEditor(item, index)"></i>
               </div>
+              <button type="button" :disabled="!data.allUsers.length" @click='openAddParticipantModal()' class="li_add"></button>
             </div>
           </div>
-          <div class="form_field">
+          <!-- <div class="form_field">
             <label class="lab"></label>
             <div class="val" style="width: 348px;height: 38px;">
               <button type="button" class="btn btn-primary" id="new_editor" @click='openAddParticipantModal()' :disabled="!data.allUsers.length">
                 <i class="iconfont iconfont-jia"></i> {{ $t("New Editor") }}
               </button>
             </div>
-          </div>
+          </div> -->
           <div class="form_field">
             <label class="lab">{{$t('Template')}}:</label>
             <div class="val">
@@ -138,6 +134,7 @@
   import memo from '@/components/memoModel'
   import alert from '@/components/alert'
   import addParticipantModal from '@/components/addParticipantModal'
+  import { mapGetters } from 'vuex'
 
   export default {
     components: {
@@ -162,6 +159,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        userInfo: 'userInfo'
+      })
     },
     mounted () {
       // !@#$%^&*()_+
@@ -287,7 +287,9 @@
           if (typeof tempObj.id === 'string' && tempObj.id.indexOf('temp_id') === 0) {
             tempObj.id = 0;
           }
-          contentList.push(tempObj);
+          if (tempObj.sub_title && tempObj.memo_text) {
+            contentList.push(tempObj);
+          }
         }
         let params = JSON.parse(JSON.stringify(this.data.memo));
         params.memoContentList = contentList;

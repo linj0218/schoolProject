@@ -72,7 +72,7 @@
             </div>
           </div>
           <div class="button_box">
-            <span class="lab"></span>
+            <span class="lab long_text"></span>
             <div class="name_value">
               <button type="button" class="btn btn-primary" @click='()=>{this.showWeekSelectModal=true}'>
                 <span class="icon_btn_add"></span> {{ $t("New Hoildays") }}

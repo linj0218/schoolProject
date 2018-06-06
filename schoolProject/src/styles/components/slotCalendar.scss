@@ -36,7 +36,11 @@
     }
     table .icon{position: absolute;width: 22px;height: 22px;left: 0;top: 50%;transform: translateY(-50%);cursor: pointer;}
     table .icon.icon_edit{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;}
-    .button_box .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
+    .button_box{
+      .name_value{text-align: right;margin-top: 14px;margin-bottom: 26px;}
+      .icon_btn_add{display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;background: url('../images/icon_btn_add.png') 50% 50% / auto auto no-repeat;}
+      .btn{width: 180px;}
+    }
     table .checkbox{width: 20px;height: 20px;background: url('../images/icon_checkbox_unchecked.png') 50% 50%/auto auto no-repeat;cursor: pointer;}
     table .checkbox.checked{background: url('../images/icon_checkbox_checked.png') 50% 50% / auto auto no-repeat;}
   }
