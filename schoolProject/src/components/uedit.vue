@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :id="'content' + id" type="text/plain" style="width: 100%;" :style="{height: isfix ? '258px' : '200px'}"></div>
+    <div :id="'content' + id" type="text/plain" style="width: 100%;" :style="{height: isfix ? '260px' : '200px'}"></div>
   </div>
 </template>
 

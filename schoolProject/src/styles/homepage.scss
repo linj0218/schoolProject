@@ -48,7 +48,7 @@
     .week_calendar{
       text-align: center;
       .table_head{
-        height: 60px;border-bottom: 1px solid #eee;display: flex;margin-right: 5px;
+        height: 60px;border-bottom: 1px solid #eee;display: flex;overflow-y: scroll;
         .th{
           flex: 1;height: 100%;border-right: 1px solid #eee;color: #969DBA;padding: 12px;position: relative;
           .week_name{font-size: 18px;line-height: 18px;}
