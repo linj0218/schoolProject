@@ -104,7 +104,7 @@
             <span class="icon_close" @click='closePreview()'></span>
           </div>
           <div class="" style="background: #fff;padding: 20px 30px;">
-            <memo :titleType="'type1'" :memo="data.previewMemo" :readonly="true"></memo>
+            <memo :titleType="'type1'" :model="'side'" :memo="data.previewMemo" :readonly="true"></memo>
           </div>
         </div>
       </div>
@@ -240,6 +240,7 @@
           memoId: this.data.memo.id,
           memoGroupId: this.data.memo.memo_groupid,
           title: this.data.memo.memo_name,
+          sticky_flag: this.data.memo.sticky_flag,
           memos: []
         }
         if (this.data.memo.template === 0) tempObj.contentType = 'type2';
@@ -287,7 +288,7 @@
           if (typeof tempObj.id === 'string' && tempObj.id.indexOf('temp_id') === 0) {
             tempObj.id = 0;
           }
-          if (tempObj.sub_title && tempObj.memo_text) {
+          if (tempObj.sub_title || tempObj.memo_text) {
             contentList.push(tempObj);
           }
         }

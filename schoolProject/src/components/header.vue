@@ -91,7 +91,7 @@
         let pageName = this.$route.name
         if (pageName === 'homepage' && this.userRole === 0) {
           this.showConfig = true
-        } else if ((pageName === 'index' || pageName === 'contacts') && this.userRole === 0) {
+        } else if ((pageName === 'index' || pageName === 'contacts' || pageName === 'setting') && this.userRole === 0) {
           this.showAppSetting = true
         }
       },

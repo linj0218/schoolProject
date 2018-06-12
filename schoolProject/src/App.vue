@@ -8,7 +8,7 @@
 <script>
   // import $ from 'jquery/dist/jquery.min.js'
   import loading from '@/components/loading'
-  import { browser, setSStorage, getCookie, setCookie } from '@/script/util'
+  import { browser, setSStorage, getSStorage, getCookie, setCookie } from '@/script/util'
   import { mapGetters } from 'vuex';
   export default{
     components: {
@@ -71,7 +71,8 @@
         // console.log('auto login in');
         const username = getCookie('USERNAME');
         const password = getCookie('PASSWORD');
-        if (!this.userInfo.id && username !== 'undefined' && password !== 'undefined') {
+        // console.log(getSStorage('userinfo'));
+        if (!getSStorage('userinfo').id && username !== 'undefined' && password !== 'undefined') {
           let params = {
             userName: username,
             passWord: password
@@ -93,13 +94,12 @@
               setCookie('USERNAME', username, {expires: 1 / 8});
               setCookie('PASSWORD', password, {expires: 1 / 8});
               setSStorage('userinfo', resData);
-              this.$store.dispatch('getUserInfo');
               this.$store.dispatch('getAutoLoginFinish');
             }
             return res;
           })
         } else {
-          return new Promise((resolve, reject) => {});
+          return new Promise((resolve, reject) => { resolve() });
         }
       },
       updateCookie () {

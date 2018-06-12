@@ -1,14 +1,23 @@
 .memo_model{
   margin-bottom: 20px;background: #fff;
+  &.type2{border-left-width: 3px;border-left-style: solid;}
+  &.top{
+    border-left-width: 3px !important;border-left-style: solid;border: 1px solid #eee;
+    .title{border-bottom: 1px solid #eee;height: 52px;}
+    .title_bg{background: transparent !important;color: #333 !important;height: 52px !important;line-height: 52px !important;margin-left: 5px !important;}
+    .side_style{border: 0 !important;}
+  }
   .title{
     height: 40px;font-weight: bold;position: relative;z-index: 0;
-    .title_bg {display: inline-block;border-right: 15px solid transparent;height: 0;min-width: 120px;border-radius: 8px 30px 0 0 / 8px 50px 0 0;padding: 0 20px;line-height: 38px;color: #fff;font-size: 20px;}
-    .edit{position: absolute;right: 0;top: 50%;transform: translateY(-50%);color: #0079F4;font-weight: normal;cursor: pointer;}
+    .title_bg {display: inline-block;height: 40px;min-width: 120px;padding: 0 20px;line-height: 40px;color: #fff;font-size: 20px;margin-left: 20px;border-radius: 3px;}
+    .edit{position: absolute;right: 15px;top: 50%;transform: translateY(-50%);color: #0079F4;font-weight: normal;cursor: pointer;}
     .iconfont-bianji1{font-size: 18px;margin-right: 4px;}
     .top{position: absolute;top: 25px;right: 80px;width: 64px;height: 78px;background: url('../images/icon_topflg_2.png') 0 0 / 100% 100% no-repeat;}
   }
+  .side:after{content: '';position: absolute;width: 100%;height: 1px;background: inherit;left: 0;bottom: 10px;z-index: -1;}
   .contents{
     padding: 20px 30px;position: relative;
+    &.side_style{border-width: 1px;border-style: solid;margin-top: -10px;padding-top: 30px;}
     .sub_memo{margin-bottom: 16px;}
     .sub_memo:last-child{margin-bottom: 0;}
     .sub_memo:after{content: '';display: block;clear: both;}
@@ -29,11 +38,8 @@
 }
 .memo_model.type2{
   .title2{
-    border-bottom: 1px solid #eee;height: 52px;position: relative;font-weight: bold;
-    .title_bg{font-size: 20px;color: #333;display: inline-block;line-height: 52px;padding-left: 25px;cursor: pointer;}
-    .more_memo{
-      position: absolute;right: 18px;top: 50%;transform: translateY(-50%);font-weight: normal;padding: 10px;cursor: pointer;color: #333;
-      i{display: inline-block;width: 20px;height: 20px;background: url('../images/icon_homepagelink.png') 0 0 / 100% 100% no-repeat;vertical-align: middle;margin-right: 10px;}
-    }
+    border-bottom: 1px solid #eee;height: 52px;position: relative;font-weight: bold;cursor: pointer;
+    .title_bg{font-size: 20px;color: #333;display: inline-block;line-height: 52px;padding-left: 25px;}
+    .iconfont-you{position: absolute;right: 15px;line-height: 52px;}
   }
 }

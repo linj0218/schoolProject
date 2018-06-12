@@ -21,7 +21,7 @@
           width: 700px;height: 58px;background: #fff;border: 1px solid #ddd;border-radius: 2px;position: relative;
           .memo_title{float: left;width: 50%;height: 100%;line-height: 56px;color: #333;font-size: 18px;padding-left: 30px;}
           .memo_editor{overflow: hidden;height: 100%;line-height: 56px;color: #999;font-size: 16px;padding-left: 50px;}
-          .icon.icon_link{background: url('../images/icon_link.png') 0 0 / 100% 100% no-repeat;right: 50px;display: none;}
+          .icon.icon_link{background: url('../images/icon_edit.png') 0 0 / 100% 100% no-repeat;right: 50px;display: none;}
           .icon.icon_delete{background: url('../images/icon_delete.png') 0 0 / 100% 100% no-repeat;right: 20px;display: none;}
         }
         .memo_box:hover .icon{display: block;}
