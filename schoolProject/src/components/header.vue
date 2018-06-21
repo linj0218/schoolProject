@@ -14,6 +14,7 @@
           <li @click='profileToggle()'><span class="icon1"></span>{{ $t("Profile") }}</li>
           <li @click='appSettingToggle()' v-if='showAppSetting'><span class="icon2"></span>{{ $t("Configuration") }}</li>
           <li @click='configToggle()' v-if='showConfig'><span class="icon2"></span>{{ $t("Configuration") }}</li>
+          <li @click='searchLogs()' v-if='userRole==0'><span class="icon4"></span>{{ $t("Logs") }}</li>
           <li @click='logout()'><span class="icon3"></span>{{ $t("Log out") }}</li>
         </ul>
       </div>
@@ -110,6 +111,9 @@
       configToggle () {
         this.$emit('profileToggle', false)
         this.$router.push({ path: '/setting', query: {tabflg: 1} });
+      },
+      searchLogs () {
+        this.$router.push({ path: '/logs', query: {} });
       },
       // 登出
       logout () {

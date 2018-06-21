@@ -24,7 +24,7 @@ axios.interceptors.request.use((config) => {
       param = config.data;
     }
     let userinfo = getSStorage('userinfo');
-    if (config.url.indexOf('/login') === -1) {
+    if (config.url.indexOf('/login') === -1 || config.url.indexOf('/loginOut') !== -1) {
       param.userId = !userinfo ? 0 : userinfo.id;
       param.lang = localStorage.getItem('LANGUAGE') || 'en-US'; // 多语言
     }
@@ -38,9 +38,9 @@ axios.interceptors.request.use((config) => {
   }
 
   // 手动同步，正式环境调用测试环境的固定接口，我也是醉了
-  if (config.url.indexOf('toSynchronize') > -1 && process.env.PROJECT_BUILD_ENV === 'production') {
-    config.url = config.fix_sync_path;
-  }
+  // if (config.url.indexOf('toSynchronize') > -1 && process.env.PROJECT_BUILD_ENV === 'production') {
+  //   config.url = config.fix_sync_path;
+  // }
   return config
 }, (err) => {
   console.log('传参错误')

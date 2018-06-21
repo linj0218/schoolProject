@@ -8,6 +8,7 @@ const Index = r => require.ensure([], () => r(require('@/pages/index')), 'main')
 const Homepage = r => require.ensure([], () => r(require('@/pages/homepage')), 'main')
 const Setting = r => require.ensure([], () => r(require('@/pages/setting')), 'setting')
 const Memo = r => require.ensure([], () => r(require('@/pages/memo')), 'setting')
+const Logs = r => require.ensure([], () => r(require('@/pages/logs')), 'setting')
 const Contacts = r => require.ensure([], () => r(require('@/pages/contacts')), 'main')
 
 Vue.use(Router)
@@ -74,6 +75,15 @@ const router = new Router({
       component: Memo,
       meta: {
         pageTitle: '备忘录',
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/logs',
+      name: 'logs',
+      component: Logs,
+      meta: {
+        pageTitle: '日志',
         requiresAuth: true
       }
     }

@@ -54,6 +54,11 @@
             { name: this.name, path: '/', query: {} },
             { name: this.$t('Edit Memo'), path: '/memo', query: {memo_id: this.$route.query.memo_id}, readonly: true }
           ]
+        } else if (this.$route.path === '/logs') {
+          this.data.crumbs = [
+            { name: this.$t('Home'), path: '/', query: {}, isHome: true },
+            { name: this.$t('Logs'), path: '/logs', query: {}, readonly: true }
+          ]
         }
       }
     }
