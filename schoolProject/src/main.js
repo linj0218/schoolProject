@@ -2,7 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import Moment from 'moment'
-import { Table, TableColumn, Tooltip, Upload, Select, Option, TimePicker, TimeSelect, DatePicker, ColorPicker, Input, Pagination } from 'element-ui'
+import { Table, TableColumn, Tooltip, Upload, Select, Option, TimePicker, TimeSelect, DatePicker, ColorPicker, Input, Pagination, Button } from 'element-ui'
 import router from '@/router'
 import Axios from '@/http'
 import App from '@/App'
@@ -35,6 +35,7 @@ Vue.use(DatePicker)
 Vue.use(ColorPicker)
 Vue.use(Input)
 Vue.use(Pagination)
+Vue.use(Button)
 
 /* eslint-disable no-new */
 new Vue({

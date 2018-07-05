@@ -128,7 +128,7 @@ const FR = {
   'Memo name': 'Memo name',
   'Edited': 'Edited',
   'Newly created': 'Newly created',
-  'Save and quit': 'Sauvegarder et démissionne',
+  'Save and quit': 'Sauvegarder et quitter',
   'Operation logs': 'Operation logs',
   'Login logs': 'Login logs',
   'Ad sync logs': 'Ad sync logs',

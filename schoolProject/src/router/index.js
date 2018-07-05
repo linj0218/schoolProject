@@ -21,7 +21,8 @@ const router = new Router({
       component: Test,
       meta: {
         pageTitle: '测试',
-        requiresAuth: false
+        requiresAuth: false,
+        keepAlive: false
       }
     },
     {
@@ -30,7 +31,8 @@ const router = new Router({
       component: Login,
       meta: {
         pageTitle: '登录',
-        requiresAuth: false
+        requiresAuth: false,
+        keepAlive: false
       }
     },
     {
@@ -39,7 +41,8 @@ const router = new Router({
       component: Index,
       meta: {
         pageTitle: '首页',
-        requiresAuth: true
+        requiresAuth: true,
+        keepAlive: false
       }
     },
     {
@@ -48,7 +51,8 @@ const router = new Router({
       component: Homepage,
       meta: {
         pageTitle: '日历',
-        requiresAuth: true
+        requiresAuth: true,
+        keepAlive: false
       }
     },
     {
@@ -57,7 +61,8 @@ const router = new Router({
       component: Setting,
       meta: {
         pageTitle: '设置',
-        requiresAuth: true
+        requiresAuth: true,
+        keepAlive: false
       }
     },
     {
@@ -66,7 +71,8 @@ const router = new Router({
       component: Contacts,
       meta: {
         pageTitle: '通讯录',
-        requiresAuth: true
+        requiresAuth: true,
+        keepAlive: false
       }
     },
     {
@@ -75,7 +81,8 @@ const router = new Router({
       component: Memo,
       meta: {
         pageTitle: '备忘录',
-        requiresAuth: true
+        requiresAuth: true,
+        keepAlive: false
       }
     },
     {
@@ -84,7 +91,8 @@ const router = new Router({
       component: Logs,
       meta: {
         pageTitle: '日志',
-        requiresAuth: true
+        requiresAuth: true,
+        keepAlive: true
       }
     }
   ]

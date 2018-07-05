@@ -7,7 +7,8 @@
     <div class="page_body">
       <div class="page_body_box">
         <div class="tabs">
-          <button type="button" class="btn iconfont iconfont-fanhui" @click="back()"></button>
+          <crumbs></crumbs>
+          <!-- <button type="button" class="btn iconfont iconfont-fanhui" @click="back()"></button> -->
           <div class="tab">
             <button type="button" class="btn" :class="{act: currentTab == 0}" @click='switchTab(0)'>
               <i class="iconfont iconfont-shezhi"></i><span>{{ $t("General") }}</span>
@@ -36,7 +37,7 @@
           <div class="tab_content" v-if='data.tab==2'>
             <toolbar @openBanner='openBanner'></toolbar>
           </div>
-          <div class="tab_content" v-if='data.tab==3'>
+          <div class="tab_content" v-show='data.tab==3'>
             <launcher @openBanner='openBanner' ref='launcher'></launcher>
           </div>
           <div class="tab_content" v-if="data.tab==4">
@@ -64,10 +65,11 @@
   import toolbar from '@/components/slotToolbar'
   import launcher from '@/components/slotLauncher'
   import memoSetting from '@/components/slotMemoSetting'
+  import crumbs from '@/components/crumbs'
 
   export default {
     components: {
-      headerr, banner, profile, appSetting, calendar, toolbar, launcher, memoSetting
+      headerr, banner, profile, appSetting, calendar, toolbar, launcher, memoSetting, crumbs
     },
     data () {
       return {
@@ -83,6 +85,11 @@
       }
     },
     mounted () {
+      if (this.$route.query.userId != undefined && this.$route.query.userName != undefined) {
+        this.$refs.launcher.data.tab = 1;
+        this.$refs.launcher.data.userId = this.$route.query.userId;
+        this.$refs.launcher.userChanged(this.$route.query.userId);
+      }
     },
     methods: {
       profileToggle (bol) {
@@ -92,14 +99,14 @@
       openBanner (res) {
         this.$refs.banner.show(res.msg)
       },
-      back () {
+      /* back () {
         this.$router.go(-1)
-      },
+      }, */
       switchTab (tab) {
         this.$router.replace({path: '/setting', query: {tabflg: tab}})
       },
       switchChildTab (tab, data) {
-        this.data.tab = tab;
+        this.switchTab(tab);
         this.$refs.launcher.data.tab = data.subTab;
         this.$refs.launcher.data.userId = data.userId;
         this.$refs.launcher.userChanged(data.userId);

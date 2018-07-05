@@ -59,6 +59,11 @@
             { name: this.$t('Home'), path: '/', query: {}, isHome: true },
             { name: this.$t('Logs'), path: '/logs', query: {}, readonly: true }
           ]
+        } else if (this.$route.path === '/setting') {
+          this.data.crumbs = [
+            { name: this.$t('Home'), path: '/', query: {}, isHome: true },
+            { name: this.$t('Configuration'), path: '/setting', query: {tabflg: this.$route.query.tabflg}, readonly: true }
+          ]
         }
       }
     }

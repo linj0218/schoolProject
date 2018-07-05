@@ -111,7 +111,7 @@
     }
   }
   .part_3{
-    height: 533px;
+    min-height: 533px;
     .task_title{
       float: left;width: 323px;height: 100%;overflow-y: auto;
       &::-webkit-scrollbar {width: 0;height: 0;}
@@ -126,10 +126,10 @@
       .li:hover{cursor: default;cursor: pointer;}
     }
     .task_detail{
-      overflow: hidden;height: 100%;border-left: 3px solid #4A90E2;position: relative;
+      overflow: hidden;min-height: 533px;border-left: 3px solid #4A90E2;position: relative;
       .empty{padding: 20px;font-size: 18px;color: #333;}
       .tast_detail_left{
-        overflow: hidden;padding: 20px 0;height: 100%;
+        overflow: hidden;padding: 20px 0 100px 0;height: 100%;
         .item{
           line-height: 24px;padding: 5px 0;
           &>span{float: left;width: 140px;text-align: right;color: #999;font-size: 14px;margin-right: 10px;}

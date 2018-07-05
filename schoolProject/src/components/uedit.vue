@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :id="'content' + id" type="text/plain" style="width: 100%;" :style="{height: isfix ? '260px' : '200px'}"></div>
+    <div :id="'content' + id" type="text/plain" style="width: 100%;" :style="{height: isfix ? '140px' : '200px'}"></div>
   </div>
 </template>
 
@@ -52,6 +52,19 @@ export default {
   },
   mounted () {
     let lang = this.lang; // 只提供英文、中文
+    let toolbars = [];
+    if (this.isfix) {
+      toolbars.push([
+        'link', // 超链接
+        'simpleupload'
+      ])
+    } else {
+      toolbars.push([
+        'link', // 超链接
+        'attachment', // 附件
+        'simpleupload'
+      ])
+    }
     this.ue = window.UE.getEditor('content' + this.id, {
       BaseUrl: '',
       UEDITOR_HOME_URL: 'static/uedit/',
@@ -59,13 +72,7 @@ export default {
       autosave: false,
       elementPathEnabled: false,
       autoHeightEnabled: !this.isfix,
-      toolbars: [
-        [
-          'link', // 超链接
-          'attachment', // 附件
-          'simpleupload'
-        ]
-      ]
+      toolbars: toolbars
     });
     this.ue.addListener('ready', (editor) => {
       this.ue.setContent(this.content);

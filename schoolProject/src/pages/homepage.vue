@@ -789,7 +789,7 @@
         if (!this.weekTaskListActId) return false
 
         this.$refs.alert.showDialog().then(() => {
-          this.$http.post('sharedcalendarSettingCtl/event/editEvent', {
+          this.$http.post('/sharedcalendarSettingCtl/event/editEvent', {
             data: JSON.stringify({id: this.weekTaskListActId, operation_flag: -1})
           }).then((res) => {
             if (res.success) {

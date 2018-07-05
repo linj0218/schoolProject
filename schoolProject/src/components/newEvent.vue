@@ -100,12 +100,12 @@
               <span class="lab">{{ $t("Description") }}</span>
               <div class="name_value">
                 <!-- <textarea class="form-control textarea" v-model='data.description'></textarea> -->
-                <div v-if="loadFinish">
+                <div v-if="loadFinish" style="z-index: 1;position: relative;">
                   <uedit :id="eventId" :content="data.description" :isfix="true" @syncContent="syncContent"></uedit>
                 </div>
               </div>
             </div>
-            <!-- <div>
+            <div>
               <span class="lab">{{ $t("Attachment") }}</span>
               <div class="name_value" style="background: #f5f5f5;border: 1px solid #ccc;border-radius: 4px;height: 150px;position: relative;">
                 <el-upload class="upload-demo"
@@ -119,14 +119,14 @@
                   <a class="upload_a" v-show='data.fileList.length < 3'><i class="iconfont iconfont-shangchuan"></i>{{ $t("Upload") }}</a>
                 </el-upload>
               </div>
-            </div> -->
+            </div>
           </div>
           <div class="right">
             <div>
               <span class="lab">{{ $t("Participants") }}</span>
               <div class="participants">
                 <div style="height: 100%;overflow: auto;">
-                  <div class="li" v-for='(item, index) in data.participants'>
+                  <div class="li" v-for='(item, index) in data.participants' :key="index">
                     <span class="icon" :class='item.type'></span>
                     {{item.name}}
                     <span class="action_icon icon_delete" @click='deleteParticipant(item, index)'></span>
@@ -148,7 +148,7 @@
                   </div>
                 </div>
                 <div class="check_list">
-                  <div class="checkbox" v-for='item in data.viewedList' v-if='item.operation_flag==1'>
+                  <div class="checkbox" v-for='(item, index) in data.viewedList' v-if='item.operation_flag==1' :key="index">
                     <label :class='{"checked": item.value}'>
                       <input @click='checkChange(item)' type="checkbox" v-model='item.value'> {{item.name}}
                     </label>
@@ -767,7 +767,7 @@ export default {
         this.data.fileList.push({
           id: res.data[0].id,
           name: res.data[0].file_name,
-          url: res.data[0].file_url
+          url: this.$config.api_path.img_path + res.data[0].file_url
         })
         // this.$nextTick(() => {
         // })

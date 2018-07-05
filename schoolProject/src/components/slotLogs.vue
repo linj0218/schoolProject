@@ -62,7 +62,7 @@
         <div class="nav_content_1" v-if='data.tab==1'>
           <div class="no_login" style="width: 1200px;">
             {{total4}} {{ $t("accounts never login") }}
-            <div class="view" @click="() => {this.showNoLogin = true;}">
+            <div class="view" @click="viewNeverLogin">
               <i class="iconfont iconfont-jiantou"></i>{{ $t("View details") }}
             </div>
           </div>
@@ -70,15 +70,15 @@
             <div class="item">
               <label>{{ $t("Account name") }}:</label>
               <span class="input_wrapper">
-                <el-input v-model="userName" class="lj_input" @keyup.enter.native="getLoginData"></el-input>
+                <el-input v-model="userName" class="lj_input" @keyup.enter.native="getLoginData(true)"></el-input>
               </span>
             </div>
             <div class="item" style="padding-left: 50px;">
               <label>{{ $t("Login date") }}:</label>
               <span class="input_wrapper">
-                <el-date-picker class="lj_date" type="date" @change="getLoginData" value-format="yyyy-MM-dd" v-model="login_time"></el-date-picker>
+                <el-date-picker class="lj_date" type="date" @change="getLoginData(true)" value-format="yyyy-MM-dd" v-model="login_time"></el-date-picker>
                 -
-                <el-date-picker class="lj_date" type="date" @change="getLoginData" value-format="yyyy-MM-dd" v-model="loginout_time"></el-date-picker>
+                <el-date-picker class="lj_date" type="date" @change="getLoginData(true)" value-format="yyyy-MM-dd" v-model="loginout_time"></el-date-picker>
               </span>
             </div>
           </div>
@@ -109,30 +109,41 @@
             <div class="item">
               <label>{{ $t("Date") }}:</label>
               <span class="input_wrapper">
-                <el-date-picker v-model="value1" class="lj_date" type="date"></el-date-picker>
+                <el-date-picker v-model="startDate" class="lj_date" type="date" value-format="yyyy-MM-dd" @change="getADSyncLogs(true)"></el-date-picker>
                 -
-                <el-date-picker v-model="value2" class="lj_date" type="date"></el-date-picker>
+                <el-date-picker v-model="endDate" class="lj_date" type="date" value-format="yyyy-MM-dd" @change="getADSyncLogs(true)"></el-date-picker>
               </span>
             </div>
             <div class="item" style="padding-left: 50px;">
               <label>{{ $t("Operator") }}:</label>
               <span class="input_wrapper">
-                <el-input v-model="input8" class="lj_input" @keyup.enter.native="searchSync"></el-input>
+                <el-select v-model="operator_flag" @change="getADSyncLogs(true)">
+                  <el-option label="System" value="System"></el-option>
+                  <el-option label="Manual" value="Manual"></el-option>
+                </el-select>
               </span>
             </div>
             <div class="item" style="padding-left: 50px;">
               <label>{{ $t("Changed account") }}:</label>
               <span class="input_wrapper">
-                <el-input v-model="input9" class="lj_input" @keyup.enter.native="searchSync"></el-input>
+                <el-input v-model="userName_ad" class="lj_input" @keyup.enter.native="getADSyncLogs(true)"></el-input>
               </span>
             </div>
           </div>
           <div class="table_wrapper">
             <el-table :data="table3" border stripe style="width: 100%;">
-              <el-table-column align="center" prop="id" label="ID" width="60"></el-table-column>
-              <el-table-column align="center" prop="operation_type" label="Sync time" width="180"></el-table-column>
-              <el-table-column align="center" prop="operation_object" label="Operator" width="180"></el-table-column>
-              <el-table-column align="center" prop="description" label="Result"></el-table-column>
+              <el-table-column align="center" type="index" :index="(index) => { return index + 1; }" label="ID" width="60"></el-table-column>
+              <el-table-column align="center" prop="sync_time" label="Sync time" width="180"></el-table-column>
+              <el-table-column align="center" prop="operator_flag" label="Operator" width="180"></el-table-column>
+              <el-table-column align="center" label="Result">
+                <template slot-scope="scope">
+                  <span style="padding: 0 10px;">Adds:&nbsp;<i class="sync_num" @click="viewSync('Adds', scope.row.addsList)">{{ scope.row.addsNum }}</i></span>
+                  <span style="padding: 0 10px;">Updates:&nbsp;<i class="sync_num" @click="viewSync('Updates', scope.row.updatesList)">{{ scope.row.updatesNum }}</i></span>
+                  <span style="padding: 0 10px;">Deletes:&nbsp;<i class="sync_num" @click="viewSync('Deletes', scope.row.deleteList)">{{ scope.row.deleteNum }}</i></span>
+                  <span style="padding: 0 10px;">Renames:&nbsp;<i class="sync_num" @click="viewSync('Renames', scope.row.renameList)">{{ scope.row.renameNum }}</i></span>
+                  <span style="padding: 0 10px;">Unchanged:&nbsp;<i style="font-style: normal;">{{ scope.row.unchangedNum }}</i></span>
+                </template>
+              </el-table-column>
             </el-table>
             <div class="table_footer">
               <el-pagination
@@ -152,35 +163,45 @@
     </div>
 
     <!-- 未登录过用户弹窗 -->
-    <div class="popup" :class='{"open": showNoLogin}'>
-      <div class="popup_bg" @click='() => {this.showNoLogin = false;}'></div>
-      <div class="popup_content">
-
-        <div class="popup_header">
-          <span class="icon_close" @click='() => {this.showNoLogin = false;}'></span>
-        </div>
-
-        <div class="popup_body">
-          <el-table :data="table4" border stripe style="width: 100%;">
-            <el-table-column align="center" type="index" :index="(index) => { return index + 1; }" label="ID" width="60"></el-table-column>
-            <el-table-column align="center" prop="nom" label="Name"></el-table-column>
-            <el-table-column align="center" prop="department" label="Position(Job Title)"></el-table-column>
-          </el-table>
-          <div class="table_footer">
-            <el-pagination
-              background
-              @size-change="handleSizeChange2"
-              @current-change="handleCurrentChange2"
-              :current-page="pageIndex4"
-              :page-sizes="[10, 20, 50]"
-              :page-size="pageSize4"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="total4">
-            </el-pagination>
-          </div>
+    <popup-table ref="popupTable">
+      <div slot="content">
+        <el-table :data="table4" border stripe style="width: 100%;">
+          <el-table-column align="center" type="index" :index="(index) => { return index + 1; }" label="ID" width="60"></el-table-column>
+          <el-table-column align="center" prop="nom" label="Name"></el-table-column>
+          <el-table-column align="center" prop="department" label="Position(Job Title)"></el-table-column>
+        </el-table>
+        <div class="table_footer">
+          <el-pagination
+            background
+            @size-change="handleSizeChange2"
+            @current-change="handleCurrentChange2"
+            :current-page="pageIndex4"
+            :page-sizes="[10, 20, 50]"
+            :page-size="pageSize4"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total4">
+          </el-pagination>
         </div>
       </div>
-    </div>
+    </popup-table>
+
+    <!-- AD同步弹窗 -->
+    <popup-table ref="popupTable_ad" :title="popupTableTitle">
+      <div slot="content">
+        <el-table :data="table5" border stripe style="width: 100%;" class="lj_ad_popup">
+          <el-table-column align="center" type="index" :index="(index) => { return index + 1; }" label="ID" width="60"></el-table-column>
+          <el-table-column align="center" prop="user_name" label="Name"></el-table-column>
+          <el-table-column align="center" prop="department" label="Position"></el-table-column>
+          <el-table-column align="center" label="Set User Permission" width="190">
+            <template slot-scope="scope">
+              <router-link tag="div" :to="{path: 'setting', query: {tabflg: 3, userId: scope.row.user_id, userName: scope.row.user_name}}">
+                <el-button type="primary">Set</el-button>
+              </router-link>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </popup-table>
 
     <alert ref='alert'></alert>
 
@@ -192,10 +213,11 @@
 <script>
 import prompt from '@/components/prompt'
 import alert from '@/components/alert'
+import popupTable from '@/components/popupTable'
 
 export default {
   components: {
-    prompt, alert
+    prompt, alert, popupTable
   },
   data () {
     return {
@@ -215,7 +237,6 @@ export default {
       userName: '',
       login_time: '',
       loginout_time: '',
-      showNoLogin: false,
       pageIndex2: 1,
       pageSize2: 10,
       total2: 0,
@@ -226,14 +247,17 @@ export default {
       total4: 0,
       table4: [],
       // AD同步日志
-      input8: '',
-      input9: '',
-      value1: '',
-      value2: '',
+      startDate: '',
+      endDate: '',
+      operator_flag: '',
+      userName_ad: '',
       pageIndex3: 1,
       pageSize3: 10,
       total3: 0,
-      table3: []
+      table3: [],
+      // AD同步弹窗
+      popupTableTitle: '',
+      table5: []
     }
   },
   computed: {
@@ -244,10 +268,12 @@ export default {
   methods: {
     initPage () {
       this.getLoginData();
-      this.getNeverLogin();
+      // this.getNeverLogin();
+      this.getADSyncLogs();
     },
     // 获取登录日志
-    getLoginData () {
+    getLoginData (reset) {
+      if (reset) this.pageIndex2 = 1;
       let params = {
         pageIndex: this.pageIndex2,
         pageSize: this.pageSize2,
@@ -276,7 +302,39 @@ export default {
           this.table4 = res.data;
           this.total4 = res.total;
         }
+        return res;
       })
+    },
+    // 开启未登录日志弹窗
+    viewNeverLogin () {
+      this.getNeverLogin().then(() => {
+        this.$refs.popupTable.show = true;
+      })
+    },
+    // 获取AD同步日志
+    getADSyncLogs (reset) {
+      if (reset) this.pageIndex3 = 1;
+      let params = {
+        pageIndex: this.pageIndex3,
+        pageSize: this.pageSize3,
+        startDate: this.startDate,
+        endDate: this.endDate,
+        operator_flag: this.operator_flag,
+        userName: this.userName_ad
+      };
+      return this.$http.post('/adSynchronizeCtl/sys/searchAdSyncLogs', { data: params }).then((res) => {
+        // console.log(res);
+        if (res.result === 'SUCCESS') {
+          this.table3 = res.data;
+          this.total3 = res.total;
+        }
+      })
+    },
+    // 开启AD同步弹窗
+    viewSync (type, data) {
+      this.table5 = data;
+      this.popupTableTitle = type;
+      this.$refs.popupTable_ad.show = true;
     },
     switchTab (i) {
       this.data.tab = i;
@@ -290,13 +348,9 @@ export default {
         this.pageSize2 = val;
         this.getLoginData();
       } else if (this.data.tab === 2) {
-
+        this.pageSize3 = val;
+        this.getADSyncLogs();
       }
-    },
-    // 修改未登录每页显示条数
-    handleSizeChange2 (val) {
-      this.pageSize4 = val;
-      this.getNeverLogin();
     },
     // 翻页
     handleCurrentChange (val) {
@@ -307,8 +361,14 @@ export default {
         this.pageIndex2 = val;
         this.getLoginData();
       } else if (this.data.tab === 2) {
-
+        this.pageIndex3 = val;
+        this.getADSyncLogs();
       }
+    },
+    // 修改未登录每页显示条数
+    handleSizeChange2 (val) {
+      this.pageSize4 = val;
+      this.getNeverLogin();
     },
     // 未登录翻页
     handleCurrentChange2 (val) {
@@ -318,14 +378,6 @@ export default {
     // 查询操作日志
     searchOperation () {
       console.log(1);
-    },
-    // 查询登录日志
-    searchLogin () {
-      console.log(2);
-    },
-    // 查询同步日志
-    searchSync () {
-      console.log(3);
     }
   }
 }
