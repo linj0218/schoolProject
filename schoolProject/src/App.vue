@@ -109,8 +109,8 @@
         // console.log('update cookie', getCookie());
         const username = getCookie('USERNAME');
         const password = getCookie('PASSWORD');
-        setCookie('USERNAME', username, {expires: 1 / 8});
-        setCookie('PASSWORD', password, {expires: 1 / 8});
+        setCookie('USERNAME', username, {expires: 1 / 24 * 18});
+        setCookie('PASSWORD', password, {expires: 1 / 24 * 18});
       }
     }
   }
